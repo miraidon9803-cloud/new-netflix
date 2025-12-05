@@ -1,0 +1,11 @@
+@font-face {
+  font-family: "SUIT";
+  src: url("/src/assets/fonts/SUIT-ExtraLight.otf") format("opentype");
+  /* font-weight: 200; */
+  font-style: normal;
+}
+
+body {
+  font-family: "SUIT", sans-serif;
+  font-size: 16px;
+}
