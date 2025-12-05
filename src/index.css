@@ -9,3 +9,75 @@ body {
   font-family: "SUIT", sans-serif;
   font-size: 16px;
 }
+
+/* 공통 */
+/* 모든 여백제거 */
+/* 테두리와 여백이 width,height안에 포함되도록 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* li 장식제거 */
+li {
+  list-style: none;
+}
+
+/* a 여백제거,글자색 */
+a {
+  text-decoration: none;
+  /* color:#1f1f1f; */
+  /* 부모의 color속성을 상속받아서 사용할때 */
+  color: inherit;
+}
+
+/* img,video 위아래 정렬 */
+img {
+  vertical-align: middle;
+  max-width: 100%;
+}
+
+/* em,i,address */
+em,
+i,
+address {
+  font-style: normal;
+}
+
+/* blind */
+.blind {
+  position: absolute;
+  top: -99999px;
+}
+
+/* button */
+button {
+  cursor: pointer;
+}
+
+html {
+  font-size: 10px;
+  font-family: "Pretendard", sans-serif;
+}
+
+/* body */
+/* html{
+    font-family: Pretendard,"돋움",sans-serif;
+    font-size: 10px;
+    font-weight: 300;
+
+} */
+
+.inner {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+body {
+  overflow-y: scroll;
+}
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}

@@ -1,0 +1,65 @@
+@use "../../App.scss" as *;
+
+header {
+  background: $BG;
+  padding: 20px 0;
+
+  .inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1464px;
+    padding: 0 12px;
+    margin: 0 auto;
+
+    .header-left,
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .header-left {
+      gap: 48px;
+
+      .logo img {
+        display: block;
+        height: 100%;
+      }
+
+      // 메인 메뉴
+      .main-menu {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+
+        .main-text {
+          @include myTitle16();
+          color: $grey10;
+        }
+      }
+    }
+
+    .header-right {
+      ul {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        li {
+          display: flex;
+          align-items: center;
+
+          a {
+            display: inline-flex;
+          }
+
+          img {
+            display: block;
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
+    }
+  }
+}

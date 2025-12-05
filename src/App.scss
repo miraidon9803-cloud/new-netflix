@@ -18,48 +18,43 @@ $BG: #171718;
 // }
 
 //타이틀
-@mixin myTitle32($fw: 500, $ta: center, $color: $text1) {
+@mixin myTitle32($fw: 500, $ta: center) {
   font-size: 32px;
   font-weight: $fw;
   line-height: 140%;
   text-align: $ta;
-  color: $color;
   letter-spacing: -0.8px;
 }
 
-@mixin myTitle24($fw: 500, $ta: center, $color: $text1) {
+@mixin myTitle24($fw: 500, $ta: center) {
   font-size: 24px;
   font-weight: $fw;
   line-height: 140%;
   text-align: $ta;
-  color: $color;
   letter-spacing: -0.6px;
 }
 
-@mixin myTitle20($fw: 400, $ta: center, $color: $text1) {
+@mixin myTitle20($fw: 400, $ta: center) {
+  font-size: 20px;
+  font-weight: $fw;
+  line-height: 140%;
+  text-align: $ta;
+  letter-spacing: -0.4px;
+}
+
+@mixin myTitle16($fw: 400, $ta: center) {
   font-size: 16px;
   font-weight: $fw;
   line-height: 140%;
   text-align: $ta;
-  color: $color;
   letter-spacing: -0.4px;
 }
 
-@mixin myTitle16($fw: 400, $ta: center, $color: $text1) {
-  font-size: 16px;
-  font-weight: $fw;
-  line-height: 140%;
-  text-align: $ta;
-  color: $color;
-  letter-spacing: -0.4px;
-}
-
-@mixin myTitle14($fw: 400, $ta: center, $color: $text1) {
+@mixin myTitle14($fw: 400, $ta: center) {
   font-size: 14px;
   font-weight: $fw;
   line-height: 140%;
   text-align: $ta;
-  color: $color;
   letter-spacing: -0.35px;
 }
 
