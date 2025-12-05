@@ -1,6 +1,6 @@
 export interface Original {
   id: number;
-  title: string;
+  name: string;
   overview: string;
   backdrop_path: string;
   poster_path: string;

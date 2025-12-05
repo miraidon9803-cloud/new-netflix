@@ -16,10 +16,11 @@ const NetflixOriginal = ({ title, original }: NetflixOriginalProps) => {
               <li className="origianl-list" key={data.id}>
                 <div>
                   <img
-                    src={`https://image.tmdb.org/t/p/w500${data.backdrop_path}`}
+                    src={`https://image.tmdb.org/t/p/w500${data.poster_path}`}
                     alt=""
                   />
                 </div>
+                <p>{data.name}</p>
               </li>
             ))}
           </ul>
