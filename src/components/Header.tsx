@@ -17,7 +17,9 @@ const Header = () => {
       <div className="inner">
         <div className="header-left">
           <h1 className="logo">
-            <img src="/images/logo.png" alt="logo" />
+            <Link to="/">
+              <img src="/images/logo.png" alt="logo" />
+            </Link>
           </h1>
 
           <ul className="main-menu">
