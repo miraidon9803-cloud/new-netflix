@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import Main from "./pages/Main";
 import Login from "./pages/Login";
 import Join from "./pages/Join";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -15,7 +16,7 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="join" element={<Join />} />
       </Routes>
-      <Footer/>
+      <Footer />
     </>
   );
 }
