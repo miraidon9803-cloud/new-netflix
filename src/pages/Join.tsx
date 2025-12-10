@@ -1,18 +1,10 @@
-import { useEffect } from "react";
 import { useAuthStore } from "../store/authStore";
 import "./scss/join.scss";
 import { useNavigate } from "react-router-dom";
 
 const Join = () => {
+  const { onMember, joinForm, setJoinForm, resetJoinForm } = useAuthStore();
   const navigate = useNavigate();
-  const { onMember, user, joinForm, setJoinForm, resetJoinForm } =
-    useAuthStore();
-  useEffect(() => {
-    if (user) {
-      // 이미 로그인 상태면 로그인 페이지 보여줄 필요 X
-      navigate("/mypage", { replace: true });
-    }
-  }, [user, navigate]);
 
   const handleJoinChange = (e) => {
     const { name, value } = e.target;
@@ -26,16 +18,17 @@ const Join = () => {
       alert("비밀번호가 일치하지 않습니다!");
       return;
     }
+
     try {
-      await onMember(joinForm);
-      console.log("회원가입 성공!");
+      await onMember(joinForm); // 회원가입
+      alert("회원가입 성공!"); // 🔹 alert 정상 표시
       resetJoinForm();
-      // setPanel("login");
+      navigate("/login"); // 로그인 페이지 이동
     } catch (err) {
+      console.error("JOIN ERROR:", err);
       alert("회원가입 실패: " + err.message);
     }
   };
-
   return (
     <div className="inner-join">
       <div className="join-wrap">
