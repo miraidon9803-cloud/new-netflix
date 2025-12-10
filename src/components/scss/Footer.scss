@@ -1,0 +1,110 @@
+// @use "../../App.scss" as *;
+
+// footer {
+//   height: 20.8rem;
+//   // 208px;
+//   padding: 4rem 24rem;
+//   // 40px 240px;
+//   background: $BG;
+//   color: $grey10;
+
+//   .inner {
+//     display: flex;
+//     justify-content: space-between;
+
+//     .footer-left {
+//       width: 69.4rem;
+//       // 694px;
+//       gap: 2.4rem;
+//       @include myTitle16($ta:left);
+
+//       ul {
+//         display: flex;
+//         gap: 2.4rem;
+//       }
+
+//       address {
+//         font-size: 1.2rem;
+//         color: $grey8;
+//         margin-top: 2.4rem;
+
+//         .sns-list {
+//           display: flex;
+//           gap: 2.4rem; // 아이콘 사이 간격
+//           justify-content: flex-start; // 왼쪽 정렬
+//           a{
+//             display: inline-block;
+//           }
+
+//         }
+//       }
+//     }
+//   }
+// }
+// Footer.scss
+@use "../../App.scss" as *;
+footer {
+  height: 20.8rem;
+  background: $BG;
+  color: $grey10;
+  padding: 4rem 24rem;
+  margin-top: 12rem;
+
+  .footer-wrap {
+    .inner {
+      max-width: 1440px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      .footer-left {
+        display: flex;
+        flex-direction: column;
+        gap: 2.4rem; // ul, address, sns-list 사이
+
+        ul {
+          @include myFlex(24px, flex-start, center);
+
+          li a {
+            color: $grey10;
+            @include myTitle16($fw: 500, $ta: left);
+          }
+        }
+
+        address {
+          color: $grey8;
+          font-size: 1.2rem;
+          font-weight: 400;
+          line-height: 140%;
+          letter-spacing: -0.25px;
+
+          span {
+            display: inline-block;
+          }
+        }
+
+        .sns-list {
+          display: flex;
+          gap: 2.4rem; // 아이콘 사이 간격
+          justify-content: flex-start; // 왼쪽 정렬
+
+          a {
+            display: inline-block;
+
+            img {
+              display: block;
+              width: 100%;
+            }
+          }
+        }
+      }
+
+      .footer-right {
+        img {
+          display: block;
+          width: 100%; 
+        }
+      }
+    }
+  }
+}
