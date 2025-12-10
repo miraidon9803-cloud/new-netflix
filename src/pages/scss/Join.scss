@@ -56,6 +56,18 @@
             outline: none;
           }
         }
+        .next-btn {
+          height: 4.8rem;
+          padding: 12px 0;
+          border-radius: 0.4rem;
+          background-color: l.$main1;
+          @include l.myTitle16();
+          color: l.$grey10;
+          margin-top: 60px;
+        }
+        .next-btn:hover {
+          background: l.$sub1;
+        }
       }
     }
   }
