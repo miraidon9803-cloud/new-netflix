@@ -16,6 +16,7 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="join" element={<Join />} />
       </Routes>
+
       <Footer />
     </>
   );
