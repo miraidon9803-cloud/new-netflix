@@ -1,7 +1,7 @@
 @use "../../App.scss" as *;
 footer {
   height: 20.8rem;
-  background: $BG;
+  background: $grey1;
   color: $grey10;
   padding: 4rem 24rem;
   margin-top: 12rem;
@@ -9,6 +9,7 @@ footer {
   .footer-wrap {
     .inner {
       max-width: 1440px;
+      width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;

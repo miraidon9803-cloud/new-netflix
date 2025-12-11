@@ -1,9 +1,10 @@
+import { Link } from "react-router-dom";
 import "./scss/Footer.scss";
 const Footer = () => {
   return (
     <footer>
       <div className="footer-wrap">
-        <div className="content-inner">
+        <div className="inner">
           <div className="footer-left">
             <ul>
               <li>
@@ -32,22 +33,23 @@ const Footer = () => {
               </span>
             </address>
             <div className="sns-list">
-              <a href="https://www.instagram.com/netflixkr/">
+              <a href="https://www.instagram.com/netflixkr/" target="_blank">
                 <img src="/images/instagram.svg" alt="instagram" />
               </a>
-              <a href="https://x.com/NetflixKR">
+              <a href="https://x.com/NetflixKR" target="_blank">
                 <img src="/images/twitter.svg" alt="twitter" />
               </a>
-              <a href="https://www.youtube.com/channel/UCiEEF51uRAeZeCo8CJFhGWw">
+              <a href="https://www.youtube.com/channel/UCiEEF51uRAeZeCo8CJFhGWw" target="_blank">
                 <img src="/images/youtube.svg" alt="youtube" />
               </a>
-              <a href="https://www.facebook.com/NetflixKR/about/">
+              <a href="https://www.facebook.com/NetflixKR/about/" target="_blank">
                 <img src="/images/facebook.svg" alt="facebook" />
               </a>
             </div>
           </div>
           <div className="footer-right">
-            <img src="/images/logo-white.svg" alt="Netflix-footer-logo" />
+            {/*  하단로고 클릭시 상단으로 가고 싶어서 API 기능, 자동으로 사용 / 선언 필요없음 */}
+           <Link to="/" onClick={() => window.scrollTo(0, 0)}><img src="/images/logo-white.svg" alt="Netflix-footer-logo" /></Link>
           </div>
         </div>
       </div>
