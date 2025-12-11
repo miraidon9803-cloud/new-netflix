@@ -26,6 +26,9 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      h1 {
+        display: none;
+      }
     }
 
     .login-left img {
@@ -155,6 +158,23 @@
           justify-content: center;
         }
       }
+    }
+  }
+}
+
+@media (max-width: 1366px) {
+  .inner-login .login-wrap .login-left {
+    display: none !important;
+  }
+
+  .inner-login .login-wrap {
+    background: none;
+  }
+
+  .join-content {
+    h1 {
+      display: block !important;
+      margin-bottom: 80px;
     }
   }
 }

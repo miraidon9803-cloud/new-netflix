@@ -5,6 +5,7 @@ import Main from "./pages/Main";
 import Login from "./pages/Login";
 import Join from "./pages/Join";
 import Footer from "./components/Footer";
+import Membership from "./pages/Membership";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
 
         <Route path="login" element={<Login />} />
         <Route path="join" element={<Join />} />
+        <Route path="membership" element={<Membership />} />
       </Routes>
       <Footer />
     </>

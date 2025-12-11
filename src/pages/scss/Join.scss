@@ -24,6 +24,9 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
+      h1 {
+        display: none;
+      }
 
       h3 {
         margin-bottom: 40px;
@@ -69,6 +72,20 @@
           background: l.$sub1;
         }
       }
+    }
+  }
+}
+
+@media (max-width: 1366px) {
+  .join-wrap {
+    background: none !important;
+  }
+
+  .join-content {
+    h1 {
+      display: block !important;
+      margin-bottom: 80px;
+      text-align: center;
     }
   }
 }

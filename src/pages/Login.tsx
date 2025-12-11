@@ -1,23 +1,60 @@
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 import "./scss/Login.scss";
 
-const Login = () => {
+const Login: React.FC = () => {
+  const { onLogin } = useAuthStore();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!email || !password) {
+      setError("이메일과 비밀번호를 입력해주세요.");
+      return;
+    }
+
+    try {
+      await onLogin(email, password);
+      setEmail("");
+      setPassword("");
+      setError("");
+      navigate("/");
+    } catch (err) {
+      console.error("로그인 실패:", err);
+      setError("로그인 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <div className="inner-login">
       <div className="login-wrap">
-        {/* 로그인 */}
-
         <div className="login-left">
-          <img src="/images/login-img.png" alt="" />
+          <img src="/images/login-img.png" alt="Login Image" />
         </div>
+
         <div className="login-right">
+          <h1>
+            <img src="/images/Netflix_Logo.png" alt="" />
+          </h1>
           <div className="login-right2">
             <h2>LOGIN</h2>
 
-            <form>
+            <form onSubmit={handleLogin}>
               <div className="input-wrap">
                 <img src="/images/email.svg" alt="email" />
-                <input type="email" name="email" placeholder="Email" required />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
               </div>
 
               <div className="input-wrap">
@@ -26,9 +63,13 @@ const Login = () => {
                   type="password"
                   name="password"
                   placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
+
+              {error && <p className="error-msg">{error}</p>}
 
               <button type="submit" className="login-btn">
                 로그인
