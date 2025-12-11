@@ -1,31 +1,65 @@
 @use "../../App.scss" as *;
-
 footer {
-  height: 208px;
-  padding: 40px 240px;
+  height: 20.8rem;
   background: $BG;
   color: $grey10;
-  .content-inner {
-    max-width: 1440px;
-    display: flex;
-    justify-content: space-between;
-    .footer-left {
-        width: 694px;
-      gap: 24px;
-      @include myTitle16();
-      ul {
+  padding: 4rem 24rem;
+  margin-top: 12rem;
+
+  .footer-wrap {
+    .inner {
+      max-width: 1440px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      .footer-left {
         display: flex;
-        gap: 24px;
+        flex-direction: column;
+        gap: 2.4rem; // ul, address, sns-list 사이
+
+        ul {
+          @include myFlex(24px, flex-start, center);
+
+          li a {
+            color: $grey10;
+            @include myTitle16($fw: 500, $ta: left);
+          }
+        }
+
+        address {
+          color: $grey8;
+          font-size: 1.2rem;
+          font-weight: 400;
+          line-height: 140%;
+          letter-spacing: -0.25px;
+
+          span {
+            display: inline-block;
+          }
+        }
+
+        .sns-list {
+          display: flex;
+          gap: 2.4rem; // 아이콘 사이 간격
+          justify-content: flex-start; // 왼쪽 정렬
+
+          a {
+            display: inline-block;
+
+            img {
+              display: block;
+              width: 100%;
+            }
+          }
+        }
       }
-      address {
-        font-size: 12px;
-        color: $grey8;
-      }
-      .sns-list {
-        display: flex; // 가로 배치
-        justify-content: flex-start; // 왼쪽 정렬
-        gap: 24px; // 아이콘 사이 간격
-        align-items: center; // 세로 중앙 정렬
+
+      .footer-right {
+        img {
+          display: block;
+          width: 100%; 
+        }
       }
     }
   }

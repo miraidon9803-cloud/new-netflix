@@ -5,6 +5,30 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: "SUIT";
+  src: url("/src/assets/fonts/SUIT-Regular.otf") format("opentype");
+  font-weight: 400; 
+  /* 400 (Regular) */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SUIT";
+  src: url("/src/assets/fonts/SUIT-Medium.otf") format("opentype");
+  font-weight: 500; 
+    /* 400 (Medium) */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SUIT";
+  src: url("/src/assets/fonts/SUIT-SemiBold.otf") format("opentype");
+  font-weight: 600; 
+  /* 600 (SUIT-SemiBold) */
+  font-style: normal;
+} 
+
 body {
   font-family: "SUIT", sans-serif;
   font-size: 16px;
