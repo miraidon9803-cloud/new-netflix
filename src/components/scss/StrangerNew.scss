@@ -1,0 +1,17 @@
+.Stranger {
+  margin-top: 4rem;
+  position: relative;
+  .poster {
+    > p {
+      margin-bottom: 1.6rem;
+    }
+  }
+  .button {
+    button {
+      position: absolute;
+
+      bottom: 6.2rem;
+      left: 12.3rem;
+    }
+  }
+}

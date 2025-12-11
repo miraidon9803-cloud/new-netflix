@@ -1,0 +1,112 @@
+@use '../../App.scss' as Color;
+
+.wrap {
+  position: relative;
+  max-width: 1440px;
+  height: 700px;
+  margin: 0 auto;
+  background-color: Color.$BG;
+  z-index: 1000;
+
+  // --- 슬라이드 트랙 ---
+  .banner-track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.6s ease; // 슬라이드 애니메이션
+    .banner-item {
+      position: relative;
+      flex: 0 0 100%;
+      height: 100%;
+      .banner-layer {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        .banBg {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          z-index: 1;
+        }
+
+        .banMid {
+          position: absolute;
+          left: 26%;
+          bottom: 0;
+          height: 105%;
+          aspect-ratio: 37 / 30;
+          z-index: 2;
+        }
+      }
+      .btns-text {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+
+        .banTxt {
+          position: absolute;
+          bottom: 5%;
+          left: 0;
+        }
+
+        .play {
+          position: absolute;
+          bottom: 4.5%;
+          left: 8rem;
+          width: 24rem;
+          height: 4rem;
+          border-radius: 0.4rem;
+        }
+
+        .wish {
+          position: absolute;
+          bottom: 4.5%;
+          left: 34rem;
+          width: 24rem;
+          height: 4rem;
+          border-radius: 0.4rem;
+          background: rgba(255, 255, 255, 0.6);
+        }
+      }
+    }
+    .banner-item:first-child {
+      .banMid {
+        width: 40%;
+        left: 44%;
+      }
+    }
+    .banner-item:nth-child(3) {
+      .banMid {
+        left: 20%;
+        width: 70%;
+      }
+    }
+  }
+
+  .nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    font-size: 2.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &.prev {
+      left: 1.6rem;
+    }
+
+    &.next {
+      right: 1.6rem;
+    }
+  }
+}

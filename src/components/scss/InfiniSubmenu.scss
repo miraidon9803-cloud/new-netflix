@@ -1,0 +1,38 @@
+@use '../../App.scss' as main;
+
+.submenu-wrap {
+  width: 100%;
+  overflow: hidden;
+  background-color: main.$BG;
+}
+
+.submenu-scroll {
+  display: flex;
+  gap: 1.2rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  cursor: grab;
+  user-select: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  scrollbar-width: none;
+}
+
+.submenu-scroll.is-dragging {
+  cursor: grabbing;
+}
+
+.submenu-item {
+  padding: 0.8rem 1.6rem;
+  white-space: nowrap;
+  border-radius: 999px;
+  color: #fff;
+  border: 1px solid main.$grey6;
+  background-color: rgba(0, 0, 0, 0);
+  font-size: 1.4rem;
+  cursor: pointer;
+}

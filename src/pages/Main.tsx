@@ -1,15 +1,40 @@
-import { useEffect } from "react";
-import NetflixOriginal from "../components/NetflixOriginal";
-import { useNetflixStorte } from "../store/NetflixStore";
+import { useEffect } from 'react';
+import './scss/Main.scss';
+// import NetflixOriginal from '../components/NetflixOriginal';
+import { useNetflixStore } from '../store/NetflixStore';
+import MainBanner from '../components/MainBanner';
+import InfiniSubmenu from '../components/InfiniSubmenu';
+import Originals from '../components/Originals';
+import NowPlay from '../components/NowPlay';
+import ComingSoon from '../components/ComingSoon';
+import WalkingDead from '../components/WalkingDead';
+import SideNav from '../components/SideNav';
+import StrangerNew from '../components/StrangerNew';
+import TodayTop10 from '../components/TodayTop10';
+import MovieTop10 from '../components/MovieTop10';
+import SFNFantasy from '../components/SFNFantasy';
+import TrandingSeries from '../components/TrandingSeries';
 
 const Main = () => {
-  const { onFetchOriginal, original } = useNetflixStorte();
+  const { onFetchOriginal, original } = useNetflixStore();
   useEffect(() => {
     onFetchOriginal();
   }, [onFetchOriginal]);
   return (
-    <div>
-      <NetflixOriginal title="넷플릭스 오리지날" original={original} />
+    <div className="Main">
+      <SideNav />
+      {/* <NetflixOriginal title="넷플릭스 오리지날" original={original} /> */}
+      <InfiniSubmenu />
+      <MainBanner />
+      <TodayTop10 />
+      <Originals />
+      <NowPlay />
+      <MovieTop10 />
+      <StrangerNew />
+      <ComingSoon />
+      <WalkingDead />
+      <TrandingSeries />
+      <SFNFantasy />
     </div>
   );
 };
