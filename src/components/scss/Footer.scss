@@ -1,0 +1,32 @@
+@use "../../App.scss" as *;
+
+footer {
+  height: 208px;
+  padding: 40px 240px;
+  background: $BG;
+  color: $grey10;
+  .content-inner {
+    max-width: 1440px;
+    display: flex;
+    justify-content: space-between;
+    .footer-left {
+        width: 694px;
+      gap: 24px;
+      @include myTitle16();
+      ul {
+        display: flex;
+        gap: 24px;
+      }
+      address {
+        font-size: 12px;
+        color: $grey8;
+      }
+      .sns-list {
+        display: flex; // 가로 배치
+        justify-content: flex-start; // 왼쪽 정렬
+        gap: 24px; // 아이콘 사이 간격
+        align-items: center; // 세로 중앙 정렬
+      }
+    }
+  }
+}
