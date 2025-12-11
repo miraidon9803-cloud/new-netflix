@@ -1,103 +1,170 @@
+/*  SUIT FONT FAMILY (FULL WEIGHT SET)                         */
 @font-face {
-  font-family: "SUIT";
-  src: url("/src/assets/fonts/SUIT-ExtraLight.otf") format("opentype");
-  /* font-weight: 200; */
+  font-family: 'SUIT';
+  src: url('/src/assets/fonts/SUIT-Thin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SUIT';
+  src: url('/src/assets/fonts/SUIT-ExtraLight.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SUIT';
+  src: url('/src/assets/fonts/SUIT-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SUIT';
+  src: url('/src/assets/fonts/SUIT-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SUIT';
+  src: url('/src/assets/fonts/SUIT-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SUIT';
+  src: url('/src/assets/fonts/SUIT-SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SUIT';
+  src: url('/src/assets/fonts/SUIT-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SUIT';
+  src: url('/src/assets/fonts/SUIT-ExtraBold.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'SUIT';
+  src: url('/src/assets/fonts/SUIT-Heavy.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+/*  ESAMANRU FONT FAMILY                                       */
+@font-face {
+  font-family: 'Esamanru';
+  src: url('/src/assets/fonts/esamanru Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Esamanru';
+  src: url('/src/assets/fonts/esamanru Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Esamanru';
+  src: url('/src/assets/fonts/esamanru Bold.ttf') format('truetype');
+  font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
-  font-family: "SUIT";
-  src: url("/src/assets/fonts/SUIT-Regular.otf") format("opentype");
-  font-weight: 400; 
+  font-family: 'SUIT';
+  src: url('/src/assets/fonts/SUIT-ExtraLight.otf') format('opentype');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SUIT';
+  src: url('/src/assets/fonts/SUIT-Regular.otf') format('opentype');
+  font-weight: 400;
   /* 400 (Regular) */
   font-style: normal;
 }
 
 @font-face {
-  font-family: "SUIT";
-  src: url("/src/assets/fonts/SUIT-Medium.otf") format("opentype");
-  font-weight: 500; 
-    /* 400 (Medium) */
+  font-family: 'SUIT';
+  src: url('/src/assets/fonts/SUIT-Medium.otf') format('opentype');
+  font-weight: 500;
+  /* 400 (Medium) */
   font-style: normal;
 }
 
 @font-face {
-  font-family: "SUIT";
-  src: url("/src/assets/fonts/SUIT-SemiBold.otf") format("opentype");
-  font-weight: 600; 
+  font-family: 'SUIT';
+  src: url('/src/assets/fonts/SUIT-SemiBold.otf') format('opentype');
+  font-weight: 600;
   /* 600 (SUIT-SemiBold) */
   font-style: normal;
-} 
+}
 
+/* body 기본 폰트 */
 body {
-  font-family: "SUIT", sans-serif;
+  font-family: 'SUIT', sans-serif;
   font-size: 16px;
 }
 
-/* 공통 */
-/* 모든 여백제거 */
-/* 테두리와 여백이 width,height안에 포함되도록 */
+/* 모든 요소 초기화 */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* li 장식제거 */
+/* li 장식 제거 */
 li {
   list-style: none;
 }
 
-/* a 여백제거,글자색 */
+/* a 태그 초기화 */
 a {
   text-decoration: none;
-  /* color:#1f1f1f; */
-  /* 부모의 color속성을 상속받아서 사용할때 */
   color: inherit;
 }
 
-/* img,video 위아래 정렬 */
+/* 이미지 정렬 */
 img {
   vertical-align: middle;
   max-width: 100%;
 }
 
-/* em,i,address */
+/* 기울임 제거 */
 em,
 i,
 address {
   font-style: normal;
 }
 
-/* blind */
+/* blind 요소 */
 .blind {
   position: absolute;
   top: -99999px;
 }
 
-/* button */
+/* 버튼 기본 */
 button {
   cursor: pointer;
 }
 
+/* html 기본 폰트 */
 html {
   font-size: 10px;
-  font-family: "Pretendard", sans-serif;
+  font-family: 'Pretendard', sans-serif;
 }
 
-/* body */
-/* html{
-    font-family: Pretendard,"돋움",sans-serif;
-    font-size: 10px;
-    font-weight: 300;
-
-} */
-
+/* inner layout */
 .inner {
   max-width: 1440px;
   margin: 0 auto;
 }
 
+/* 스크롤 숨기기 */
 body {
   overflow-y: scroll;
 }

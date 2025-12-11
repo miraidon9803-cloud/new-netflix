@@ -1,0 +1,33 @@
+.playWrap {
+  margin-top: 4rem;
+  > p {
+    margin-bottom: 1.6rem;
+  }
+  .Nowplay {
+    display: flex;
+    gap: 2.4rem;
+
+    overflow-x: auto; // 가로 스크롤 허용
+    overflow-y: hidden;
+    padding-bottom: 1rem;
+
+    // 스크롤바 숨기
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    li {
+      flex: 0 0 auto; // 절대 줄어들지 말고, width 그대로 유지
+      width: 22rem;
+      aspect-ratio: 220 / 320;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; // 위아래 잘라서 꽉 채우기
+        display: block;
+        border-radius: 4px;
+      }
+    }
+  }
+}

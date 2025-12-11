@@ -1,0 +1,34 @@
+.walking {
+  > p {
+    margin-bottom: 1.6rem;
+  }
+  margin-top: 4rem;
+  ul {
+    display: flex;
+    gap: 2.4rem;
+    overflow-x: auto; // 🔥 가로 스크롤 허용
+    overflow-y: hidden;
+    li {
+      flex: 0 0 auto;
+    }
+    li:first-child {
+      position: relative;
+      transform: none !important;
+      button {
+        position: absolute;
+        left: 1.6rem; // ← 왼쪽에서 1.6rem
+        bottom: 1.6rem; // ← 아래에서 1.6rem
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+
+        padding: 0.8rem 1.6rem;
+        cursor: pointer;
+      }
+    }
+    li:nth-child(odd) {
+      transform: translateY(12.4rem); // 원하는 만큼 조절 가능
+    }
+  }
+}
