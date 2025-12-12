@@ -1,0 +1,633 @@
+@use '../../App.scss' as *;
+
+// ================================================
+// SearchModal 스타일 - 팀 컨벤션 적용
+// ================================================
+
+// 팝업 오버레이
+.search-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; // 상단 정렬로 변경
+  padding-top: 110px; // 상단 110px 위치
+  z-index: 9999;
+  cursor: pointer;
+  animation: fadeIn 0.3s ease;
+}
+
+// 팝업 컨텐츠
+.search-modal-content {
+  position: relative;
+  // width: 90%;
+  min-width: 60%; // 최소 너비 설정
+  max-width: 1200px;
+  max-height: 85vh;
+  border-radius: 12px;
+  overflow-y: auto;
+  cursor: default;
+  padding: 30px 40px;
+  animation: slideUp 0.3s ease;
+
+  // 스크롤바 숨기기
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// Search 팝업 내부 스타일
+.search-popup {
+  width: 100%;
+  min-width: 100%;
+}
+
+// Search 타이틀
+.search-title-wrapper {
+  @include myFlex(10px, space-between, center);
+  margin-bottom: 20px; // Search와 input 사이 간격
+}
+
+.search-title {
+  font-family: 'SUIT';
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 140%;
+  letter-spacing: -0.6px;
+  color: $grey10;
+}
+
+.close-btn {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: all 0.3s;
+  margin-left: 25px; // Search title과의 간격
+
+  svg path {
+    fill: $grey8; // #D2D2D2
+    transition: fill 0.3s;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover svg path {
+    fill: $grey10; // #FFF
+  }
+}
+
+// 검색창
+.search-form {
+  position: relative;
+  width: 100%;
+  margin-bottom: 54px; // 검색창과 최근검색어 사이 간격
+}
+
+.search-input {
+  width: 100%;
+  // min-width: 100%;
+  padding: 12px 24px;
+  font-family: 'SUIT';
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.4px;
+  border-radius: 50px;
+  border: 1px solid #FFCDCD;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.40) 0%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0.40) 100%);
+  box-shadow: 0 0 5px 0 rgba(255, 184, 184, 0.25), 0 0 10px 0 rgba(255, 86, 86, 0.25), 0 0 20px 0 rgba(229, 9, 20, 0.50), 0 0 30px 0 rgba(229, 9, 20, 0.30);
+  color: $grey10;
+  outline: none;
+  transition: all 0.3s;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: $grey8; // #D2D2D2
+  }
+
+  &:focus {
+    border-color: $grey10;
+  }
+}
+
+.search-form .search-submit-btn {
+  position: absolute;
+  right: 4%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 1%;
+  transition: opacity 0.3s;
+
+  &:focus {
+    outline: none;
+  }
+
+  img {
+    width: 24px;
+    height: 24px;
+  }
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+// 섹션 헤더
+.section-header {
+  @include myFlex(10px, space-between, center);
+  margin-bottom: 16px; // 최근검색어와 태그 사이 간격
+}
+
+.section-title {
+  font-family: 'SUIT';
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.4px;
+  color: $grey10;
+  transition: color 0.3s;
+
+  &:hover {
+    color: $grey10; // #FFF
+  }
+}
+
+.go-link {
+  font-family: 'SUIT';
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.4px;
+  color: $grey8; // #D2D2D2
+  text-decoration: underline;
+  transition: color 0.3s;
+
+  &:hover {
+    color: $grey10; // #FFF
+  }
+}
+
+// 최근 검색어
+.recent-searches-section {
+  margin-bottom: 54px; // 태그와 가장 많이 찾아본 콘텐츠 사이 간격
+}
+
+.clear-all-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'SUIT';
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.4px;
+  color: $grey8;
+  text-decoration: underline;
+  transition: color 0.3s;
+
+  &:hover {
+    color: $grey10;
+  }
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px; // 태그 사이 간격
+}
+
+.tag {
+  @include myFlex(16px, center, center); // 텍스트와 X 사이 간격 16px
+  padding: 8px 16px; // 상하 8px, 좌우 16px
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  font-family: 'SUIT';
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.4px;
+  color: $grey10;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: $grey10;
+  }
+}
+
+.tag-text {
+  user-select: none;
+}
+
+.tag-remove-btn {
+  background: none;
+  border: none;
+  color: $grey7;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.3s;
+
+  &:hover {
+    color: $grey10;
+  }
+}
+
+// 콘텐츠 그리드 (인기 콘텐츠)
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 46px; // 카드 사이 가로 간격
+  row-gap: 40px; // 세로 간격 (임시)
+}
+
+.content-card {
+  position: relative;
+  display: flex;
+  gap: 13px;
+  cursor: pointer;
+}
+
+.card-rank {
+  font-family: 'Esamanru';
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 140%;
+  letter-spacing: -0.8px;
+  color: $grey10;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  flex-shrink: 0;
+  min-width: 40px;
+  text-align: center;
+}
+
+.card-image-wrapper {
+  position: relative;
+  width: 250px;
+  height: 141px;
+  overflow: hidden;
+  border-radius: 8px;
+
+  .content-card:hover & .card-image {
+    transform: scale(1.1);
+  }
+}
+
+.card-logo {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  object-fit: cover;
+}
+
+.card-image {
+  width: 250px;
+  height: 141px;
+  aspect-ratio: 250 / 141;
+  display: block;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: lightgray;
+  transition: transform 0.3s ease;
+}
+
+.card-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 5%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+  @include myTitle14();
+  color: $grey10;
+  text-align: center;
+  border-radius: 0 0 8px 8px;
+}
+
+// 검색 결과 없음
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  color: $grey7;
+  @include myTitle16();
+  width: 1001px;
+}
+
+// 검색 결과 그리드
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3%;
+}
+
+.results-card {
+  cursor: pointer;
+  transition: transform 0.3s;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.results-image-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.results-image {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  display: block;
+  object-fit: contain;
+  border-radius: 8px;
+  background-color: $grey2;
+}
+
+// 뒤로가기 버튼 (기본: 숨김)
+.back-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: $grey10;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+// 애니메이션
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ================================================
+// 반응형
+// ================================================
+
+@media (min-width: 1441px) {
+  .tag-remove-btn {
+    display: none;
+  }
+
+  .tag {
+    gap: 0;
+    padding: 8px 20px;
+  }
+}
+
+@media (max-width: 1440px) {
+  .search-modal-overlay {
+    padding-top: 0;
+    align-items: flex-start; // 상단 정렬
+  }
+
+  .search-modal-content {
+    padding: 30px;
+    margin: 0 16px; // 좌우 16px 여백
+  }
+
+  .search-title-wrapper {
+    display: none;
+  }
+
+  .search-popup {
+    padding-top: 10px;
+  }
+
+  .search-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px; // 54px에서 32px로
+  }
+
+  .recent-searches-section {
+    margin-bottom: 32px; // 54px에서 32px로
+  }
+
+  .back-btn {
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .search-input {
+    flex: 1;
+  }
+
+  // 카드 rank 반응형
+  .card-rank {
+    font-size: clamp(20px, 3vw, 30px);
+    min-width: auto;
+
+    &.rank-first {
+      margin-left: 5%;
+    }
+  }
+
+
+  // 카드 이미지 반응형 + max 사이즈 유지
+  .card-image-wrapper {
+    width: 100%;
+    max-width: 250px; // 1440px 이상 사이즈 유지
+    height: auto;
+    max-height: 141px;
+    aspect-ratio: 250 / 141;
+  }
+
+  .card-image {
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+    max-height: 141px;
+    aspect-ratio: 250 / 141;
+  }
+
+  .content-grid {
+    column-gap: 20px;
+    row-gap: 20px;
+  }
+}
+
+
+// @media (max-width: 1024px) {
+//   .card-rank {
+//     font-size: 32px;
+//     min-width: 32px;
+//   }
+// }
+
+@media (max-width: 768px) {
+  .search-modal-content {
+    width: 95%;
+    padding: 16px;
+    max-height: 90vh;
+  }
+}
+
+@media (max-width: 430px) {
+  .search-title {
+    font-size: 20px;
+  }
+
+  .close-btn {
+    font-size: 20px;
+  }
+
+  .search-title-wrapper {
+    margin-bottom: 5%;
+  }
+
+  .search-form {
+    margin-bottom: 5%;
+  }
+
+  // 검색어를 입력해주세요 - 430px 이하
+  .search-input {
+    padding: 8px 4%;
+    font-family: 'SUIT';
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 140%;
+    letter-spacing: -0.35px;
+
+    &::placeholder {
+      color: $grey8;
+    }
+  }
+
+  .search-form .search-submit-btn {
+    right: 5%;
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .section-header {
+    margin-bottom: 4%;
+  }
+
+  // 최근 검색어, 가장 많이 찾아본 콘텐츠 - 430px 이하
+  .section-title {
+    font-family: 'SUIT';
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 140%;
+    letter-spacing: -0.4px;
+    color: $grey10;
+  }
+
+  // 전체삭제 - 430px 이하
+  .clear-all-btn {
+    font-family: 'SUIT';
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 140%;
+    letter-spacing: -0.4px;
+    color: $grey8;
+    text-decoration: underline;
+  }
+
+  .recent-searches-section {
+    margin-bottom: 6%;
+  }
+
+  .tags-container {
+    gap: 10px;
+  }
+
+  // 최근검색어 태그 내용 - 430px 이하
+  .tag {
+    padding: 6px 12px;
+    font-family: 'SUIT';
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 140%;
+    letter-spacing: -0.35px;
+    color: $grey10;
+  }
+
+  // X 표시 - 430px 이하
+  .tag-remove-btn {
+    font-size: 14px;
+    color: $grey10;
+  }
+
+  .content-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 4%;
+  }
+
+  .results-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 0 16px;
+  }
+
+  .results-image {
+    border-radius: 4px;
+  }
+
+  .card-rank {
+    font-size: 24px;
+    min-width: 10px;
+  }
+
+  .card-logo {
+    bottom: 15%;
+  }
+
+  .card-image {
+    border-radius: 4px;
+  }
+
+  .card-title {
+    padding: 6%;
+    border-radius: 0 0 4px 4px;
+  }
+
+  .no-results {
+    padding: 15% 5%;
+  }
+}
