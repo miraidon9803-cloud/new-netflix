@@ -2,112 +2,114 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { auth, db } from "../firebase/firebase.ts";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { auth, db, googleProvider } from "../firebase/firebase.ts";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import type { AuthStore, UserData } from "../types/auth";
 
-// 커스텀 유저 타입 정의
-export interface AppUser {
-  uid: string;
-  email: string;
-  phone: string;
-  createdAt: Date;
-}
+export const useAuthStore = create<AuthStore>()(
+  persist((set) => ({
+    user: null,
 
-// 회원가입 데이터 타입
-export interface JoinData {
-  email: string;
-  password: string;
-  phone: string;
-}
+    // 로그인 폼
+    loginForm: { email: "", password: "" },
+    setLoginForm: (fn) => set((state) => ({ loginForm: fn(state.loginForm) })),
 
-// Zustand 상태 타입
-interface AuthState {
-  user: AppUser | null;
-  onMember: (data: JoinData) => Promise<void>;
-  onLogin: (email: string, password: string) => Promise<void>;
-  onLogout: () => Promise<void>;
-}
+    // 회원가입 폼
+    joinForm: { email: "", password: "", passwordConfirm: "", phone: "" },
+    setJoinForm: (fn) => set((state) => ({ joinForm: fn(state.joinForm) })),
+    resetJoinForm: () =>
+      set({
+        joinForm: { email: "", password: "", passwordConfirm: "", phone: "" },
+      }),
 
-export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
+    // 🔹 1️⃣ 앱 최초 마운트 시 로그인 상태 유지
+    initAuth: () => {
+      onAuthStateChanged(auth, async (fbUser) => {
+        if (fbUser) {
+          const userRef = doc(db, "users", fbUser.uid);
+          const userDoc = await getDoc(userRef);
+          if (userDoc.exists()) {
+            set({ user: userDoc.data() as UserData });
+          } else {
+            const baseUser = {
+              uid: fbUser.uid,
+              name: fbUser.displayName || "",
+              email: fbUser.email || "",
+              phone: fbUser.phoneNumber || "",
+            };
+            await setDoc(userRef, baseUser);
+            set({ user: baseUser });
+          }
+        } else {
+          set({ user: null });
+        }
+      });
+    },
 
-  // 회원가입
-  onMember: async ({ email, password, phone }) => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
+    // 🔹 2️⃣ 회원가입 (자동 로그인 제거)
+    onMember: async ({ email, password, phone }) => {
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      const fbUser = cred.user;
+
+      const userData: UserData = {
+        uid: fbUser.uid,
         email,
-        password
-      );
-
-      const firebaseUser = userCredential.user;
-
-      const newUser: AppUser = {
-        uid: firebaseUser.uid,
-        email: firebaseUser.email || "",
         phone,
+        provider: "email",
         createdAt: new Date(),
       };
 
-      // Firestore에 사용자 정보 저장
-      await setDoc(doc(db, "users", firebaseUser.uid), newUser);
+      await setDoc(doc(db, "users", fbUser.uid), userData);
 
-      set({ user: newUser });
-      alert("회원가입 완료");
-    } catch (err) {
-      if (err instanceof Error) {
-        console.error("회원가입 실패:", err.message);
-      } else {
-        console.error("회원가입 실패:", err);
-      }
-      alert("회원가입 실패");
-    }
-  },
+      // 🔹 자동 로그인 방지 (회원가입 후 alert가 정상 작동)
+      await signOut(auth);
+    },
 
-  // 로그인
-  onLogin: async (email, password) => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+    // 🔹 3️⃣ 로그인
+    onLogin: async (email, password) => {
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      const fbUser = cred.user;
 
-      const firebaseUser = userCredential.user;
+      const userRef = doc(db, "users", fbUser.uid);
+      const userDoc = await getDoc(userRef);
+      if (userDoc.exists()) set({ user: userDoc.data() as UserData });
+      else set({ user: { uid: fbUser.uid, email: fbUser.email || "" } });
+    },
 
-      // Firestore에서 정보 불러오기
-      const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+    // 🔹 4️⃣ 구글 로그인
+    onGoogleLogin: async () => {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
 
-      if (userDoc.exists()) {
-        set({ user: userDoc.data() as AppUser });
-      } else {
-        // Firestore에 사용자 정보가 없으면 기본 정보만 저장
-        const defaultUser: AppUser = {
-          uid: firebaseUser.uid,
-          email: firebaseUser.email || "",
-          phone: "",
-          createdAt: new Date(),
+      const userRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (!userDoc.exists()) {
+        const newUser: UserData = {
+          uid: user.uid,
+          email: user.email || "",
+          name: user.displayName || "",
+          phone: user.phoneNumber || "",
+          provider: "google",
+          photoURL: user.photoURL || "",
         };
-
-        set({ user: defaultUser });
-      }
-
-      alert("로그인 성공");
-    } catch (err) {
-      if (err instanceof Error) {
-        console.error("로그인 실패:", err.message);
+        await setDoc(userRef, newUser);
+        set({ user: newUser });
       } else {
-        console.error("로그인 실패:", err);
+        set({ user: userDoc.data() as UserData });
       }
-      alert("로그인 실패");
-    }
-  },
+    },
 
-  // 로그아웃
-  onLogout: async () => {
-    await signOut(auth);
-    set({ user: null });
-  },
-}));
+    // 🔹 5️⃣ 로그아웃
+    onLogout: async () => {
+      await signOut(auth);
+      set({ user: null });
+    },
+  }))
+);

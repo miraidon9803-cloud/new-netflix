@@ -1,7 +1,7 @@
+import { useAuthStore } from "../store/authStore";
 import "./scss/join.scss";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
 
 // 회원가입 데이터 타입 정의
 interface JoinData {
@@ -59,12 +59,14 @@ const Join: React.FC = () => {
             <img src="/images/Netflix_Logo.png" alt="" />
           </h1>
           <h3>SIGN</h3>
-          <form onSubmit={handleJoin}>
+          <form onSubmit={handleJoinSubmit}>
             <p>이메일 주소</p>
             <div className="input-wrap">
               <input
                 type="email"
                 name="email"
+                value={joinForm.email}
+                onChange={handleJoinChange}
                 placeholder="이메일 주소를 입력해주세요"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -77,6 +79,8 @@ const Join: React.FC = () => {
               <input
                 type="password"
                 name="password"
+                onChange={handleJoinChange}
+                value={joinForm.password}
                 placeholder="영어,숫자,특수문자 조합 8~16자리"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -88,7 +92,9 @@ const Join: React.FC = () => {
             <div className="input-wrap">
               <input
                 type="password"
-                name="confirmPassword"
+                name="passwordConfirm"
+                value={joinForm.passwordConfirm}
+                onChange={handleJoinChange}
                 placeholder="비밀번호를 다시 입력해주세요"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -101,6 +107,8 @@ const Join: React.FC = () => {
               <input
                 type="text"
                 name="phone"
+                value={joinForm.phone}
+                onChange={handleJoinChange}
                 placeholder="- 없이 숫자만 입력해주세요"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}

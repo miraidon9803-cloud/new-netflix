@@ -1,32 +1,57 @@
-import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
 import "./scss/Login.scss";
+import { useAuthStore } from "../store/authStore";
+import { useEffect } from "react";
 
-const Login: React.FC = () => {
-  const { onLogin } = useAuthStore();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+const Login = () => {
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    onLogin,
+    onGoogleLogin,
+    onKakaoLogin,
+    user,
+    loginForm,
+    setLoginForm,
+  } = useAuthStore();
 
-    if (!email || !password) {
-      setError("이메일과 비밀번호를 입력해주세요.");
-      return;
+  useEffect(() => {
+    if (user) {
+      navigate("/mypage", { replace: true });
     }
+  }, [user, navigate]);
 
+  const handleLoginChange = (e) => {
+    const { name, value } = e.target;
+    setLoginForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
     try {
-      await onLogin(email, password);
-      setEmail("");
-      setPassword("");
-      setError("");
-      navigate("/");
+      await onLogin(loginForm.email, loginForm.password);
+      alert("로그인 성공!");
+      navigate("/mypage");
     } catch (err) {
-      console.error("로그인 실패:", err);
-      setError("로그인 중 오류가 발생했습니다.");
+      alert("로그인 실패: " + err.message);
+    }
+  };
+
+  const handleGoogle = async () => {
+    try {
+      await onGoogleLogin();
+      navigate("/mypage");
+    } catch (err) {
+      alert("로그인 실패: " + err.message);
+    }
+  };
+
+  const handleKaKao = async () => {
+    try {
+      await onKakaoLogin();
+      navigate("/mypage");
+    } catch (err) {
+      alert("로그인 실패: " + err.message);
     }
   };
 
@@ -50,9 +75,9 @@ const Login: React.FC = () => {
                 <input
                   type="email"
                   name="email"
+                  value={loginForm.email}
+                  onChange={handleLoginChange}
                   placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
@@ -62,6 +87,8 @@ const Login: React.FC = () => {
                 <input
                   type="password"
                   name="password"
+                  value={loginForm.password}
+                  onChange={handleLoginChange}
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -84,12 +111,16 @@ const Login: React.FC = () => {
             </p>
 
             <div className="social-login">
-              <button type="button" className="google-btn">
+              <button
+                onClick={handleGoogle}
+                type="button"
+                className="google-btn"
+              >
                 <img src="/images/google.png" alt="google" />
                 <p>구글 로그인</p>
               </button>
 
-              <button type="button" className="kakao-btn">
+              <button onClick={handleKaKao} type="button" className="kakao-btn">
                 <img src="/images/kakao.png" alt="kakao" />
                 <p>카카오 로그인</p>
               </button>
