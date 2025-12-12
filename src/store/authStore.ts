@@ -48,6 +48,7 @@ export interface AppUser {
   photoURL?: string;
   provider?: string;
   createdAt: Date;
+  membership?: MembershipInfo;
 }
 
 // 회원가입 데이터 타입
@@ -65,6 +66,7 @@ interface AuthState {
   onGoogleLogin: () => Promise<void>;
   onKakaoLogin: (navigate: (path: string) => void) => Promise<void>;
   onLogout: () => Promise<void>;
+  saveMembership: (membership: MembershipInfo) => Promise<void>;
 }
 
 const googleProvider = new GoogleAuthProvider();
@@ -236,6 +238,21 @@ export const useAuthStore = create<AuthState>()(
       onLogout: async () => {
         await signOut(auth);
         set({ user: null });
+      },
+
+      //멤버쉽저장
+      saveMembership: async (membership) => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) throw new Error("로그인이 필요합니다.");
+
+        const userRef = doc(db, "users", currentUser.uid);
+
+        await setDoc(userRef, { membership }, { merge: true });
+
+        set((state) => ({
+          membership,
+          user: state.user ? { ...state.user, membership } : state.user,
+        }));
       },
     }),
     {

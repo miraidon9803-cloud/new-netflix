@@ -1,5 +1,7 @@
 // types/auth.ts
 
+import type { JoinData } from "../store/AuthStore";
+
 export interface LoginForm {
   email: string;
   password: string;
@@ -26,6 +28,14 @@ export interface JoinForm {
 
 export type NavigateFn = (path: string) => void;
 
+export type MembershipType = "adStandard" | "standard" | "premium";
+
+export interface MembershipInfo {
+  type: MembershipType;
+  name: string;
+  price: number;
+}
+
 export interface AuthStore {
   // 상태
   user: UserData | null;
@@ -34,9 +44,10 @@ export interface AuthStore {
 
   setLoginForm: (fn: (prev: LoginForm) => LoginForm) => void;
   initAuth: () => void;
-  onMember: (data: JoinForm) => Promise<void>;
-  onLogin: (email: string, password: string) => Promise<UserData>;
+  onMember: (data: JoinData) => Promise<void>;
+  onLogin: (email: string, password: string) => Promise<void>;
   onGoogleLogin: () => Promise<void>;
-  onKakaoLogin: (navigate?: NavigateFn) => Promise<void>;
+  onKakaoLogin: (navigate: (path: string) => void) => Promise<void>;
   onLogout: () => Promise<void>;
+  saveMembership: (membership: MembershipInfo) => Promise<void>;
 }

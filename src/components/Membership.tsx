@@ -1,9 +1,33 @@
+import { useState } from "react";
+import type { MembershipType } from "../types/auth";
+import { useAuthStore } from "../store/AuthStore";
 import "./scss/Membership.scss";
+import { useNavigate } from "react-router-dom";
 
 interface MembershipProps {
   onPrev?: () => void;
 }
 const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
+  const MEMBERS = {
+    adStandard: {
+      type: "adStandard" as const,
+      name: "광고형 스탠다드",
+      price: 7000,
+    },
+    standard: { type: "standard" as const, name: "스탠다드", price: 13500 },
+    premium: { type: "premium" as const, name: "프리미엄", price: 17000 },
+  };
+  const navigate = useNavigate();
+  const [selected, setSelected] = useState<MembershipType>("adStandard");
+  const { saveMembership } = useAuthStore();
+  const handleNext = async () => {
+    try {
+      await saveMembership(MEMBERS[selected]);
+      navigate("/mypage");
+    } catch (e) {
+      alert("멤버십 저장 실패");
+    }
+  };
   return (
     <div className="inner-membership">
       <div className="membership-wrap">
@@ -29,8 +53,17 @@ const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
           </ul>
 
           <div className="card-wrap">
-            <div className="card active">
-              <h3 className="card-title active">광고형 스탠다드</h3>
+            <div
+              className={`card ${selected === "adStandard" ? "active" : ""}`}
+              onClick={() => setSelected("adStandard")}
+            >
+              <h3
+                className={`card-title ${
+                  selected === "adStandard" ? "active" : ""
+                }`}
+              >
+                광고형 스탠다드
+              </h3>
               <ul>
                 <li>7,000원</li>
                 <li>좋음</li>
@@ -43,8 +76,17 @@ const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
               </ul>
             </div>
 
-            <div className="card">
-              <h3 className="card-title">스탠다드</h3>
+            <div
+              className={`card ${selected === "standard" ? "active" : ""}`}
+              onClick={() => setSelected("standard")}
+            >
+              <h3
+                className={`card-title ${
+                  selected === "standard" ? "active" : ""
+                }`}
+              >
+                스탠다드
+              </h3>
               <ul>
                 <li>13,500원</li>
                 <li>좋음</li>
@@ -57,8 +99,17 @@ const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
               </ul>
             </div>
 
-            <div className="card">
-              <h3 className="card-title">프리미엄</h3>
+            <div
+              className={`card ${selected === "premium" ? "active" : ""}`}
+              onClick={() => setSelected("premium")}
+            >
+              <h3
+                className={`card-title ${
+                  selected === "premium" ? "active" : ""
+                }`}
+              >
+                프리미엄
+              </h3>
               <ul>
                 <li>17,000원</li>
                 <li>가장 좋음</li>
@@ -73,7 +124,9 @@ const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
           </div>
         </div>
 
-        <button className="next-btn">다음</button>
+        <button onClick={handleNext} className="next-btn">
+          다음
+        </button>
       </div>
     </div>
   );
