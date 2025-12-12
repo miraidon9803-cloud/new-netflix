@@ -4,7 +4,7 @@ import { useAuthStore } from "../store/authStore";
 import "./scss/Login.scss";
 
 const Login: React.FC = () => {
-  const { onLogin } = useAuthStore();
+  const { onLogin, onGoogleLogin, onKakaoLogin } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,10 +23,32 @@ const Login: React.FC = () => {
       setEmail("");
       setPassword("");
       setError("");
-      navigate("/");
+      navigate("/mypage");
     } catch (err) {
       console.error("로그인 실패:", err);
       setError("로그인 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleGoogle = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ): Promise<void> => {
+    e.preventDefault();
+    try {
+      await onGoogleLogin();
+      navigate("/mypage");
+    } catch (err) {
+      alert("로그인 실패: " + (err as Error).message);
+    }
+  };
+
+  const handleKaKao = async (e) => {
+    e.preventDefault();
+    try {
+      await onKakaoLogin();
+      navigate("/mypage");
+    } catch (err) {
+      alert("로그인 실패: " + (err as Error).message);
     }
   };
 
@@ -84,12 +106,16 @@ const Login: React.FC = () => {
             </p>
 
             <div className="social-login">
-              <button type="button" className="google-btn">
+              <button
+                onClick={handleGoogle}
+                type="button"
+                className="google-btn"
+              >
                 <img src="/images/google.png" alt="google" />
                 <p>구글 로그인</p>
               </button>
 
-              <button type="button" className="kakao-btn">
+              <button onClick={handleKaKao} type="button" className="kakao-btn">
                 <img src="/images/kakao.png" alt="kakao" />
                 <p>카카오 로그인</p>
               </button>
