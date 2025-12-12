@@ -46,8 +46,8 @@ const Header = () => {
             </li>
 
             <li>
-              <Link to="/ham">
-                <img src="/images/ham-btn.png" alt="ham" />
+              <Link to="/mypage">
+                <img src="/images/ham-btn.png" alt="mypage" />
               </Link>
             </li>
           </ul>

@@ -1,9 +1,20 @@
 import "./scss/Membership.scss";
-const Membership = () => {
+
+interface MembershipProps {
+  onPrev?: () => void;
+}
+const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
   return (
     <div className="inner-membership">
       <div className="membership-wrap">
-        <h2 className="title">원하는 멤버십을 선택하세요</h2>
+        <div className="signtitle-wrap">
+          <h2 className="title">원하는 멤버십을 선택하세요</h2>
+          {onPrev && (
+            <p className="prev-btn" onClick={onPrev}>
+              dd
+            </p>
+          )}
+        </div>
 
         <div className="membership-box">
           <ul className="option-list">
