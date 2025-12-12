@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import './scss/Nowplay.scss';
 
 const play = [
@@ -48,10 +48,43 @@ const play = [
 ];
 
 const NowPlay = () => {
+  const scrollRef = useRef<HTMLUListElement>(null);
+
+  // 🔥 리스트 위 휠 = 가로 스크롤 + 페이지 세로 스크롤 차단
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const onWheel = (e: WheelEvent) => {
+      const el = scrollRef.current;
+      if (!el) return;
+
+      const atLeftEnd = el.scrollLeft === 0;
+      const atRightEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
+
+      // 스크롤이 양 끝일 때 → 기본 동작 허용 (페이지 스크롤)
+      if ((atLeftEnd && e.deltaY < 0) || (atRightEnd && e.deltaY > 0)) {
+        return; // preventDefault() 안함
+      }
+
+      // 그 외엔 가로 스크롤 처리
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        e.stopPropagation();
+        el.scrollLeft += e.deltaY;
+      }
+    };
+
+    // passive: false 필수
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, []);
+
   return (
     <div className="playWrap">
       <p>지금 방영 중인 콘텐츠</p>
-      <ul className="Nowplay">
+
+      <ul className="Nowplay" ref={scrollRef}>
         {play.map((src, i) => (
           <li key={i}>
             <img src={src} alt="" />

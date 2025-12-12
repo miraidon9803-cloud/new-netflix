@@ -1,12 +1,12 @@
-import { Route, Routes } from "react-router-dom";
-import "./App.css";
+import { Route, Routes } from 'react-router-dom';
+import './App.css';
 
-import Main from "./pages/Main";
-import Login from "./pages/Login";
-import Join from "./pages/Join";
-import Membership from "./pages/Membership";
-import Mypage from "./pages/Mypage";
-import Layout from "./pages/Layout";
+import Main from './pages/Main';
+import Login from './pages/Login';
+import Join from './pages/Join';
+import Membership from './pages/Membership';
+import Mypage from './pages/Mypage';
+import Layout from './pages/Layout';
 
 function App() {
   return (

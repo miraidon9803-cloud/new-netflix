@@ -5,7 +5,7 @@ import './scss/SideNav.scss';
 const SideNav = () => {
   return (
     <div className="sideNav">
-      <img src="/images/icon/Netflix-Logo.png" alt="" />
+      <img className="logo" src="/images/icon/Netflix-Logo.png" alt="" />
       <div></div>
       <Link to={'/'}>
         <img src="../../../public/images/icon/바로가기.png" alt="" />
@@ -14,7 +14,7 @@ const SideNav = () => {
         <img src="../../../public/images/icon/쇼츠.png" alt="" />
       </Link>
       <Link to={'/'}>
-        <img src="../../../public/images/icon/홈.png" alt="" />
+        <img src="../../../public/images/icon/홈-active.png" alt="" />
       </Link>
       <Link to={'/'}>
         <img src="../../../public/images/icon/위시리스트.png" alt="" />

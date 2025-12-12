@@ -4,6 +4,8 @@
   width: 100%;
   overflow: hidden;
   background-color: main.$BG;
+  margin: 2rem 0 2.4rem;
+  z-index: 1;
 }
 
 .submenu-scroll {
@@ -35,4 +37,17 @@
   background-color: rgba(0, 0, 0, 0);
   font-size: 1.4rem;
   cursor: pointer;
+}
+/* 📌 태블릿 이하에서는 숨김 */
+@media (max-width: 1440px) {
+  .submenu-wrap {
+    display: none;
+  }
+}
+
+/* 📌 모바일에서도 마찬가지로 숨김 (선택이지만 명확하게 명시) */
+@media (max-width: 430px) {
+  .submenu-wrap {
+    display: none;
+  }
 }

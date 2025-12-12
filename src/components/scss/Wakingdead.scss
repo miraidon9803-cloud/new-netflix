@@ -1,5 +1,8 @@
 .walking {
   > p {
+    font-size: 2.4rem;
+    font-weight: 600;
+    line-height: 140%;
     margin-bottom: 1.6rem;
   }
   margin-top: 4rem;
@@ -28,7 +31,19 @@
       }
     }
     li:nth-child(odd) {
-      transform: translateY(12.4rem); // 원하는 만큼 조절 가능
+      transform: translateY(12.4rem);
+      transform-origin: center bottom;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      &:hover {
+        transform: translateY(12rem) scale(1.03);
+      } // 원하는 만큼 조절 가능
+    }
+    li:nth-child(even) {
+      transform-origin: center bottom;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      &:hover {
+        transform: translateY(1rem) scale(1.03);
+      }
     }
   }
 }

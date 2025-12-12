@@ -14,6 +14,7 @@ import TodayTop10 from '../components/TodayTop10';
 import MovieTop10 from '../components/MovieTop10';
 import SFNFantasy from '../components/SFNFantasy';
 import TrandingSeries from '../components/TrandingSeries';
+import ChoiceContentTxt from '../components/ChoiceContentTxt';
 
 const Main = () => {
   const { onFetchOriginal, original } = useNetflixStore();
@@ -35,6 +36,7 @@ const Main = () => {
       <WalkingDead />
       <TrandingSeries />
       <SFNFantasy />
+      <ChoiceContentTxt />
     </div>
   );
 };

@@ -6,107 +6,211 @@
   height: 700px;
   margin: 0 auto;
   background-color: Color.$BG;
-  z-index: 1000;
 
-  // --- 슬라이드 트랙 ---
   .banner-track {
     display: flex;
     height: 100%;
-    transition: transform 0.6s ease; // 슬라이드 애니메이션
+    transition: transform 0.6s ease;
+
+    &.no-transition {
+      transition: none;
+    }
+
     .banner-item {
       position: relative;
       flex: 0 0 100%;
       height: 100%;
+
       .banner-layer {
-        position: relative;
         width: 100%;
         height: 100%;
+
         .banBg {
           position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
           object-fit: cover;
-          object-position: center;
-          z-index: 1;
+          z-index: 10;
         }
 
         .banMid {
           position: absolute;
           left: 26%;
           bottom: 0;
-          height: 105%;
-          aspect-ratio: 37 / 30;
-          z-index: 2;
+          height: 110%;
+          aspect-ratio: 638/777;
+          z-index: 20;
         }
       }
+
       .btns-text {
         position: absolute;
         inset: 0;
-        z-index: 3;
+        z-index: 30;
 
         .banTxt {
           position: absolute;
-          bottom: 5%;
+          bottom: 13%;
           left: 0;
         }
 
         .play {
           position: absolute;
           bottom: 4.5%;
-          left: 8rem;
+          left: 5.5%;
           width: 24rem;
           height: 4rem;
-          border-radius: 0.4rem;
+          border: none;
         }
 
         .wish {
           position: absolute;
           bottom: 4.5%;
-          left: 34rem;
+          left: 23.5%;
           width: 24rem;
           height: 4rem;
-          border-radius: 0.4rem;
           background: rgba(255, 255, 255, 0.6);
+          border: none;
         }
       }
     }
-    .banner-item:first-child {
-      .banMid {
-        width: 40%;
-        left: 44%;
-      }
+
+    /* 개별 배너 위치 조정은 그대로 유지 */
+    .banner-item:first-child .banMid {
+      left: 46%;
+      aspect-ratio: 638/777;
     }
-    .banner-item:nth-child(3) {
-      .banMid {
-        left: 20%;
-        width: 70%;
-      }
+    .banner-item:nth-child(2) .banMid {
+      left: 46%;
+      aspect-ratio: 638/777;
+    }
+    .banner-item:nth-child(3) .banMid {
+      left: 23%;
+      width: 70%;
+      aspect-ratio: 37/30;
+    }
+    .banner-item:nth-child(4) .banMid {
+      left: 16%;
+      width: 70%;
+      aspect-ratio: 351/254;
+    }
+    .banner-item:last-child .banMid {
+      left: 46%;
+      aspect-ratio: 638/777;
     }
   }
 
-  .nav {
+  /* 하단 점(페이지네이션) */
+  .banner-dots {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 4rem;
-    height: 4rem;
-    border-radius: 50%;
-    border: none;
-    background: rgba(0, 0, 0, 0.4);
-    color: #fff;
-    font-size: 2.4rem;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
     display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+    gap: 8px;
+    z-index: 40;
 
-    &.prev {
-      left: 1.6rem;
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.4);
+      opacity: 0.7;
+      transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+
+      &.active {
+        background: #fff;
+        opacity: 1;
+        transform: scale(1.4);
+      }
+    }
+  }
+  .mobile-wrap {
+    display: none;
+  }
+
+  /* ===========================
+     🟦 태블릿 (max-width: 1440px)
+     =========================== */
+  @media (max-width: 1440px) {
+    height: 600px;
+
+    .banner-track {
+      .banner-item {
+        .banner-layer .banMid {
+          width: 100%;
+          height: auto;
+        }
+
+        .btns-text {
+          .banTxt {
+            transform: scale(0.95);
+            bottom: 14%;
+          }
+
+          .play,
+          .wish {
+            width: 200px;
+            height: 36px;
+          }
+
+          .wish {
+            left: 300px;
+          }
+        }
+      }
     }
 
-    &.next {
-      right: 1.6rem;
+    .banner-dots {
+      bottom: 20px;
+    }
+  }
+
+  /* ===========================
+     🟩 모바일 (max-width: 430px)
+     =========================== */
+  @media (max-width: 430px) {
+    max-width: 100%;
+    height: auto;
+    .mobile-wrap {
+      position: relative;
+      top: -154px;
+      display: block;
+
+      // position: relative;
+      border: 1px solid yellow;
+      .mobileBG {
+        width: 100%;
+
+        margin: 0 auto;
+        border: 1px solid red;
+        img {
+          width: 100%;
+        }
+      }
+      .mobileimg {
+        // display: none;
+        position: absolute;
+        left: 4.1%;
+        top: 154px;
+        width: 91.8%;
+        aspect-ratio: 179/248;
+        border: solid green;
+        img {
+          width: 100%;
+        }
+      }
+      .mobilebtn {
+        button {
+          width: 18rem;
+          height: 4rem;
+          margin-left: 1.2rem;
+        }
+      }
+    }
+    .banner-track {
+      display: none;
     }
   }
 }
