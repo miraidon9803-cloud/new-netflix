@@ -1,0 +1,109 @@
+.top10Wrap {
+  position: relative;
+  margin-top: 8rem;
+
+  h2 {
+    color: #fff;
+    font-size: 2.4rem;
+    font-weight: 600;
+    margin-bottom: 1.6rem;
+  }
+
+  .top10List {
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto;
+    overflow-y: visible;
+    padding-left: 6rem;
+
+    .top10Item {
+      flex: 0 0 20%; // 📌 PC: 5개 보이게(폭에 맞춰 자동 줄어듦)
+      scroll-snap-align: start;
+      position: relative;
+      padding-bottom: 1.2rem;
+
+      img {
+        width: 100%;
+        aspect-ratio: 11/16;
+        border-radius: 0.8rem;
+        box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.6);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+      }
+
+      &:hover img {
+        transform: translateY(-0.4rem) scale(1.03);
+      }
+
+      .rank {
+        position: absolute;
+        bottom: 0;
+        left: -28%;
+        font-size: 10rem;
+        font-family: 'Esamanru';
+        color: #fff;
+        z-index: 2;
+        opacity: 0.9;
+      }
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: -1.2rem;
+        bottom: 0;
+        left: 20%;
+        right: 20%;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 0.8rem;
+        z-index: 0;
+      }
+    }
+  }
+
+  /* ===========================
+     🟦 태블릿 (≤1440px)
+     =========================== */
+  @media (max-width: 1440px) {
+    margin-top: 4rem;
+
+    .top10List {
+      gap: 1.6rem;
+      padding-left: 1.6rem;
+    }
+
+    .top10Item {
+      flex: 0 0 25%; // 태블릿: 4개 보이게
+      img {
+        aspect-ratio: 172 / 244;
+        border-radius: 0.4rem;
+      }
+      .rank {
+        font-size: 8rem;
+        left: -22%;
+      }
+    }
+  }
+
+  /* ===========================
+     🟩 모바일 (≤430px)
+     =========================== */
+  @media (max-width: 430px) {
+    margin-top: 2.8rem;
+
+    .top10List {
+      gap: 1.2rem;
+      padding-left: 1.6rem;
+    }
+
+    .top10Item {
+      flex: 0 0 40%; // 모바일: 2.5개 보임
+      img {
+        aspect-ratio: 104 / 151;
+        border-radius: 0.4rem;
+      }
+      .rank {
+        font-size: 5.6rem;
+        left: -14%;
+      }
+    }
+  }
+}

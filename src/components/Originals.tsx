@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import './scss/Originals.scss';
 
 const imgs = [
@@ -25,10 +25,38 @@ const imgs = [
 ];
 
 const Originals = () => {
+  const scrollRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const onWheel = (e: WheelEvent) => {
+      const atLeftEnd = el.scrollLeft === 0;
+      const atRightEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
+
+      // 양 끝에서는 페이지 스크롤 허용
+      if ((atLeftEnd && e.deltaY < 0) || (atRightEnd && e.deltaY > 0)) {
+        return;
+      }
+
+      // 그 외에는 강제로 가로 스크롤
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        e.stopPropagation();
+        el.scrollLeft += e.deltaY;
+      }
+    };
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, []);
+
   return (
     <div className="OriginalWrap">
       <p>넷플릭스 오리지널</p>
-      <ul className="original">
+
+      <ul className="original" ref={scrollRef}>
         {imgs.map((src, i) => (
           <li key={i}>
             <img src={src} alt="" />
