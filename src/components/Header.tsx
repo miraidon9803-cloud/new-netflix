@@ -26,9 +26,14 @@ const Header = () => {
     setIsSearchOpen(false);
   };
 
-            <li>
-              <Link to="/mypage">
-                <img src="/images/ham-btn.png" alt="mypage" />
+  return (
+    <>
+      <header>
+        <div className="inner">
+          <div className="header-left">
+            <h1 className="logo">
+              <Link to="/">
+                <img src="/images/logo.png" alt="logo" />
               </Link>
             </h1>
 
@@ -50,7 +55,7 @@ const Header = () => {
               </li>
 
               <li>
-                <button 
+                <button
                   className="search-btn"
                   onClick={handleSearchOpen}
                   aria-label="검색"
