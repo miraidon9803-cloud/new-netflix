@@ -14,7 +14,7 @@ export interface UserData {
   phone?: string;
   nickname?: string;
   photoURL?: string;
-  provider?: string;
+  provider?: "password" | "google" | "kakao";
   createdAt?: Date;
 }
 // 회원가입용 타입

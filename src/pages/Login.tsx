@@ -1,57 +1,54 @@
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./scss/Login.scss";
 import { useAuthStore } from "../store/authStore";
-import { useEffect } from "react";
+import "./scss/Login.scss";
 
-const Login = () => {
+const Login: React.FC = () => {
+  const { onLogin, onGoogleLogin, onKakaoLogin } = useAuthStore();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const {
-    onLogin,
-    onGoogleLogin,
-    onKakaoLogin,
-    user,
-    loginForm,
-    setLoginForm,
-  } = useAuthStore();
-
-  useEffect(() => {
-    if (user) {
-      navigate("/mypage", { replace: true });
-    }
-  }, [user, navigate]);
-
-  const handleLoginChange = (e) => {
-    const { name, value } = e.target;
-    setLoginForm((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!email || !password) {
+      setError("이메일과 비밀번호를 입력해주세요.");
+      return;
+    }
+
     try {
-      await onLogin(loginForm.email, loginForm.password);
-      alert("로그인 성공!");
+      await onLogin(email, password);
+      setEmail("");
+      setPassword("");
+      setError("");
       navigate("/mypage");
     } catch (err) {
-      alert("로그인 실패: " + err.message);
+      console.error("로그인 실패:", err);
+      setError("로그인 중 오류가 발생했습니다.");
     }
   };
 
-  const handleGoogle = async () => {
+  const handleGoogle = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ): Promise<void> => {
+    e.preventDefault();
     try {
       await onGoogleLogin();
       navigate("/mypage");
     } catch (err) {
-      alert("로그인 실패: " + err.message);
+      alert("로그인 실패: " + (err as Error).message);
     }
   };
 
-  const handleKaKao = async () => {
+  const handleKaKao = async (e) => {
+    e.preventDefault();
     try {
       await onKakaoLogin();
       navigate("/mypage");
     } catch (err) {
-      alert("로그인 실패: " + err.message);
+      alert("로그인 실패: " + (err as Error).message);
     }
   };
 
@@ -75,9 +72,9 @@ const Login = () => {
                 <input
                   type="email"
                   name="email"
-                  value={loginForm.email}
-                  onChange={handleLoginChange}
                   placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
@@ -87,8 +84,6 @@ const Login = () => {
                 <input
                   type="password"
                   name="password"
-                  value={loginForm.password}
-                  onChange={handleLoginChange}
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
