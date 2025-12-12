@@ -13,7 +13,7 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
 
   const [name, setName] = useState("");
   const [selectedAvatarKey, setSelectedAvatarKey] = useState(profile[0].key);
-  const [showAvatarPicker, setShowAvatarPicker] = useState(false); // ✅ 추가
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isAdult, setIsAdult] = useState(true);
@@ -28,7 +28,7 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
 
   const handleClose = () => {
     if (submitting) return;
-    setShowAvatarPicker(false); // ✅ 닫을 때 같이 접기
+    setShowAvatarPicker(false);
     onClose();
   };
 
@@ -65,69 +65,71 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
   return (
     <div className="modal-dim" onClick={handleClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>현재프로필관리</h2>
-          <button className="modal-close" onClick={handleClose}>
-            ✕
-          </button>
-        </div>
-
         <div className="modal-body">
-          {/* ✅ 대표 프로필 사진 1장만 보여주기 */}
-          <div className="avatar-preview">
-            <img src={selectedAvatar.poster} alt={selectedAvatar.title} />
-            <button
-              type="button"
-              className="change-btn"
-              onClick={() => setShowAvatarPicker((v) => !v)}
-              disabled={submitting}
-            >
-              사진 변경
+          <div className="modal-header">
+            <h2>현재프로필관리</h2>
+            <button className="modal-close" onClick={handleClose}>
+              ✕
             </button>
           </div>
 
-          <label className="field">
-            <span>프로필 이름</span>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="10자 이내"
-              maxLength={10}
-              disabled={submitting}
-            />
-
-            <div className="adult-toggle">
-              <span className={!isAdult ? "active" : ""}>키즈</span>
-
+          <div className="modal-wrap">
+            <div className="avatar-preview">
+              <img src={selectedAvatar.poster} alt={selectedAvatar.title} />
               <button
                 type="button"
-                className={`toggle ${isAdult ? "on" : ""}`}
-                onClick={() => setIsAdult((prev) => !prev)}
+                className="change-btn"
+                onClick={() => setShowAvatarPicker((v) => !v)}
                 disabled={submitting}
-                aria-label="성인 여부 토글"
               >
-                <span className="knob" />
+                사진 변경
               </button>
-
-              <span className={isAdult ? "active" : ""}>성인</span>
             </div>
 
-            <div className="lock-toggle">
-              <span className={!isLock ? "active" : ""}></span>
-
-              <button
-                type="button"
-                className={`toggle ${isAdult ? "on" : ""}`}
-                onClick={() => setIsLock((prev) => !prev)}
+            <label className="field">
+              <span>프로필 이름</span>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="10자 이내"
+                maxLength={10}
                 disabled={submitting}
-                aria-label="프로필잠금"
-              >
-                <span className="knob" />
-              </button>
+              />
 
-              <span className={isAdult ? "active" : ""}></span>
-            </div>
-          </label>
+              <div className="adult-toggle">
+                <span className={!isAdult ? "active" : ""}>키즈</span>
+
+                <button
+                  type="button"
+                  className={`toggle ${isAdult ? "on" : ""}`}
+                  onClick={() => setIsAdult((prev) => !prev)}
+                  disabled={submitting}
+                  aria-label="성인 여부 토글"
+                >
+                  <span className="knob" />
+                </button>
+
+                <span className={isAdult ? "active" : ""}>성인</span>
+              </div>
+
+              <div className="lock-toggle">
+                <span className={!isLock ? "active" : ""}>ㅍㅍㅍ</span>
+
+                <button
+                  type="button"
+                  className={`toggle ${isAdult ? "on" : ""}`}
+                  onClick={() => setIsLock((prev) => !prev)}
+                  disabled={submitting}
+                  aria-label="프로필잠금"
+                >
+                  <span className="knob" />
+                </button>
+
+                <span className={isAdult ? "active" : ""}></span>
+              </div>
+            </label>
+            <button>프로필삭제</button>
+          </div>
 
           {/* ✅ 사진 변경 눌렀을 때만 목록 오픈 */}
           {showAvatarPicker && (

@@ -1,4 +1,4 @@
-// import MypageMain from "../components/MypageMain";
+import MypageMain from "../components/MypageMain";
 import ProfileSelect from "../components/ProfileSelect";
 
 const Mypage = () => {
@@ -9,7 +9,7 @@ const Mypage = () => {
   return (
     <div className="inner-mypage">
       <ProfileSelect />
-      {/* <MypageMain /> */}
+      <MypageMain />
     </div>
   );
 };
