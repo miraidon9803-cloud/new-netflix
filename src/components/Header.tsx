@@ -26,14 +26,9 @@ const Header = () => {
     setIsSearchOpen(false);
   };
 
-  return (
-    <>
-      <header>
-        <div className="inner">
-          <div className="header-left">
-            <h1 className="logo">
-              <Link to="/">
-                <img src="/images/logo.png" alt="logo" />
+            <li>
+              <Link to="/mypage">
+                <img src="/images/ham-btn.png" alt="mypage" />
               </Link>
             </h1>
 

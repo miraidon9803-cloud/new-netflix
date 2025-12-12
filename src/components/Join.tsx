@@ -1,7 +1,7 @@
 import "./scss/join.scss";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
+import { useAuthStore } from "../store/AuthStore";
 
 // 회원가입 데이터 타입 정의
 interface JoinData {
@@ -10,7 +10,12 @@ interface JoinData {
   phone: string;
 }
 
-const Join: React.FC = () => {
+interface JoinProps {
+  onNext?: () => void;
+  onPrev?: () => void;
+}
+
+const Join: React.FC<JoinProps> = ({ onNext, onPrev }) => {
   const { onMember } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,6 +33,11 @@ const Join: React.FC = () => {
       return;
     }
 
+    if (!email || !password || !confirmPassword || !phone) {
+      setError("모든 항목을 입력해주세요.");
+      return;
+    }
+
     const joinData: JoinData = {
       email,
       password,
@@ -35,20 +45,27 @@ const Join: React.FC = () => {
     };
 
     try {
-      await onMember(joinData); // onMember 함수는 JoinData 타입 받도록 수정 필요
+      await onMember(joinData);
+
+      // 입력값 초기화
       setEmail("");
       setPassword("");
       setConfirmPassword("");
       setPhone("");
       setError("");
-      navigate("/");
+
+      // ⭐ 두 가지 경우로 나눠서 처리
+      if (onNext) {
+        // FullLogin 같은 step 플로우 안에서 사용할 때
+        onNext();
+      } else {
+        // 단독 페이지로 쓸 때 (기존 /join 라우트)
+        navigate("/");
+      }
     } catch (err) {
       console.error(err);
       setError("회원가입 중 오류가 발생했습니다.");
     }
-  };
-  const goMembership = () => {
-    navigate("/membership");
   };
 
   return (
@@ -58,7 +75,16 @@ const Join: React.FC = () => {
           <h1>
             <img src="/images/Netflix_Logo.png" alt="" />
           </h1>
-          <h3>SIGN</h3>
+
+          <div className="signtitle-wrap">
+            {onPrev && (
+              <p className="prev-btn" onClick={onPrev}>
+                dd
+              </p>
+            )}
+
+            <h3>SIGN</h3>
+          </div>
           <form onSubmit={handleJoin}>
             <p>이메일 주소</p>
             <div className="input-wrap">
@@ -110,7 +136,8 @@ const Join: React.FC = () => {
 
             {error && <p className="error-msg">{error}</p>}
 
-            <button type="submit" onClick={goMembership} className="next-btn">
+            {/* ❗ 이제 onClick={onNext} 제거 */}
+            <button type="submit" className="next-btn">
               다음
             </button>
           </form>

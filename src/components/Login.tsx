@@ -1,9 +1,13 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/AuthStore";
 import "./scss/Login.scss";
 
-const Login: React.FC = () => {
+interface LoginProps {
+  onNext?: () => void;
+}
+
+const Login: React.FC<LoginProps> = ({ onNext }) => {
   const { onLogin, onGoogleLogin, onKakaoLogin } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -98,11 +102,8 @@ const Login: React.FC = () => {
               </button>
             </form>
 
-            <p className="signup-text">
-              계정이 없으신가요?{" "}
-              <Link to="/join">
-                <span>회원가입</span>
-              </Link>
+            <p onClick={onNext} className="signup-text">
+              계정이 없으신가요? <span>회원가입</span>
             </p>
 
             <div className="social-login">

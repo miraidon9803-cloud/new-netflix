@@ -27,7 +27,10 @@
       h1 {
         display: none;
       }
-
+      .signtitle-wrap {
+        display: flex;
+        justify-content: center;
+      }
       h3 {
         margin-bottom: 40px;
         @include l.myTitle24();
@@ -67,6 +70,7 @@
           @include l.myTitle16();
           color: l.$grey10;
           margin-top: 60px;
+          border: none;
         }
         .next-btn:hover {
           background: l.$sub1;
