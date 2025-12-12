@@ -13,10 +13,9 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Main />} />
-        <Route path="login" element={<Login />} />
-        <Route path="join" element={<Join />} />
         <Route path="membership" element={<Membership />} />
         <Route path="mypage" element={<Mypage />} />
+        <Route path="auth" element={<FullLogin />} />
       </Route>
     </Routes>
   );

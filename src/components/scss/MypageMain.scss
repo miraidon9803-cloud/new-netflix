@@ -1,0 +1,116 @@
+@use "../../App.scss" as l;
+.inner-mypageMain {
+  display: flex;
+  justify-content: center;
+  .mypageMain-wrap {
+    .title {
+      h1 {
+        @include l.myTitle24();
+        color: l.$grey10;
+        text-align: left;
+        margin-bottom: 18px;
+      }
+    }
+    .main-content {
+      width: 95.2rem;
+      height: 55rem;
+      // background-color: red;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+
+      .content-left {
+        width: 222px;
+        height: 340px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        gap: 12px;
+        .nickname {
+          @include l.myTitle24();
+          text-align: left;
+        }
+        .profile-change {
+          @include l.myTitle16();
+          color: l.$grey7;
+          text-align: center;
+          width: 100%;
+          height: 3.2rem;
+          padding: 4px 8px;
+          border-radius: 4px;
+          background: none;
+          border: 1px solid l.$grey7;
+        }
+        .profile-change:hover {
+          background-color: l.$grey3;
+        }
+      }
+
+      .content-right {
+        .title-wrap {
+          display: flex;
+          justify-content: space-between;
+          background-color: l.$grey3;
+          border-radius: 8px;
+          padding: 12px 24px;
+          width: 100%;
+          height: 7.8rem;
+          margin-bottom: 80px;
+        }
+        width: 70.9rem;
+        // background-color: aquamarine;
+        .content-title {
+          @include l.myTitle20();
+          text-align: left;
+          margin-bottom: 80px;
+        }
+        .membership-grade {
+          @include l.myTitle16();
+          text-align: left;
+        }
+        .content-out {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          text-decoration: underline;
+          color: l.$grey7;
+          cursor: pointer;
+        }
+        .content-out:hover {
+          color: l.$grey10;
+        }
+      }
+      ul {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+
+        li {
+          @include l.myTitle20();
+          text-align: left;
+          color: l.$grey10;
+          padding: 18px 24px;
+          background-color: l.$grey2;
+          width: 100%;
+          border-radius: 8px;
+        }
+        li:hover {
+          background-color: l.$grey3;
+        }
+      }
+    }
+    .logout-btn {
+      @include l.myTitle16();
+      color: l.$grey7;
+      width: 100%;
+      margin-top: 24px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      background: none;
+      border: 1px solid l.$grey7;
+    }
+  }
+}

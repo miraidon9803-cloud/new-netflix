@@ -1,0 +1,41 @@
+@use "../../App.scss" as l;
+.modal-dim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-body {
+  display: flex;
+  width: 100rem;
+  height: 70rem;
+  padding: 24px;
+  flex-direction: column;
+  align-items: center;
+  background: blue;
+  .modal-header {
+    display: flex;
+    h2 {
+      @include l.myTitle20();
+      color: l.$grey10;
+      margin-bottom: 32 px;
+    }
+  }
+  img {
+    width: 220px;
+    height: 220px;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    top: 365px;
+    left: 60%;
+  }
+
+  .modal-wrap {
+  }
+}
