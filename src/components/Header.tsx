@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './scss/Header.scss';
-import SearchModal from './SearchModal';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import "./scss/Header.scss";
+import SearchModal from "./SearchModal";
 
 interface MenuItem {
   id: number;
@@ -10,9 +10,9 @@ interface MenuItem {
 }
 
 const mainMenu: MenuItem[] = [
-  { id: 1, title: '시리즈', path: '/series' },
-  { id: 2, title: '영화', path: '/movies' },
-  { id: 3, title: '오리지널', path: '/original' },
+  { id: 1, title: "시리즈", path: "/series" },
+  { id: 2, title: "영화", path: "/movies" },
+  { id: 3, title: "오리지널", path: "/original" },
 ];
 
 const Header = () => {
@@ -55,13 +55,17 @@ const Header = () => {
               </li>
 
               <li>
-                <button className="search-btn" onClick={handleSearchOpen} aria-label="검색">
+                <button
+                  className="search-btn"
+                  onClick={handleSearchOpen}
+                  aria-label="검색"
+                >
                   <img src="/images/search-btn.png" alt="search" />
                 </button>
               </li>
 
               <li>
-                <Link to="/ham">
+                <Link to="/mypage">
                   <img src="/images/ham-btn.png" alt="ham" />
                 </Link>
               </li>

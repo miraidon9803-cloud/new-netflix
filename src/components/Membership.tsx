@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { MembershipType } from "../types/auth";
-import { useAuthStore } from "../store/AuthStore";
+import { useAuthStore } from "../store/authStore";
 import "./scss/Membership.scss";
 import { useNavigate } from "react-router-dom";
 

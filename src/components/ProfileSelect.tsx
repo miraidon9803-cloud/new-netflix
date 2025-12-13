@@ -20,9 +20,12 @@ const ProfileSelect = () => {
       <div className="profile-wrap">
         <div className="profile-content">
           {profiles.length === 0 ? (
-            <div className="empty">
-              <p>프로필이 없습니다. 새로 생성해주세요.</p>
-              <button onClick={() => setOpen(true)}>+ 프로필 만들기</button>
+            <div onClick={() => setOpen(true)} className="add">
+              <div className="add-box">
+                <img src="/images/Union.png" alt="" />
+                {/* <p>프로필이 없습니다. 새로 생성해주세요.</p> */}
+                <p>프로필 추가</p>
+              </div>
             </div>
           ) : (
             <ul>
