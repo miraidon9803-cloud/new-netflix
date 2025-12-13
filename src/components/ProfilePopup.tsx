@@ -1,7 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { profile } from "../data/profile";
 import { useProfileStore } from "../store/Profile";
-// import "./scss/ModalPopup.scss";
 import "./scss/ProfilePopup.scss";
 
 interface ProfileCreateModalProps {
@@ -9,6 +8,56 @@ interface ProfileCreateModalProps {
   onClose: () => void;
 }
 
+/* =======================
+   Language Dropdown
+======================= */
+const languages = ["한국어", "English", "日本語", "中文"];
+
+const LanguageDropdown = () => {
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState("한국어");
+  const ref = useRef<HTMLDivElement>(null);
+
+  return (
+    <div className="language-wrap">
+      <p>기본 음성 및 자막</p>
+
+      <div className="language" ref={ref}>
+        <button
+          type="button"
+          className="language-btn"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+        >
+          {selected}
+          <span className={`arrow ${open ? "open" : ""}`}>▾</span>
+        </button>
+
+        {open && (
+          <ul className="language-list">
+            {languages.map((lang) => (
+              <li key={lang}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelected(lang);
+                    setOpen(false);
+                  }}
+                >
+                  {lang}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* =======================
+   Profile Popup
+======================= */
 const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
   const { profiles, createProfile } = useProfileStore();
 
@@ -17,13 +66,25 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
   const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [isAdult, setIsAdult] = useState(true);
-  const [isLock, setIsLock] = useState(true);
+  const [isAdult, setIsAdult] = useState(false);
+  const [isLock, setIsLock] = useState(false);
 
   const selectedAvatar = useMemo(
     () => profile.find((a) => a.key === selectedAvatarKey) ?? profile[0],
     [selectedAvatarKey]
   );
+
+  /* body scroll lock */
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   if (!open) return null;
 
@@ -68,7 +129,7 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-body">
           <div className="modal-header">
-            <h2>현재프로필관리</h2>
+            <h2>현재 프로필 관리</h2>
             <button className="modal-close" onClick={handleClose}>
               ✕
             </button>
@@ -98,70 +159,67 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
                   disabled={submitting}
                 />
               </div>
-              <div className="adult-toggle">
-                <span>시청제한</span>
 
+              <div className="adult-toggle">
+                <span>시청 제한</span>
                 <button
                   type="button"
                   className={`toggle ${isAdult ? "on" : ""}`}
                   onClick={() => setIsAdult((prev) => !prev)}
-                  disabled={submitting}
-                  aria-label="성인 여부 토글"
                 >
                   <span className="knob" />
                 </button>
               </div>
 
               <div className="lock-toggle">
-                <span>프로필잠금</span>
-
+                <span>프로필 잠금</span>
                 <button
                   type="button"
                   className={`toggle ${isLock ? "on" : ""}`}
                   onClick={() => setIsLock((prev) => !prev)}
-                  disabled={submitting}
-                  aria-label="프로필잠금"
                 >
                   <span className="knob" />
                 </button>
               </div>
+
+              <LanguageDropdown />
             </label>
+
             <div className="btn-wrap">
               <button
-                className="del btn"
+                className="btn ghost"
                 onClick={handleClose}
                 disabled={submitting}
               >
                 취소
               </button>
               <button
-                className="create btn"
+                className="btn primary"
                 onClick={handleCreate}
                 disabled={submitting}
               >
-                {submitting ? "생성 중..." : "저장"}
+                {submitting ? "저장 중..." : "저장"}
               </button>
             </div>
           </div>
         </div>
 
-        {/* ✅ 사진 변경 눌렀을 때만 목록 오픈 */}
+        {/* avatar picker */}
         {showAvatarPicker && (
           <div className="avatar-section">
             <p className="avatar-title">아바타 선택</p>
             <div className="avatar-grid">
               {profile.map((a) => (
                 <button
-                  key={a.id} // ✅ key는 id 추천
+                  key={a.id}
                   type="button"
                   className={
                     a.key === selectedAvatarKey ? "avatar active" : "avatar"
                   }
                   onClick={() => {
                     setSelectedAvatarKey(a.key);
-                    setShowAvatarPicker(false); // ✅ 선택하면 자동 닫기 (원치 않으면 이 줄 제거)
+                    setShowAvatarPicker(false);
                   }}
-                  disabled={submitting}
                 >
                   <img src={a.poster} alt={a.title} />
                   <span>{a.title}</span>
