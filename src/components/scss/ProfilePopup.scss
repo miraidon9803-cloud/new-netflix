@@ -7,11 +7,9 @@
   position: fixed;
   inset: 0;
   z-index: 1000;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   background: rgba(0, 0, 0, 0.75);
 
   /* =======================
@@ -21,22 +19,17 @@
     width: 100rem;
     height: 70rem;
     max-height: 80vh;
-
+    padding: 24px;
     display: flex;
     flex-direction: column;
-
-    border-radius: 6px;
-    background: #000;
+    border-radius: 8px;
+    background: l.$grey2;
     color: #fff;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-
+   
     /* =======================
        Modal Body
     ======================= */
     .modal-body {
-      padding: 24px;
-      flex: 1;
-
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -61,13 +54,11 @@
           position: absolute;
           top: 0;
           right: 16px;
-
           background: none;
           border: none;
           color: #aaa;
           font-size: 20px;
           cursor: pointer;
-
           &:hover {
             color: #fff;
           }
@@ -78,8 +69,8 @@
          Content Wrap
       ======================= */
       .modal-wrap {
-        width: 358px;
-        height: 590px;
+        width: 35.8rem;
+        height: 59rem;
 
         display: flex;
         flex-direction: column;
@@ -102,11 +93,9 @@
             position: absolute;
             top: 130px;
             left: 470px;
-
             padding: 6px 14px;
             font-size: 13px;
             border-radius: 4px;
-
             background: #2f2f2f;
             border: 1px solid #555;
             color: #fff;
@@ -176,12 +165,10 @@
               position: absolute;
               top: 2px;
               left: 2px;
-
               width: 27px;
               height: 27px;
               border-radius: 50%;
               background: #fff;
-
               transition: transform 0.2s;
             }
 
@@ -200,24 +187,26 @@
           gap: 10px;
 
           .btn {
-            padding: 12px 24px;
+            padding: 12px;
 
             &.del {
               @include l.myTitle16();
-              background: transparent;
-              border: 1px solid #555;
-              color: #fff;
+              background: none;
+              border:1px solid l.$grey7;
+              border-radius: 4px;
+              color: l.$grey7;
 
               &:hover {
-                background: #2a2a2a;
+                // background: #2a2a2a;
               }
             }
 
             &.create {
               @include l.myTitle16();
-              background: #e50914;
+              background: l.$sub1;
               border: none;
-              color: #fff;
+              color: l.$grey10;
+               border-radius: 4px;
 
               &:hover {
                 background: #f6121d;

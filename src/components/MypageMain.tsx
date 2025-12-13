@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import "./scss/MypageMain.scss";
+import Acount from "./Acount"; // Acount 컴포넌트를 임포트
+import { useState } from "react";
 
 const MypageMain = () => {
   const user = useAuthStore((s) => s.user);
@@ -8,55 +10,65 @@ const MypageMain = () => {
   const { onLogout } = useAuthStore();
   const membership = user?.membership;
   const navigate = useNavigate();
+
   const handleLogout = () => {
     onLogout();
     navigate("/");
   };
 
-  // if (!membership) {
-  //   return <div>멤버십 불러오는 중...</div>;
-  // }
+  const ProfilePage = () => {
+    const [showAccount, setShowAccount] = useState(false); // 계정 보이기/숨기기 상태 관리
 
-  return (
-    <div className="inner-mypageMain">
-      <div className="mypageMain-wrap">
-        <div className="title">
-          <h1>나의 넷플릭스</h1>
-        </div>
+    const handleAccountClick = () => {
+      setShowAccount((prev) => !prev); // 계정 클릭 시 showAccount 토글
+    };
 
-        <div className="main-content">
-          <div className="content-left">
-            <div>
-              <img src="/images/profile/케데헌3.png" alt="" />
-            </div>
-            <p className="nickname">nickname</p>
-            <button className="profile-change">프로필변경</button>
+    return (
+      <div className="inner-mypageMain">
+        <div className="mypageMain-wrap">
+          <div className="title">
+            <h1>나의 넷플릭스</h1>
           </div>
 
-          <div className="content-right">
-            <div className="title-wrap">
-              <div className="content-title">
-                <p>나의 멤버십</p>
-                <p className="membership-grade">{membership?.name}</p>
+          <div className="main-content">
+            <div className="content-left">
+              <div>
+                <img src="/images/profile/케데헌3.png" alt="" />
               </div>
-              <p className="content-out">변경 및 해지</p>
+              <p className="nickname">nickname</p>
+              <button className="profile-change">프로필변경</button>
             </div>
 
-            <ul>
-              <li>현재 프로필 관리</li>
-              <li>계정</li>
-              <li>앱 설정</li>
-              <li>고객센터</li>
-            </ul>
+            <div className="content-right">
+              <div className="title-wrap">
+                <div className="content-title">
+                  <p>나의 멤버십</p>
+                  <p className="membership-grade">{membership?.name}</p>
+                </div>
+                <p className="content-out">변경 및 해지</p>
+              </div>
 
-            <button onClick={handleLogout} className="logout-btn">
-              로그아웃
-            </button>
+              <ul>
+                <li>현재 프로필 관리</li>
+                <li onClick={handleAccountClick}>계정</li>
+                <li>앱 설정</li>
+                <li>고객센터</li>
+
+                {/* showAccount 상태에 따라 Acount 모달을 렌더링 */}
+                {showAccount && <Acount onClose={() => setShowAccount(false)} />}
+              </ul>
+
+              <button onClick={handleLogout} className="logout-btn">
+                로그아웃
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
+
+  return <ProfilePage />;
 };
 
 export default MypageMain;
