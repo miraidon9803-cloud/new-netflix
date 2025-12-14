@@ -3,6 +3,8 @@ import { useAuthStore } from "../store/authStore";
 import "./scss/MypageMain.scss";
 import Acount from "./Acount"; // Acount 컴포넌트를 임포트
 import { useState } from "react";
+import AppPopup from "./AppPopup";
+import MemberPopup from "./MemberPopup";
 
 const MypageMain = () => {
   const user = useAuthStore((s) => s.user);
@@ -18,11 +20,20 @@ const MypageMain = () => {
 
   const ProfilePage = () => {
     const [showAccount, setShowAccount] = useState(false); // 계정 보이기/숨기기 상태 관리
+    const [showApp, setShowApp] = useState(false);
+    const [showMember, setShowMember] = useState(false);
 
     const handleAccountClick = () => {
       setShowAccount((prev) => !prev); // 계정 클릭 시 showAccount 토글
     };
 
+    const handleAppClick = () => {
+      setShowApp((prev) => !prev);
+    }
+
+    const handleMemberClick = () =>{
+      setShowMember((prev)=> !prev);
+    }
     return (
       <div className="inner-mypageMain">
         <div className="mypageMain-wrap">
@@ -45,17 +56,19 @@ const MypageMain = () => {
                   <p>나의 멤버십</p>
                   <p className="membership-grade">{membership?.name}</p>
                 </div>
-                <p className="content-out">변경 및 해지</p>
+                <p onClick={handleMemberClick} className="content-out">변경 및 해지</p>
               </div>
 
               <ul>
                 <li>현재 프로필 관리</li>
                 <li onClick={handleAccountClick}>계정</li>
-                <li>앱 설정</li>
+                <li onClick={handleAppClick}>앱 설정</li>
                 <li>고객센터</li>
 
                 {/* showAccount 상태에 따라 Acount 모달을 렌더링 */}
                 {showAccount && <Acount onClose={() => setShowAccount(false)} />}
+                {showApp && <AppPopup onClose={() => setShowApp(false)} />}
+                {showMember && <MemberPopup onClose={() => setShowMember(false)} />}
               </ul>
 
               <button onClick={handleLogout} className="logout-btn">
