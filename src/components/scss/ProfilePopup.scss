@@ -29,7 +29,7 @@
       .modal-header {
         position: relative;
         width: 100%;
-        margin-bottom: 32px;
+        margin-bottom: 20px;
         text-align: center;
 
         h2 {
@@ -65,7 +65,14 @@
           display: flex;
           flex-direction: column;
           gap: 32px;
-
+          .pin {
+            p {
+              margin-top: 16px;
+            }
+            input {
+              width: 38.8rem;
+            }
+          }
           .toggle-option {
             display: flex;
             justify-content: space-between;
@@ -157,19 +164,14 @@
 
           .change-btn {
             position: absolute;
-            top: 130px;
-            left: 470px;
-            padding: 6px 14px;
-            font-size: 13px;
-            border-radius: 4px;
-            background: #2f2f2f;
-            border: 1px solid #555;
-            color: #fff;
-            cursor: pointer;
-
-            &:hover {
-              background: #444;
+            top: 140px;
+            right: 93px;
+            img {
+              width: 76px;
+              height: 32px;
             }
+
+            cursor: pointer;
           }
         }
 

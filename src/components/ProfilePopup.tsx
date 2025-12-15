@@ -1,7 +1,8 @@
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { profile } from "../data/profile";
 import { useProfileStore } from "../store/Profile";
 import "./scss/ProfilePopup.scss";
+import AvatarSelPopup from "./AvatarSelPopup";
 
 interface ProfileCreateModalProps {
   open: boolean;
@@ -25,13 +26,11 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
 
   const [name, setName] = useState("");
   const [selectedAvatarKey, setSelectedAvatarKey] = useState(profile[0].key);
-  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+  const [avatarPopupOpen, setAvatarPopupOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const [adultOnly, setAdultOnly] = useState(false);
-
-  // ✅ 시청 제한 단계(슬라이더 값)
   const [ageLimit, setAgeLimit] = useState<number>(1); // 기본: 전체관람가
 
   const [profileLock, setProfileLock] = useState(false);
@@ -43,10 +42,10 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
   >("한국어");
   const [openlanguage, setOpenlanguage] = useState(false);
 
-  const selectedAvatar = useMemo(
-    () => profile.find((a) => a.key === selectedAvatarKey) ?? profile[0],
-    [selectedAvatarKey]
-  );
+  /* 선택된 아바타 */
+  const selectedAvatar = useMemo(() => {
+    return profile.find((a) => a.key === selectedAvatarKey);
+  }, [selectedAvatarKey]);
 
   const validateForm = () => {
     const trimmed = name.trim();
@@ -56,7 +55,6 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
     if (profiles.some((p) => p.title === trimmed))
       return "이미 같은 이름의 프로필이 있어요.";
 
-    // ✅ 잠금 ON이면 핀 검증
     if (profileLock) {
       if (!/^\d{4}$/.test(pin))
         return "잠금 비밀번호는 숫자 4자리로 입력해주세요.";
@@ -79,12 +77,10 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
         avatarKey: selectedAvatarKey,
         poster: selectedAvatar.poster,
 
-        // ✅ 추가 저장값(원하시면 store 타입도 같이 맞춰드려야 함)
         adultOnly,
         ageLimit,
         profileLock,
         language,
-        // pin은 보안상 실제 서비스면 저장 비추(프로젝트면 일단 가능)
         pin: profileLock ? pin : "",
       });
 
@@ -98,7 +94,7 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
 
   const handleClose = () => {
     if (submitting) return;
-    setShowAvatarPicker(false);
+    setAvatarPopupOpen(false);
     onClose();
   };
 
@@ -125,14 +121,13 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
           <div className="modal-wrap">
             <div className="avatar-preview">
               <img src={selectedAvatar.poster} alt={selectedAvatar.title} />
-              <button
-                type="button"
+              <p
                 className="change-btn"
-                onClick={() => setShowAvatarPicker((v) => !v)}
+                onClick={() => setAvatarPopupOpen(true)}
                 disabled={submitting}
               >
-                사진 변경
-              </button>
+                <img src="/images/change-btn.png" alt="" />
+              </p>
             </div>
 
             <div className="field">
@@ -160,7 +155,6 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
                   </button>
                 </div>
 
-                {/* ✅ 토글 ON이면 슬라이더 표시 */}
                 {adultOnly && (
                   <div className="age-limit-wrap">
                     <div className="age-labels">
@@ -182,9 +176,6 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
                       value={ageLimit}
                       onChange={(e) => setAgeLimit(Number(e.target.value))}
                       className="age-slider"
-                      // 일부 브라우저에서만 인식되지만 추가해도 문제 없음
-                      // @ts-ignore
-                      orient="vertical"
                     />
                   </div>
                 )}
@@ -292,30 +283,13 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
           </div>
         </div>
 
-        {/* avatar picker */}
-        {showAvatarPicker && (
-          <div className="avatar-section">
-            <p className="avatar-title">아바타 선택</p>
-            <div className="avatar-grid">
-              {profile.map((a) => (
-                <button
-                  key={a.id}
-                  type="button"
-                  className={
-                    a.key === selectedAvatarKey ? "avatar active" : "avatar"
-                  }
-                  onClick={() => {
-                    setSelectedAvatarKey(a.key);
-                    setShowAvatarPicker(false);
-                  }}
-                >
-                  <img src={a.poster} alt={a.title} />
-                  <span>{a.title}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Avatar 선택 팝업 */}
+        <AvatarSelPopup
+          open={avatarPopupOpen}
+          selectedKey={selectedAvatarKey}
+          onSelect={setSelectedAvatarKey}
+          onClose={() => setAvatarPopupOpen(false)}
+        />
 
         {errorMsg && <p className="error">{errorMsg}</p>}
       </div>

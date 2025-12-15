@@ -5,6 +5,7 @@ import Acount from "./Acount"; // Acount 컴포넌트를 임포트
 import { useState } from "react";
 import AppPopup from "./AppPopup";
 import MemberPopup from "./MemberPopup";
+import { useProfileStore } from "../store/Profile";
 
 const MypageMain = () => {
   const user = useAuthStore((s) => s.user);
@@ -12,6 +13,10 @@ const MypageMain = () => {
   const { onLogout } = useAuthStore();
   const membership = user?.membership;
   const navigate = useNavigate();
+  const { profiles, activeProfileId } = useProfileStore();
+  const activeProfile = profiles.find((p) => p.id === activeProfileId);
+
+  if (!activeProfile) return null;
 
   const handleLogout = () => {
     onLogout();
@@ -46,7 +51,7 @@ const MypageMain = () => {
               <div>
                 <img src="/images/profile/케데헌3.png" alt="" />
               </div>
-              <p className="nickname">{user?.email}</p>
+              <p className="nickname">{activeProfile.title}</p>
               <button className="profile-change">프로필변경</button>
             </div>
 
