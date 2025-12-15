@@ -8,6 +8,7 @@
   min-height: 100vh;
   background-color: $BG;
   position: relative;
+  justify-content: center;
 }
 
 
@@ -20,6 +21,7 @@
   height: 100vh;
   z-index: 100;
 }
+
 // 430px 이하 전용 모바일 헤더 (기본: 숨김)
 
 .shorts-mobile-header {
@@ -32,6 +34,9 @@
   flex: 1;
   margin-left: 130px; // 사이드네비 너비만큼
   padding: 42px 60px 60px; // 헤더 높이 고려
+  max-width: 1440px; // 최대 너비 제한
+  width: 100%;
+  box-sizing: border-box;
 }
 
 
@@ -55,7 +60,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  
+
 }
 
 .sort-icon-wrapper {
@@ -165,20 +170,17 @@
 }
 
 
-// 플레이어 오버레이
+// 플레이어 섹션 (콘텐츠 영역 내 배치 - Header/Footer/SideNav 유지)
 
 .player-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.9);
-  z-index: 1000;
+  position: relative;
+  width: 100%;
+  min-height: 70vh;
+  background-color: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
+  padding: 40px 0;
 }
 
 .player-container {
@@ -186,12 +188,14 @@
   align-items: center;
   gap: 20px;
   cursor: default;
+  position: relative; // 화살표 absolute 배치용
 }
 
 // 좌우 화살표
 .player-arrow {
   width: 36px;
   height: 36px;
+  min-width: 36px; // 최소 너비 보장
   background: rgba(255, 255, 255, 0.2);
   border: none;
   border-radius: 50%;
@@ -201,6 +205,7 @@
   align-items: center;
   transition: background 0.3s;
   flex-shrink: 0;
+  z-index: 10; // 카드 위에 표시
 
   &:hover {
     background: rgba(255, 255, 255, 0.4);
@@ -339,16 +344,20 @@
 .shorts-footer {
   display: block;
   width: 100%;
-  margin-left: 130px; // 사이드네비 너비만큼
+  max-width: 1570px; // 사이드네비(130px) + 콘텐츠(1440px)
+  margin: 0 auto;
+  padding-left: 130px; // 사이드네비 너비만큼
+  box-sizing: border-box;
 }
 
 
-.shorts-page ~ footer,
-.shorts-page + footer {
+.shorts-page~footer,
+.shorts-page+footer {
   display: none !important;
 }
 
 @media (max-width: 1440px) {
+
   // 사이드 네비게이션 숨김
   .shorts-sidenav {
     display: none;
@@ -376,7 +385,7 @@
     aspect-ratio: 342 / 540;
   }
 
-    // 카드 제목 - 2줄 표시
+  // 카드 제목 - 2줄 표시
   .card-title-text {
     @include myTitle14(400, left);
   }
@@ -385,19 +394,104 @@
     display: block; // 줄바꿈
   }
 
+  // 플레이어 모드 - 콘텐츠 영역 내 유지 (Header, 쇼츠타이틀, 하단네비 보임)
+  .player-overlay {
+    min-height: 60vh;
+    padding: 20px 0 100px; // 하단 네비 공간 확보
+    position: relative;
+  }
 
-  // 플레이어 모드 반응형
+  .player-container {
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    padding: 0;
+    position: relative;
+  }
+
+  // 화살표 - 화면 양쪽 끝에 absolute 배치
+  .player-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 30;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+  }
+
+  .player-arrow-left {
+    left: 2%;
+  }
+
+  .player-arrow-right {
+    right: 2%;
+  }
+
+  // 좌우 카드 - 뒤에서 작게 (중앙 카드 뒤로)
   .player-card-prev,
   .player-card-next {
     width: 25%;
+    max-width: 280px;
     height: auto;
     aspect-ratio: 342 / 540;
+    opacity: 0.7;
+    z-index: 1;
   }
 
+  // 중앙 카드 - 앞으로 나와서 크게
   .player-card-current {
-    width: 35%;
+    width: 38%;
+    max-width: 420px;
     height: auto;
     aspect-ratio: 464 / 825;
+    z-index: 10;
+    margin: 0 -3%; // 좌우 카드와 겹치게
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  // 액션 버튼 반응형 크기
+  .player-actions {
+    right: 12px;
+    bottom: 25%;
+    gap: 12px;
+  }
+
+  .action-btn {
+    font-size: clamp(10px, 1.5vw, 16px);
+    
+    svg {
+      width: clamp(20px, 3vw, 36px);
+      height: clamp(20px, 3vw, 36px);
+    }
+  }
+
+  // 하단 정보 반응형
+  .player-info {
+    bottom: 8%;
+    left: 12px;
+    right: 70px;
+  }
+
+  .player-title {
+    font-size: clamp(12px, 1.8vw, 16px);
+    margin-bottom: 8px;
+  }
+
+  .watch-btn {
+    padding: clamp(4px, 1vw, 8px) clamp(10px, 2vw, 16px);
+    font-size: clamp(10px, 1.5vw, 16px);
+    
+    svg {
+      width: clamp(16px, 2vw, 24px);
+      height: clamp(16px, 2vw, 24px);
+    }
+  }
+
+  // 진행바
+  .progress-bar {
+    height: clamp(4px, 0.8vw, 8px);
   }
 
   // 하단 네비게이션 표시
@@ -411,10 +505,10 @@
     left: 0;
     right: 0;
     height: 80px;
-    background-color: $BG;
-    border-top: 1px solid $grey3;
+    background: rgba(23, 23, 24, 0.60);
+    backdrop-filter: blur(15px);    
     z-index: 100;
-    padding-bottom: 30px; // 하단 여백
+    padding-bottom: 30px;
   }
 
   .bottom-nav-item {
@@ -427,14 +521,15 @@
     transition: color 0.3s;
 
     img {
-      width: 24px;
-      height: 24px;
+      width: 100%; // 아이콘 24px
       opacity: 0.6;
       transition: opacity 0.3s;
     }
 
     span {
-      display: none; // 텍스트 숨김
+      display: none; // 텍스트 표시
+      font-size: 10px; // 작은 텍스트
+      line-height: 1;
     }
 
     &:hover,
@@ -448,17 +543,12 @@
   }
 }
 
-
 // 반응형 - 430px 이하
 @media (max-width: 430px) {
-  // 기존 헤더 숨기기 (global로 Header 컴포넌트 제어)
-  :global(.header) {
-    display: none;
-  }
 
-  // 기존 header 태그 공간 제거
-  :global(header) {
-    display: none !important;
+  
+  header{
+    display: none;
   }
 
   // 모바일 전용 헤더 표시
@@ -538,6 +628,19 @@
     display: block; // 줄바꿈
   }
 
+  // 플레이어 모드 - 430px 이하에서는 전체화면 오버레이
+  .player-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.95);
+    z-index: 1000;
+    min-height: unset;
+    padding: 0;
+  }
+
   // 플레이어 모드 - 단독 전체화면
   .player-container {
     width: 100%;
@@ -610,16 +713,6 @@
   // 하단 네비게이션 조정
   .shorts-bottom-nav {
     height: 70px;
-  }
-
-  .bottom-nav-item {
-    span {
-      font-size: 12px;
-    }
-
-    img {
-      width: 20px;
-      height: 20px;
-    }
-  }
+    padding: 10px;
+  }  
 }

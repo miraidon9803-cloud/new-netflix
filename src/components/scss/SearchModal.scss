@@ -24,9 +24,7 @@
 // 팝업 컨텐츠
 .search-modal-content {
   position: relative;
-  // width: 90%;
-  min-width: 60%; // 최소 너비 설정
-  max-width: 1200px;
+  width: 1001px; // 고정 너비
   max-height: 85vh;
   border-radius: 12px;
   overflow-y: auto;
@@ -257,7 +255,7 @@
 .content-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  column-gap: 46px; // 카드 사이 가로 간격
+  column-gap: 26px; // 카드 사이 가로 간격
   row-gap: 40px; // 세로 간격 (임시)
 }
 
@@ -277,7 +275,7 @@
   color: $grey10;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   flex-shrink: 0;
-  min-width: 40px;
+  min-width: 20px;
   text-align: center;
 }
 
@@ -332,14 +330,15 @@
   padding: 60px 20px;
   color: $grey7;
   @include myTitle16();
-  width: 1001px;
+  width: 100%;
 }
 
 // 검색 결과 그리드
 .results-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 3%;
+  column-gap: 24px; // 카드 사이 가로 간격
+  row-gap: 24px; // 세로 간격
 }
 
 .results-card {
@@ -357,12 +356,13 @@
 }
 
 .results-image {
-  width: 100%;
+  width: 232px;
+  height: 320px;  
   aspect-ratio: 2 / 3;
   display: block;
   object-fit: contain;
   border-radius: 8px;
-  background-color: $grey2;
+  // background-color: $grey2;
 }
 
 // 뒤로가기 버튼 (기본: 숨김)
@@ -422,6 +422,8 @@
   }
 
   .search-modal-content {
+    width: 100%;
+    max-width: 1001px;
     padding: 30px;
     margin: 0 16px; // 좌우 16px 여백
   }
@@ -485,6 +487,17 @@
   .content-grid {
     column-gap: 20px;
     row-gap: 20px;
+  }
+
+  // 검색 결과 반응형
+  .results-grid {
+    gap: 3%;
+  }
+
+  .results-image {
+    width: 100%;
+    max-width: 232px;
+    height: auto;
   }
 }
 
@@ -602,7 +615,6 @@
   .results-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
-    margin: 0 16px;
   }
 
   .results-image {

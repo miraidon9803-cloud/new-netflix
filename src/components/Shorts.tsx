@@ -172,7 +172,7 @@ const HamburgerIcon = () => (
 );
 
 const Shorts: React.FC = () => {
-  const [sortOrder, setSortOrder] = useState<'latest' | 'alphabetical'>('latest');
+  const [sortOrder, setSortOrder] = useState<'latest' | 'title' | 'popular'>('latest');
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [sortedData, setSortedData] = useState<ShortsData[]>(shortsData);
   
@@ -187,10 +187,14 @@ const Shorts: React.FC = () => {
   useEffect(() => {
     if (sortOrder === 'latest') {
       setSortedData([...shortsData]);
-    } else {
+    } else if (sortOrder === 'title') {
       const sorted = [...shortsData].sort((a, b) => 
         a.title.localeCompare(b.title, 'ko')
       );
+      setSortedData(sorted);
+    } else {
+      // popular: 조회수 높은 순
+      const sorted = [...shortsData].sort((a, b) => b.views - a.views);
       setSortedData(sorted);
     }
   }, [sortOrder]);
@@ -228,9 +232,20 @@ const Shorts: React.FC = () => {
     }
   }, [viewMode, currentIndex]);
 
-  // 정렬 토글
+  // 정렬 토글 (최신순 → 제목순 → 인기순 → 최신순)
   const toggleSort = () => {
-    setSortOrder(prev => prev === 'latest' ? 'alphabetical' : 'latest');
+    setSortOrder(prev => {
+      if (prev === 'latest') return 'title';
+      if (prev === 'title') return 'popular';
+      return 'latest';
+    });
+  };
+
+  // 정렬 버튼 텍스트
+  const getSortLabel = () => {
+    if (sortOrder === 'latest') return '최신순';
+    if (sortOrder === 'title') return '제목순';
+    return '인기순';
   };
 
   // 카드 클릭 → 플레이어 모드
@@ -304,11 +319,19 @@ const Shorts: React.FC = () => {
       <main className="shorts-content">
         {/* 헤더 영역 */}
         <div className="shorts-header">
-          <h1 className="shorts-title">쇼츠</h1>
-          <button className="sort-btn" onClick={toggleSort}>
-            {sortOrder === 'latest' ? '최신순' : '가나다순'}
-            <SortIcon />
-          </button>
+          <h1 
+            className={`shorts-title ${viewMode === 'player' ? 'clickable' : ''}`}
+            onClick={viewMode === 'player' ? closePlayer : undefined}
+            style={viewMode === 'player' ? { cursor: 'pointer' } : undefined}
+          >
+            쇼츠
+          </h1>
+          {viewMode === 'grid' && (
+            <button className="sort-btn" onClick={toggleSort}>
+              {getSortLabel()}
+              <SortIcon />
+            </button>
+          )}
         </div>
 
         {/* 그리드 모드 */}
@@ -449,23 +472,23 @@ const Shorts: React.FC = () => {
       <nav className="shorts-bottom-nav">
         <Link to="/" className="bottom-nav-item">
           <img src="/images/icon/바로가기.png" alt="" />
-          <span>바로가기</span>
+          
         </Link>
-        <Link to="/shorts" className="bottom-nav-item active">
+        <Link to="/shorts" className="bottom-nav-item">
           <img src="/images/icon/쇼츠.png" alt="" />
-          <span>쇼츠</span>
+          
         </Link>
         <Link to="/" className="bottom-nav-item">
           <img src="/images/icon/홈.png" alt="" />
-          <span>홈</span>
+          
         </Link>
         <Link to="/" className="bottom-nav-item">
           <img src="/images/icon/위시리스트.png" alt="" />
-          <span>좋아요</span>
+          
         </Link>
         <Link to="/" className="bottom-nav-item">
           <img src="/images/icon/보관함.png" alt="" />
-          <span>보관함</span>
+          
         </Link>
       </nav>
     </div>
