@@ -1,7 +1,7 @@
 import "./scss/join.scss";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/AuthStore";
+import { useAuthStore } from "../store/authStore";
 
 // 회원가입 데이터 타입 정의
 interface JoinData {

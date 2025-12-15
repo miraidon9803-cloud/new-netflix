@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { profile } from "../data/profile";
 import { useProfileStore } from "../store/Profile";
-import "./scss/ModalPopup.scss";
+// import "./scss/ModalPopup.scss";
+import "./scss/ProfilePopup.scss";
 
 interface ProfileCreateModalProps {
   open: boolean;
@@ -87,17 +88,18 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
             </div>
 
             <label className="field">
-              <span>프로필 이름</span>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="10자 이내"
-                maxLength={10}
-                disabled={submitting}
-              />
-
+              <div className="profile-name">
+                <span>프로필 이름</span>
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="10자 이내"
+                  maxLength={10}
+                  disabled={submitting}
+                />
+              </div>
               <div className="adult-toggle">
-                <span className={!isAdult ? "active" : ""}>키즈</span>
+                <span>시청제한</span>
 
                 <button
                   type="button"
@@ -108,74 +110,68 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
                 >
                   <span className="knob" />
                 </button>
-
-                <span className={isAdult ? "active" : ""}>성인</span>
               </div>
 
               <div className="lock-toggle">
-                <span className={!isLock ? "active" : ""}>ㅍㅍㅍ</span>
+                <span>프로필잠금</span>
 
                 <button
                   type="button"
-                  className={`toggle ${isAdult ? "on" : ""}`}
+                  className={`toggle ${isLock ? "on" : ""}`}
                   onClick={() => setIsLock((prev) => !prev)}
                   disabled={submitting}
                   aria-label="프로필잠금"
                 >
                   <span className="knob" />
                 </button>
-
-                <span className={isAdult ? "active" : ""}></span>
               </div>
             </label>
-            <button>프로필삭제</button>
-          </div>
-
-          {/* ✅ 사진 변경 눌렀을 때만 목록 오픈 */}
-          {showAvatarPicker && (
-            <div className="avatar-section">
-              <p className="avatar-title">아바타 선택</p>
-              <div className="avatar-grid">
-                {profile.map((a) => (
-                  <button
-                    key={a.id} // ✅ key는 id 추천
-                    type="button"
-                    className={
-                      a.key === selectedAvatarKey ? "avatar active" : "avatar"
-                    }
-                    onClick={() => {
-                      setSelectedAvatarKey(a.key);
-                      setShowAvatarPicker(false); // ✅ 선택하면 자동 닫기 (원치 않으면 이 줄 제거)
-                    }}
-                    disabled={submitting}
-                  >
-                    <img src={a.poster} alt={a.title} />
-                    <span>{a.title}</span>
-                  </button>
-                ))}
-              </div>
+            <div className="btn-wrap">
+              <button
+                className="del btn"
+                onClick={handleClose}
+                disabled={submitting}
+              >
+                취소
+              </button>
+              <button
+                className="create btn"
+                onClick={handleCreate}
+                disabled={submitting}
+              >
+                {submitting ? "생성 중..." : "저장"}
+              </button>
             </div>
-          )}
-
-          {errorMsg && <p className="error">{errorMsg}</p>}
+          </div>
         </div>
 
-        <div className="modal-footer">
-          <button
-            className="btn ghost"
-            onClick={handleClose}
-            disabled={submitting}
-          >
-            취소
-          </button>
-          <button
-            className="btn primary"
-            onClick={handleCreate}
-            disabled={submitting}
-          >
-            {submitting ? "생성 중..." : "생성"}
-          </button>
-        </div>
+        {/* ✅ 사진 변경 눌렀을 때만 목록 오픈 */}
+        {showAvatarPicker && (
+          <div className="avatar-section">
+            <p className="avatar-title">아바타 선택</p>
+            <div className="avatar-grid">
+              {profile.map((a) => (
+                <button
+                  key={a.id} // ✅ key는 id 추천
+                  type="button"
+                  className={
+                    a.key === selectedAvatarKey ? "avatar active" : "avatar"
+                  }
+                  onClick={() => {
+                    setSelectedAvatarKey(a.key);
+                    setShowAvatarPicker(false); // ✅ 선택하면 자동 닫기 (원치 않으면 이 줄 제거)
+                  }}
+                  disabled={submitting}
+                >
+                  <img src={a.poster} alt={a.title} />
+                  <span>{a.title}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {errorMsg && <p className="error">{errorMsg}</p>}
       </div>
     </div>
   );

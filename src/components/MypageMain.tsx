@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/AuthStore";
+import { useAuthStore } from "../store/authStore";
 import "./scss/MypageMain.scss";
 
 const MypageMain = () => {

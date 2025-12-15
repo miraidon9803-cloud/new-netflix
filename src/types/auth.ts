@@ -1,6 +1,6 @@
 // types/auth.ts
 
-import type { JoinData } from "../store/AuthStore";
+import type { JoinData } from "../store/authStore";
 
 export interface LoginForm {
   email: string;
