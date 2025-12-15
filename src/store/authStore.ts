@@ -7,7 +7,13 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { auth, db } from "../firebase/firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  deleteField,
+} from "firebase/firestore";
 import { create } from "zustand";
 import { GoogleAuthProvider } from "firebase/auth";
 import { persist, createJSONStorage } from "zustand/middleware";
@@ -56,6 +62,12 @@ export interface JoinData {
   email: string;
   password: string;
   phone: string;
+}
+
+export interface MembershipInfo {
+  type: "adStandard" | "standard" | "premium";
+  name: string;
+  price: number;
 }
 
 // Zustand 상태 타입
@@ -122,6 +134,7 @@ export const useAuthStore = create<AuthState>()(
             const defaultUser: AppUser = {
               uid: firebaseUser.uid,
               email: firebaseUser.email || "",
+
               phone: "",
               createdAt: new Date(),
             };
@@ -234,12 +247,46 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      cancelMembership: async () => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) throw new Error("로그인이 필요합니다.");
+
+        const userRef = doc(db, "users", currentUser.uid);
+
+        await updateDoc(userRef, {
+          membership: deleteField(),
+        });
+
+        set((state) => ({
+          user: state.user
+            ? (() => {
+                const { membership, ...rest } = state.user;
+                return rest;
+              })()
+            : state.user,
+        }));
+      },
+
       // 로그아웃
       onLogout: async () => {
         await signOut(auth);
         set({ user: null });
       },
 
+      updateProfile: async ({ phone }) => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) throw new Error("로그인이 필요합니다.");
+
+        const userRef = doc(db, "users", currentUser.uid);
+
+        await setDoc(userRef, { phone }, { merge: true });
+
+        set((state) => ({
+          user: state.user ? { ...state.user, phone } : state.user,
+        }));
+      },
+
+      //멤버쉽저장
       //멤버쉽저장
       saveMembership: async (membership) => {
         const currentUser = auth.currentUser;
@@ -250,7 +297,6 @@ export const useAuthStore = create<AuthState>()(
         await setDoc(userRef, { membership }, { merge: true });
 
         set((state) => ({
-          membership,
           user: state.user ? { ...state.user, membership } : state.user,
         }));
       },
