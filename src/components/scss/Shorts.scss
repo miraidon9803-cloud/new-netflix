@@ -33,7 +33,7 @@
 .shorts-content {
   flex: 1;
   margin-left: 130px; // 사이드네비 너비만큼
-  padding: 42px 60px 60px; // 헤더 높이 고려
+  padding: 42px 0px 60px; // 헤더 높이 고려
   max-width: 1440px; // 최대 너비 제한
   width: 100%;
   box-sizing: border-box;
@@ -356,6 +356,28 @@
   display: none !important;
 }
 
+// 1480px 이하 ~ 1441px: 화살표를 카드 안쪽으로 배치
+@media (max-width: 1500px) and (min-width: 1441px) {
+  .player-container {
+    position: relative;
+  }
+
+  .player-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 30;
+  }
+
+  .player-arrow-left {
+    left: 10px; // 좌측 카드 안쪽으로
+  }
+
+  .player-arrow-right {
+    right: 10px; // 우측 카드 안쪽으로
+  }
+}
+
 @media (max-width: 1440px) {
 
   // 사이드 네비게이션 숨김
@@ -403,7 +425,7 @@
 
   .player-container {
     width: 100%;
-    justify-content: center;
+    justify-content:center;
     align-items: center;
     gap: 0;
     padding: 0;
