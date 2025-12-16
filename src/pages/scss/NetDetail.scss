@@ -1,0 +1,89 @@
+@use "../../App.scss" as l;
+
+.detail-inner {
+  display: flex;
+  max-width: 1441px;
+  height: 1414px;
+  margin: 0 auto;
+  gap: 24px;
+
+  .left-side {
+    width: 83rem;
+    height: 76.7rem;
+    // display: flex;
+    // flex-direction: column;
+
+    iframe {
+      width: 83rem;
+      height: 41rem;
+      border: none;
+    }
+
+    .text-box {
+      .title-wrap {
+        h1 {
+          @include l.myTitle32();
+          color: l.$grey10;
+        }
+        display: flex;
+        justify-content: space-between;
+
+        button {
+          @include l.myTitle16();
+          color: l.$grey10;
+          width: 24rem;
+          height: 4rem;
+          background-color: l.$main1;
+        }
+      }
+      .text-content {
+        display: flex;
+        gap: 12px;
+        @include l.myTitle16();
+        color: l.$grey10;
+        margin-bottom: 20px;
+      }
+      .text-fads {
+        @include l.myTitle16();
+        color: l.$grey10;
+        text-align: left;
+        margin-bottom: 40px;
+      }
+
+      .btn-wrap {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 40px;
+        p {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 14.8rem;
+          height: 8rem;
+          padding: 8px 16px;
+          border-radius: 4px;
+          background-color: l.$grey2;
+        }
+      }
+    }
+  }
+  .season-box {
+    width: 58.8rem;
+    .episode-list {
+      img {
+        width: 220px;
+        // height: 14rem;
+      }
+      li {
+        display: flex;
+        width: 587px;
+      }
+      .episode-title {
+        width: 354px;
+        @include l.myTitle16();
+        color: l.$grey10;
+        text-align: left;
+      }
+    }
+  }
+}

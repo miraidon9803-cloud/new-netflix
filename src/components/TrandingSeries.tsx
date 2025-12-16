@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
-import { useNetflixStore } from '../store/NetflixStore';
-import './scss/TrandingSeries.scss';
+import React, { useEffect, useRef } from "react";
+import { useNetflixStore } from "../store/NetflixStore";
+import "./scss/TrandingSeries.scss";
+import { Link } from "react-router-dom";
 
-const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
+const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 
 const TrandingSeries = () => {
   const { SeriesTop10, onFetchSeriesTop10 } = useNetflixStore();
@@ -38,9 +39,9 @@ const TrandingSeries = () => {
       }
     };
 
-    el.addEventListener('wheel', onWheel, { passive: false });
+    el.addEventListener("wheel", onWheel, { passive: false });
 
-    return () => el.removeEventListener('wheel', onWheel);
+    return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
   return (
@@ -50,7 +51,9 @@ const TrandingSeries = () => {
       <ul className="seriesTopList" ref={scrollRef}>
         {SeriesTop10.map((movie, id) => (
           <li key={movie.id} className="seriesItem">
-            <img src={`${IMG_BASE}${movie.poster_path}`} alt={movie.title} />
+            <Link to={`/tv/${movie.id}`}>
+              <img src={`${IMG_BASE}${movie.poster_path}`} alt={movie.title} />
+            </Link>
           </li>
         ))}
       </ul>

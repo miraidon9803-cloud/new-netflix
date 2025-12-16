@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
-import { useNetflixStore } from '../store/NetflixStore';
-import './scss/SFNFantasy.scss';
+import React, { useEffect, useRef } from "react";
+import { useNetflixStore } from "../store/NetflixStore";
+import "./scss/SFNFantasy.scss";
+import { Link } from "react-router-dom";
 
-const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
+const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 
 const SFNFantasy = () => {
   const { SFNFTop10, onFetchSFTop10 } = useNetflixStore();
@@ -38,9 +39,9 @@ const SFNFantasy = () => {
       }
     };
 
-    el.addEventListener('wheel', onWheel, { passive: false });
+    el.addEventListener("wheel", onWheel, { passive: false });
 
-    return () => el.removeEventListener('wheel', onWheel);
+    return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
   return (
@@ -50,7 +51,9 @@ const SFNFantasy = () => {
       <ul className="sfTopList" ref={scrollRef}>
         {SFNFTop10.map((movie) => (
           <li key={movie.id} className="sfItem">
-            <img src={`${IMG_BASE}${movie.poster_path}`} alt={movie.title} />
+            <Link to={`/tv/${movie.id}`}>
+              <img src={`${IMG_BASE}${movie.poster_path}`} alt={movie.title} />
+            </Link>
           </li>
         ))}
       </ul>
