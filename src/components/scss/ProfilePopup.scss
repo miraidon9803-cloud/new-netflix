@@ -1,8 +1,5 @@
 @use "../../App.scss" as l;
 
-/* =======================
-   Modal Dim
-======================= */
 .modal-dim {
   position: fixed;
   inset: 0;
@@ -12,9 +9,6 @@
   justify-content: center;
   background: rgba(0, 0, 0, 0.75);
 
-  /* =======================
-     Modal Box
-  ======================= */
   .modal {
     width: 100rem;
     height: 70rem;
@@ -25,23 +19,17 @@
     border-radius: 8px;
     background: l.$grey2;
     color: #fff;
-   
-    /* =======================
-       Modal Body
-    ======================= */
+
     .modal-body {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
 
-      /* =======================
-         Header
-      ======================= */
       .modal-header {
         position: relative;
         width: 100%;
-        margin-bottom: 32px;
+        margin-bottom: 20px;
         text-align: center;
 
         h2 {
@@ -65,9 +53,6 @@
         }
       }
 
-      /* =======================
-         Content Wrap
-      ======================= */
       .modal-wrap {
         width: 35.8rem;
         height: 59rem;
@@ -75,6 +60,94 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
+
+        .toggle-group {
+          display: flex;
+          flex-direction: column;
+          gap: 32px;
+          .pin {
+            p {
+              margin-top: 16px;
+            }
+            input {
+              width: 38.8rem;
+            }
+          }
+          .toggle-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            label {
+              @include l.myTitle16();
+              color: l.$grey10;
+            }
+          }
+
+          .toggle-btn {
+            width: 51px;
+            height: 31px;
+            border-radius: 50px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+          }
+
+          .toggle-btn.on {
+            background-color: l.$main1;
+          }
+
+          .toggle-btn.off {
+            background-color: l.$grey7;
+          }
+
+          .toggle-knob {
+            width: 27px;
+            height: 27px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            right: 22px;
+            transition: transform 0.3s;
+          }
+
+          .toggle-btn.on .toggle-knob {
+            transform: translateX(20px);
+          }
+
+          .toggle-btn.off .toggle-knob {
+            transform: translateX(0);
+          }
+        }
+
+        .language-method {
+          .language-select {
+            position: relative;
+          }
+          .language-list {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            cursor: pointer;
+          }
+          p {
+            @include l.myTitle16(400, left);
+            color: l.$grey10;
+          }
+
+          .language-btn {
+            margin-bottom: 12px;
+            cursor: pointer;
+          }
+
+          .language-title {
+            display: flex;
+            justify-content: space-between;
+          }
+        }
 
         /* Avatar Preview */
         .avatar-preview {
@@ -91,19 +164,14 @@
 
           .change-btn {
             position: absolute;
-            top: 130px;
-            left: 470px;
-            padding: 6px 14px;
-            font-size: 13px;
-            border-radius: 4px;
-            background: #2f2f2f;
-            border: 1px solid #555;
-            color: #fff;
-            cursor: pointer;
-
-            &:hover {
-              background: #444;
+            top: 140px;
+            right: 93px;
+            img {
+              width: 76px;
+              height: 32px;
             }
+
+            cursor: pointer;
           }
         }
 
@@ -130,7 +198,7 @@
           input {
             @include l.myTitle16();
             padding: 12px 24px;
-
+            outline: none;
             border-radius: 4px;
             border: 1px solid l.$grey9;
             background: l.$grey10;
@@ -192,7 +260,7 @@
             &.del {
               @include l.myTitle16();
               background: none;
-              border:1px solid l.$grey7;
+              border: 1px solid l.$grey7;
               border-radius: 4px;
               color: l.$grey7;
 
@@ -206,7 +274,7 @@
               background: l.$sub1;
               border: none;
               color: l.$grey10;
-               border-radius: 4px;
+              border-radius: 4px;
 
               &:hover {
                 background: #f6121d;

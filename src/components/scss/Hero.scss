@@ -1,0 +1,126 @@
+//   @use "../../App.scss" as *;
+
+//   .hero {
+//       position: relative;
+
+//       .hero_inner {
+//         margin-top: 100px;
+//           display: flex;
+//           flex-direction: column;
+//           align-items: center;
+
+//           .Netflix_logo {
+//               max-width: 697px;
+//               width: 100%;
+//           }
+//       }
+//   }
+// .hero_N_star {
+//   margin-top: 8rem;
+
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center; // ⭐ 버튼을 문구 기준으로 가운데
+
+//   .hero_desc {
+//     @include myTitle24($fw: 500);
+//     text-align: center;
+//   }
+
+//   .N_star_btn a {
+//     margin-top: 2.4rem;
+//     display: inline-flex;
+//     justify-content: center;
+//     align-items: center;
+
+//     width: 244px;
+//     height: 44px;
+//     background: $main1;
+//     border-radius: 8px;
+
+//     @include myTitle20($fw: 400, $ta: center);
+//     color: $grey10;
+//   }
+// }
+@use "../../App.scss" as *;
+
+/* HERO*/
+.hero {
+  position: relative; 
+  width: 100%;
+  min-height: 80vh;
+
+  display: flex;
+  justify-content: center;
+    
+  overflow: visible; 
+}
+
+/* HERO INNER*/
+.hero_inner {
+  position: relative;
+  z-index: 1;             // 큰 로고보다 위
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+    margin-top: 10rem;
+}
+
+/*  상단 작은 NETFLIX 로고 */
+.Netflix_logo {
+  width: 100%;
+  max-width: 697px; 
+}
+
+/* 문구 + 버튼 영역*/
+.hero_N_star {
+  margin-top: 8rem;  
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;  
+
+  .hero_desc {
+    @include myTitle24($fw: 500);
+    color: $grey10;
+    text-align: center;  
+  }
+
+  .N_star_btn {
+    margin-top: 2.4rem;
+
+
+    a {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+
+      width: 244px;
+      height: 44px;
+
+      background: $main1;
+      border-radius: 8px;
+
+      @include myTitle20($fw: 400, $ta: center);
+      color: $grey10;
+      text-decoration: none;
+    }
+  }
+}
+
+/* 하단 큰 NETFLIX 로고*/
+.Netflix_logo_Big {
+  position: absolute;
+  left: 50%;
+  bottom: -30rem;        
+  transform: translateX(-50%);
+  z-index: 0;
+  pointer-events: none;
+
+  img {
+    width: 1428px;     
+    max-width: 120vw;
+    pointer-events: none;
+  }
+}

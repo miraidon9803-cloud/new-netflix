@@ -5,6 +5,7 @@ import Acount from "./Acount"; // Acount 컴포넌트를 임포트
 import { useState } from "react";
 import AppPopup from "./AppPopup";
 import MemberPopup from "./MemberPopup";
+import { useProfileStore } from "../store/Profile";
 
 const MypageMain = () => {
   const user = useAuthStore((s) => s.user);
@@ -12,6 +13,10 @@ const MypageMain = () => {
   const { onLogout } = useAuthStore();
   const membership = user?.membership;
   const navigate = useNavigate();
+  const { profiles, activeProfileId } = useProfileStore();
+  const activeProfile = profiles.find((p) => p.id === activeProfileId);
+
+  if (!activeProfile) return null;
 
   const handleLogout = () => {
     onLogout();
@@ -19,7 +24,7 @@ const MypageMain = () => {
   };
 
   const ProfilePage = () => {
-    const [showAccount, setShowAccount] = useState(false); // 계정 보이기/숨기기 상태 관리
+    const [showAccount, setShowAccount] = useState(false);
     const [showApp, setShowApp] = useState(false);
     const [showMember, setShowMember] = useState(false);
 
@@ -29,11 +34,11 @@ const MypageMain = () => {
 
     const handleAppClick = () => {
       setShowApp((prev) => !prev);
-    }
+    };
 
-    const handleMemberClick = () =>{
-      setShowMember((prev)=> !prev);
-    }
+    const handleMemberClick = () => {
+      setShowMember((prev) => !prev);
+    };
     return (
       <div className="inner-mypageMain">
         <div className="mypageMain-wrap">
@@ -46,7 +51,7 @@ const MypageMain = () => {
               <div>
                 <img src="/images/profile/케데헌3.png" alt="" />
               </div>
-              <p className="nickname">nickname</p>
+              <p className="nickname">{activeProfile.title}</p>
               <button className="profile-change">프로필변경</button>
             </div>
 
@@ -54,22 +59,27 @@ const MypageMain = () => {
               <div className="title-wrap">
                 <div className="content-title">
                   <p>나의 멤버십</p>
-                  <p className="membership-grade">{membership?.name}</p>
+                  <p className="membership-grade">
+                    {membership?.name ?? "멤버십 없음"}
+                  </p>
                 </div>
-                <p onClick={handleMemberClick} className="content-out">변경 및 해지</p>
+                <p onClick={handleMemberClick} className="content-out">
+                  변경 및 해지
+                </p>
               </div>
 
-              <ul>
+              <ul className="profile-section">
                 <li>현재 프로필 관리</li>
                 <li onClick={handleAccountClick}>계정</li>
                 <li onClick={handleAppClick}>앱 설정</li>
                 <li>고객센터</li>
-
-                {/* showAccount 상태에 따라 Acount 모달을 렌더링 */}
-                {showAccount && <Acount onClose={() => setShowAccount(false)} />}
-                {showApp && <AppPopup onClose={() => setShowApp(false)} />}
-                {showMember && <MemberPopup onClose={() => setShowMember(false)} />}
               </ul>
+              {/* showAccount 상태에 따라 Acount 모달을 렌더링 */}
+              {showAccount && <Acount onClose={() => setShowAccount(false)} />}
+              {showApp && <AppPopup onClose={() => setShowApp(false)} />}
+              {showMember && (
+                <MemberPopup onClose={() => setShowMember(false)} />
+              )}
 
               <button onClick={handleLogout} className="logout-btn">
                 로그아웃

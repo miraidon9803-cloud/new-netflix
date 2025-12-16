@@ -1,98 +1,22 @@
-import { useMemo, useState, useRef, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { profile } from "../data/profile";
 import { useProfileStore } from "../store/Profile";
 import "./scss/ProfilePopup.scss";
-import ToggleDropdown from "./ToggleDropdown";
+import AvatarSelPopup from "./AvatarSelPopup";
 
 interface ProfileCreateModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-const languages = ["한국어", "English", "日本語", "中文"];
-
-const LanguageDropdown = () => {
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("한국어");
-  const ref = useRef<HTMLDivElement>(null);
-
-  return (
-    <div className="language-wrap">
-      <p>기본 음성 및 자막</p>
-
-      <div className="language" ref={ref}>
-        <button
-          type="button"
-          className="language-btn"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-        >
-          {selected}
-          <span className={`arrow ${open ? "open" : ""}`}>▾</span>
-        </button>
-
-        {open && (
-          <ul className="language-list">
-            {languages.map((lang) => (
-              <li key={lang}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelected(lang);
-                    setOpen(false);
-                  }}
-                >
-                  {lang}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
-  );
-};
-
-/* =======================
-   Age Restriction Dropdown
-======================= */
-const AgeRestrictionDropdown = () => {
-  const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("키즈");
-
-  const ageOptions = {
-    "키즈": "키즈",
-    "7+": "7+",
-    "12+": "12+"
-  };
-
-  return (
-    <div className="age-restriction-wrap">
-      <span>시청 제한</span>
-      <button
-        type="button"
-        className="dropdown-btn"
-        onClick={() => setOpen((prev) => !prev)}
-        aria-expanded={open}
-      >
-        {selected}
-        <span className={`arrow ${open ? "open" : ""}`}>▾</span>
-      </button>
-
-      {open && (
-        <ul className="dropdown-list">
-          {Object.entries(ageOptions).map(([key, label]) => (
-            <li key={key}>
-              <button type="button" onClick={() => setSelected(key)}>
-                {label}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-};
+const AGE_LEVELS = [
+  { label: "키즈", value: 0 },
+  { label: "전체관람가", value: 1 },
+  { label: "7+", value: 2 },
+  { label: "12+", value: 3 },
+  { label: "15+", value: 4 },
+  { label: "19+", value: 5 },
+] as const;
 
 /* =======================
    Profile Popup
@@ -102,33 +26,41 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
 
   const [name, setName] = useState("");
   const [selectedAvatarKey, setSelectedAvatarKey] = useState(profile[0].key);
-  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+  const [avatarPopupOpen, setAvatarPopupOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [isAdult, setIsAdult] = useState(false);
-  const [isLock, setIsLock] = useState(false);
 
-  const selectedAvatar = useMemo(
-    () => profile.find((a) => a.key === selectedAvatarKey) ?? profile[0],
-    [selectedAvatarKey]
-  );
+  const [adultOnly, setAdultOnly] = useState(false);
+  const [ageLimit, setAgeLimit] = useState<number>(1); // 기본: 전체관람가
 
-  const adultOptions = {
-    true: "성인 콘텐츠 허용",
-    false: "성인 콘텐츠 차단",
-  };
+  const [profileLock, setProfileLock] = useState(false);
+  const [pin, setPin] = useState("");
+  const [pinConfirm, setPinConfirm] = useState("");
 
-  const lockOptions = {
-    true: "프로필 잠금",
-    false: "프로필 잠금 해제",
-  };
+  const [language, setLanguage] = useState<
+    "한국어" | "日本語" | "中文" | "English"
+  >("한국어");
+  const [openlanguage, setOpenlanguage] = useState(false);
+
+  /* 선택된 아바타 */
+  const selectedAvatar = useMemo(() => {
+    return profile.find((a) => a.key === selectedAvatarKey);
+  }, [selectedAvatarKey]);
 
   const validateForm = () => {
     const trimmed = name.trim();
     if (!trimmed) return "프로필 이름을 입력해주세요.";
     if (trimmed.length > 10) return "프로필 이름은 10자 이내로 입력해주세요.";
     if (profiles.length >= 5) return "프로필은 최대 5개까지 만들 수 있어요.";
-    if (profiles.some((p) => p.title === trimmed)) return "이미 같은 이름의 프로필이 있어요.";
+    if (profiles.some((p) => p.title === trimmed))
+      return "이미 같은 이름의 프로필이 있어요.";
+
+    if (profileLock) {
+      if (!/^\d{4}$/.test(pin))
+        return "잠금 비밀번호는 숫자 4자리로 입력해주세요.";
+      if (pin !== pinConfirm) return "잠금 비밀번호가 일치하지 않습니다.";
+    }
+
     return null;
   };
 
@@ -139,7 +71,19 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
 
     try {
       setSubmitting(true);
-      await createProfile({ title: name.trim(), avatarKey: selectedAvatarKey, poster: selectedAvatar.poster });
+
+      await createProfile({
+        title: name.trim(),
+        avatarKey: selectedAvatarKey,
+        poster: selectedAvatar.poster,
+
+        adultOnly,
+        ageLimit,
+        profileLock,
+        language,
+        pin: profileLock ? pin : "",
+      });
+
       handleClose();
     } catch (e: any) {
       setErrorMsg(e?.message ?? "프로필 생성에 실패했습니다.");
@@ -150,16 +94,12 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
 
   const handleClose = () => {
     if (submitting) return;
-    setShowAvatarPicker(false);
+    setAvatarPopupOpen(false);
     onClose();
   };
 
   useEffect(() => {
-    if (open) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = open ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
@@ -181,17 +121,16 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
           <div className="modal-wrap">
             <div className="avatar-preview">
               <img src={selectedAvatar.poster} alt={selectedAvatar.title} />
-              <button
-                type="button"
+              <p
                 className="change-btn"
-                onClick={() => setShowAvatarPicker((v) => !v)}
+                onClick={() => setAvatarPopupOpen(true)}
                 disabled={submitting}
               >
-                사진 변경
-              </button>
+                <img src="/images/change-btn.png" alt="" />
+              </p>
             </div>
 
-            <label className="field">
+            <div className="field">
               <div className="profile-name">
                 <span>프로필 이름</span>
                 <input
@@ -203,23 +142,127 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
                 />
               </div>
 
-              <AgeRestrictionDropdown />
-              {/* <ToggleDropdown
-                label="시청 제한"
-                value={isAdult}
-                onClick={() => setIsAdult((prev) => !prev)}
-                options={adultOptions}
-              /> */}
+              <div className="toggle-group">
+                {/* 시청 제한 */}
+                <div className="toggle-option">
+                  <label>시청 제한</label>
+                  <button
+                    type="button"
+                    className={`toggle-btn ${adultOnly ? "on" : "off"}`}
+                    onClick={() => setAdultOnly((v) => !v)}
+                  >
+                    <span className="toggle-knob" />
+                  </button>
+                </div>
 
-              <ToggleDropdown
-                label="프로필 잠금"
-                value={isLock}
-                onClick={() => setIsLock((prev) => !prev)}
-                options={lockOptions}
-              />
+                {adultOnly && (
+                  <div className="age-limit-wrap">
+                    <div className="age-labels">
+                      {AGE_LEVELS.map((item) => (
+                        <span
+                          key={item.value}
+                          className={ageLimit === item.value ? "active" : ""}
+                        >
+                          {item.label}
+                        </span>
+                      ))}
+                    </div>
 
-              <LanguageDropdown />
-            </label>
+                    <input
+                      type="range"
+                      min={0}
+                      max={AGE_LEVELS.length - 1}
+                      step={1}
+                      value={ageLimit}
+                      onChange={(e) => setAgeLimit(Number(e.target.value))}
+                      className="age-slider"
+                    />
+                  </div>
+                )}
+
+                {/* 프로필 잠금 */}
+                <div className="toggle-option">
+                  <label>프로필 잠금</label>
+                  <button
+                    type="button"
+                    className={`toggle-btn ${profileLock ? "on" : "off"}`}
+                    onClick={() => setProfileLock((v) => !v)}
+                  >
+                    <span className="toggle-knob" />
+                  </button>
+                </div>
+
+                {profileLock && (
+                  <div className="pin">
+                    <p>잠금 비밀번호 설정</p>
+                    <input
+                      value={pin}
+                      onChange={(e) =>
+                        setPin(e.target.value.replace(/\D/g, "").slice(0, 4))
+                      }
+                      placeholder="숫자 4자리"
+                      inputMode="numeric"
+                    />
+
+                    <p>잠금 비밀번호 재확인</p>
+                    <input
+                      value={pinConfirm}
+                      onChange={(e) =>
+                        setPinConfirm(
+                          e.target.value.replace(/\D/g, "").slice(0, 4)
+                        )
+                      }
+                      placeholder="숫자 4자리"
+                      inputMode="numeric"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="language-method">
+                <p>기본 음성 및 자막</p>
+
+                <div className="language-select">
+                  <p
+                    className={`language-btn ${openlanguage ? "open" : ""}`}
+                    onClick={() => setOpenlanguage((v) => !v)}
+                  >
+                    <div className="language-title">
+                      <span>{language}</span>
+                      <p>
+                        <img src="/images/profile-arrow.png" alt="" />
+                      </p>
+                    </div>
+                  </p>
+
+                  {openlanguage && (
+                    <>
+                      <div
+                        className="dropdown-overlay"
+                        onClick={() => setOpenlanguage(false)}
+                      />
+                      <ul className="language-list">
+                        {(["한국어", "日本語", "中文", "English"] as const).map(
+                          (p) => (
+                            <li key={p}>
+                              <p
+                                className={language === p ? "active" : ""}
+                                onClick={() => {
+                                  setLanguage(p);
+                                  setOpenlanguage(false);
+                                }}
+                              >
+                                {p}
+                              </p>
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
 
             <div className="btn-wrap">
               <button
@@ -240,30 +283,13 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
           </div>
         </div>
 
-        {/* avatar picker */}
-        {showAvatarPicker && (
-          <div className="avatar-section">
-            <p className="avatar-title">아바타 선택</p>
-            <div className="avatar-grid">
-              {profile.map((a) => (
-                <button
-                  key={a.id}
-                  type="button"
-                  className={
-                    a.key === selectedAvatarKey ? "avatar active" : "avatar"
-                  }
-                  onClick={() => {
-                    setSelectedAvatarKey(a.key);
-                    setShowAvatarPicker(false);
-                  }}
-                >
-                  <img src={a.poster} alt={a.title} />
-                  <span>{a.title}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Avatar 선택 팝업 */}
+        <AvatarSelPopup
+          open={avatarPopupOpen}
+          selectedKey={selectedAvatarKey}
+          onSelect={setSelectedAvatarKey}
+          onClose={() => setAvatarPopupOpen(false)}
+        />
 
         {errorMsg && <p className="error">{errorMsg}</p>}
       </div>

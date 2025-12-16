@@ -50,4 +50,6 @@ export interface AuthStore {
   onKakaoLogin: (navigate: (path: string) => void) => Promise<void>;
   onLogout: () => Promise<void>;
   saveMembership: (membership: MembershipInfo) => Promise<void>;
+  cancelMembership: () => Promise<void>;
+  updateProfile: (data: { phone: string }) => Promise<void>;
 }

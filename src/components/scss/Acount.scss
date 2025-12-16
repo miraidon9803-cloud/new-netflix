@@ -11,99 +11,96 @@
   /* 수평 중앙 정렬 */
   background: rgba(0, 0, 0, 0.75);
 
+  .acount-wrap {
+    width: 1000px;
+    height: 700px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: l.$grey2;
+    border-radius: 8px;
+  }
 
-.acount-wrap {
-  width: 1000px;
-  height: 700px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: l.$grey2;
-  border-radius: 8px;
-}
+  .acount-content {
+    width: 952px;
+    height: 652px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-.acount-content {
-  width: 952px;
-  height: 652px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    /* 가로 방향 중앙 정렬 */
+    .acount-header {
+      position: relative;
 
-  /* 가로 방향 중앙 정렬 */
-  .acount-header {
-    position: relative;
+      h1 {
+        @include l.myTitle20();
+        color: l.$grey10;
+        margin-bottom: 32px;
+      }
 
-    h1 {
-      @include l.myTitle20();
-      color: l.$grey10;
-      margin-bottom: 32px;
+      .close {
+        position: absolute;
+        top: 0;
+        left: 470px;
+        background: none;
+        border: none;
+        color: #aaa;
+        font-size: 20px;
+        cursor: pointer;
+
+        &:hover {
+          color: #fff;
+        }
+      }
     }
 
-    .close {
-      position: absolute;
-      top: 0;
-      left: 470px;
-      background: none;
-      border: none;
-      color: #aaa;
-      font-size: 20px;
-      cursor: pointer;
+    form {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
 
-      &:hover {
-        color: #fff;
+      p {
+        @include l.myTitle16();
+        text-align: left;
+        width: 358px;
+      }
+
+      input {
+        width: 35.8rem;
+        padding: 12px 24px;
+        margin-bottom: 16px;
+        border-radius: 4px;
+        outline: none;
+        border: 1px solid l.$grey9;
       }
     }
   }
 
-
-  form {
+  .btn-wrap {
+    width: 100%;
+    margin-top: 130px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    gap: 12px;
 
-    p {
+    .btn {
       @include l.myTitle16();
-      text-align: left;
-      width: 358px;
-    }
-
-
-    input {
-      width: 35.8rem;
       padding: 12px 24px;
-      margin-bottom: 16px;
+    }
+
+    .del {
+      background: none;
+      border: 1px solid l.$grey7;
+      color: l.$grey7;
       border-radius: 4px;
-      outline: none;
-      border: 1px solid l.$grey9;
+    }
+
+    .submit {
+      background: l.$sub1;
+      color: l.$grey10;
+      border: none;
+      border-radius: 4px;
     }
   }
-}
-
-.btn-wrap {
-  width: 100%;
-  margin-top: 130px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  .btn {
-    padding: 12px 24px;
-  }
-
-  .del {
-    background: none;
-    border: 1px solid l.$grey7;
-    color: l.$grey7;
-    border-radius: 4px;
-  }
-
-  .submit {
-    background: l.$sub1;
-    color: l.$grey10;
-    border: none;
-    border-radius: 4px;
-  }
-
-}
 }

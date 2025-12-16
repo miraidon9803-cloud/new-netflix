@@ -80,25 +80,25 @@
         .content-out:hover {
           color: l.$grey10;
         }
-      }
-      ul {
-        display: flex;
-        width: 100%;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-
-        li {
-          @include l.myTitle20();
-          text-align: left;
-          color: l.$grey10;
-          padding: 18px 24px;
-          background-color: l.$grey2;
+        .profile-section {
+          display: flex;
           width: 100%;
-          border-radius: 8px;
-        }
-        li:hover {
-          background-color: l.$grey3;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+
+          li {
+            @include l.myTitle20();
+            text-align: left;
+            color: l.$grey10;
+            padding: 18px 24px;
+            background-color: l.$grey2;
+            width: 100%;
+            border-radius: 8px;
+          }
+          li:hover {
+            background-color: l.$grey3;
+          }
         }
       }
     }
