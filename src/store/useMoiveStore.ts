@@ -1,60 +1,118 @@
 import { create } from "zustand";
-// import type { MovieState } from "../types/movie";np
-//TMDB 키
+import type { MovieState } from "../types/movie";
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
 export const useMovieStore = create<MovieState>((set) => ({
-  // 인기 영화를 저장할 배열
   movies: [],
   videos: [],
+  seasons: [],
+  episodes: [],
 
-  //인기 영화를 가져올 메서드
+  // ✅ 추가: 영화 상세
+  movieDetail: null,
+  onFetchMovieDetail: async (id: string) => {
+    if (!API_KEY) return;
+
+    const res = await fetch(
+      `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=ko-KR`
+    );
+    const data = await res.json();
+    set({ movieDetail: data });
+  },
+
+  // ✅ 기존: TV 상세
+  tvDetail: null,
+  onFetchTvDetail: async (id: string) => {
+    if (!API_KEY) return;
+
+    const res = await fetch(
+      `https://api.themoviedb.org/3/tv/${id}?api_key=${API_KEY}&language=ko-KR`
+    );
+    const data = await res.json();
+    set({ tvDetail: data });
+  },
+
+  // 인기 영화
   onFetchPopular: async () => {
+    if (!API_KEY) return;
     const res = await fetch(
       `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=ko-KR&page=1`
     );
     const data = await res.json();
-    console.log("인기영화", data.results);
 
-    //연령, 제목 이미지
     const movieExtra = await Promise.all(
-      data.results.map(async (movie) => {
-        //1)연령 등급 요청
+      data.results.map(async (movie: any) => {
         const resAge = await fetch(
           `https://api.themoviedb.org/3/movie/${movie.id}/release_dates?api_key=${API_KEY}`
         );
         const dataAge = await resAge.json();
-        console.log("나이가 맞니", dataAge.results);
-        const krInfo = dataAge.results.find((item) => item.iso_3166_1 === "KR");
-        const cAge = krInfo?.release_dates?.[0].certification || "none";
+        const krInfo = dataAge.results?.find(
+          (item: any) => item.iso_3166_1 === "KR"
+        );
+        const cAge = krInfo?.release_dates?.[0]?.certification || "none";
 
-        //2)로고 이미지
         const resLogo = await fetch(
           `https://api.themoviedb.org/3/movie/${movie.id}/images?api_key=${API_KEY}`
         );
         const dataLogo = await resLogo.json();
-        console.log("로고이미지", dataLogo);
         const logo = dataLogo.logos?.[0]?.file_path || null;
 
-        return {
-          ...movie, //원래 영화 기본정보
-          cAge, // 추가한 연령 등급
-          logo,
-        };
+        return { ...movie, cAge, logo };
       })
     );
-    // set({ movies: data.results })
+
     set({ movies: movieExtra });
   },
+  tvRating: null,
+  onFetchTvRating: async (tvId: string) => {
+    if (!API_KEY) return;
 
-  onFetchVideo: async (id) => {
+    try {
+      const res = await fetch(
+        `https://api.themoviedb.org/3/tv/${tvId}/content_ratings?api_key=${API_KEY}`
+      );
+      const data = await res.json();
+
+      const results = data?.results ?? [];
+      const kr = results.find((r: any) => r.iso_3166_1 === "KR")?.rating;
+      const us = results.find((r: any) => r.iso_3166_1 === "US")?.rating;
+      const first = results[0]?.rating;
+
+      set({ tvRating: kr ?? us ?? first ?? null });
+    } catch {
+      set({ tvRating: null });
+    }
+  },
+
+  // 영화 비디오
+  onFetchVideo: async (id: string) => {
+    if (!API_KEY) return [];
     const res = await fetch(
       `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${API_KEY}&language=ko-KR`
     );
     const data = await res.json();
-    console.log("비디오가져오기", data.results);
-    set({ videos: data.results });
-    return data.results;
+    set({ videos: data.results ?? [] });
+    return data.results ?? [];
+  },
+
+  // TV 시즌 목록
+  onFetchSeason: async (id: string) => {
+    if (!API_KEY) return;
+    const res = await fetch(
+      `https://api.themoviedb.org/3/tv/${id}?api_key=${API_KEY}&language=ko-KR`
+    );
+    const data = await res.json();
+    set({ seasons: data.seasons ?? [] });
+  },
+
+  // TV 에피소드 목록
+  onFetchEpisode: async (id: string, season: number) => {
+    if (!API_KEY) return;
+    const res = await fetch(
+      `https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${API_KEY}&language=ko-KR`
+    );
+    const data = await res.json();
+    set({ episodes: data.episodes ?? [] });
   },
 }));

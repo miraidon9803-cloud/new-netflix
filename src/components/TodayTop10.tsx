@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from 'react';
-import { useNetflixStore } from '../store/NetflixStore';
-import './scss/Top10.scss';
+import React, { useEffect, useRef } from "react";
+import { useNetflixStore } from "../store/NetflixStore";
+import "./scss/Top10.scss";
+import { Link } from "react-router-dom";
 
-const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
+const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 
 const TodayTop10 = () => {
   const { netflixTop10, onFetchNetflixTop10 } = useNetflixStore();
@@ -39,8 +40,8 @@ const TodayTop10 = () => {
       }
     };
 
-    el.addEventListener('wheel', onWheel, { passive: false });
-    return () => el.removeEventListener('wheel', onWheel);
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
   // 드래그 시작
@@ -53,7 +54,7 @@ const TodayTop10 = () => {
     isDragging.current = true;
     startX.current = e.clientX;
     startScrollLeft.current = el.scrollLeft;
-    el.classList.add('is-dragging');
+    el.classList.add("is-dragging");
   };
 
   // 드래그 중
@@ -71,7 +72,7 @@ const TodayTop10 = () => {
     if (!el) return;
 
     isDragging.current = false;
-    el.classList.remove('is-dragging');
+    el.classList.remove("is-dragging");
   };
 
   return (
@@ -84,11 +85,14 @@ const TodayTop10 = () => {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={stopDragging}
-        onMouseLeave={stopDragging}>
+        onMouseLeave={stopDragging}
+      >
         {netflixTop10.map((item, index) => (
           <li key={item.id} className="top10Item">
             <span className="rank">{index + 1}</span>
-            <img src={`${IMG_BASE}${item.poster_path}`} alt={item.name} />
+            <Link to={`/tv/${item.id}`}>
+              <img src={`${IMG_BASE}${item.poster_path}`} alt={item.name} />
+            </Link>
           </li>
         ))}
       </ul>

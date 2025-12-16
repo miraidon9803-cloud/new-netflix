@@ -15,7 +15,7 @@ import MovieTop10 from "../components/MovieTop10";
 import SFNFantasy from "../components/SFNFantasy";
 import TrandingSeries from "../components/TrandingSeries";
 import ChoiceContentTxt from "../components/ChoiceContentTxt";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 const Main = () => {
   // const navigate = useNavigate();

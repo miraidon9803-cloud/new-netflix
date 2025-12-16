@@ -9,6 +9,7 @@ import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
 import ProfileSelect from "./pages/ProfileSelect";
 import MypageMain from "./pages/MypageMain";
+import NetDatail from "./pages/NetDetail";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -20,7 +21,7 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/profiles" element={<ProfileSelect />} />
+      <Route path="/profile" element={<ProfileSelect />} />
 
       <Route
         path="/"
@@ -35,6 +36,8 @@ function App() {
         <Route path="mypage" element={<MypageMain />} />
         <Route path="mypage/profile" element={<ProfileSelect />} />
         <Route path="auth" element={<FullLogin />} />
+
+        <Route path="/tv/:id" element={<NetDatail />} />
       </Route>
     </Routes>
   );

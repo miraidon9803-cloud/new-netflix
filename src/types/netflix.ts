@@ -11,6 +11,7 @@ export interface MediaItem {
   first_air_date?: string; // TV
   release_date?: string; // Movie
   adult?: boolean;
+  scr: string;
 }
 
 // 넷플릭스 Top10도 같은 형태로 쓸거면 재사용해도 되고,
