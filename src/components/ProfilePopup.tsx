@@ -4,9 +4,17 @@ import { useProfileStore } from "../store/Profile";
 import "./scss/ProfilePopup.scss";
 import AvatarSelPopup from "./AvatarSelPopup";
 
-interface ProfileCreateModalProps {
+type Language = "한국어" | "日本語" | "中文" | "English";
+
+interface ProfilePopupProps {
   open: boolean;
   onClose: () => void;
+
+  /** 기본 create */
+  mode?: "create" | "edit";
+
+  /** edit일 때 수정 대상 */
+  profileId?: string;
 }
 
 const AGE_LEVELS = [
@@ -18,11 +26,22 @@ const AGE_LEVELS = [
   { label: "19+", value: 5 },
 ] as const;
 
-/* =======================
-   Profile Popup
-======================= */
-const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
-  const { profiles, createProfile } = useProfileStore();
+const ProfilePopup: React.FC<ProfilePopupProps> = ({
+  open,
+  onClose,
+  mode = "create",
+  profileId,
+}) => {
+  const profiles = useProfileStore((s) => s.profiles);
+  const createProfile = useProfileStore((s) => s.createProfile);
+  const updateProfile = useProfileStore((s) => s.updateProfile); // ✅ 스토어에 추가 필요
+
+  const isEdit = mode === "edit";
+
+  const editingProfile = useMemo(() => {
+    if (!isEdit || !profileId) return null;
+    return profiles.find((p) => p.id === profileId) ?? null;
+  }, [isEdit, profileId, profiles]);
 
   const [name, setName] = useState("");
   const [selectedAvatarKey, setSelectedAvatarKey] = useState(profile[0].key);
@@ -31,29 +50,69 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const [adultOnly, setAdultOnly] = useState(false);
-  const [ageLimit, setAgeLimit] = useState<number>(1); // 기본: 전체관람가
+  const [ageLimit, setAgeLimit] = useState<number>(1);
 
   const [profileLock, setProfileLock] = useState(false);
   const [pin, setPin] = useState("");
   const [pinConfirm, setPinConfirm] = useState("");
 
-  const [language, setLanguage] = useState<
-    "한국어" | "日本語" | "中文" | "English"
-  >("한국어");
+  const [language, setLanguage] = useState<Language>("한국어");
   const [openlanguage, setOpenlanguage] = useState(false);
 
-  /* 선택된 아바타 */
   const selectedAvatar = useMemo(() => {
-    return profile.find((a) => a.key === selectedAvatarKey);
+    return profile.find((a) => a.key === selectedAvatarKey) ?? profile[0];
   }, [selectedAvatarKey]);
+
+  // ✅ create / edit 값 초기화
+  useEffect(() => {
+    if (!open) return;
+
+    setErrorMsg(null);
+    setAvatarPopupOpen(false);
+    setOpenlanguage(false);
+
+    if (isEdit) {
+      if (!editingProfile) return;
+
+      setName(editingProfile.title ?? "");
+      setSelectedAvatarKey(editingProfile.avatarKey ?? profile[0].key);
+
+      setAdultOnly((editingProfile as any).adultOnly ?? false);
+      setAgeLimit((editingProfile as any).ageLimit ?? 1);
+      setProfileLock((editingProfile as any).profileLock ?? false);
+      setLanguage(((editingProfile as any).language as Language) ?? "한국어");
+
+      setPin("");
+      setPinConfirm("");
+    } else {
+      setName("");
+      setSelectedAvatarKey(profile[0].key);
+      setAdultOnly(false);
+      setAgeLimit(1);
+      setProfileLock(false);
+      setPin("");
+      setPinConfirm("");
+      setLanguage("한국어");
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const validateForm = () => {
     const trimmed = name.trim();
     if (!trimmed) return "프로필 이름을 입력해주세요.";
     if (trimmed.length > 10) return "프로필 이름은 10자 이내로 입력해주세요.";
-    if (profiles.length >= 5) return "프로필은 최대 5개까지 만들 수 있어요.";
-    if (profiles.some((p) => p.title === trimmed))
-      return "이미 같은 이름의 프로필이 있어요.";
+
+    // create일 때만 개수 제한/중복 체크 강하게
+    // edit일 때는 같은 이름 유지 허용(본인 제외 중복만 막기)
+    if (!isEdit && profiles.length >= 5)
+      return "프로필은 최대 5개까지 만들 수 있어요.";
+
+    const duplicate = profiles.some((p) => {
+      if (isEdit && profileId && p.id === profileId) return false; // 자기 자신 제외
+      return p.title === trimmed;
+    });
+    if (duplicate) return "이미 같은 이름의 프로필이 있어요.";
 
     if (profileLock) {
       if (!/^\d{4}$/.test(pin))
@@ -61,10 +120,13 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
       if (pin !== pinConfirm) return "잠금 비밀번호가 일치하지 않습니다.";
     }
 
+    // edit 모드인데 대상 없으면 방어
+    if (isEdit && !editingProfile) return "수정할 프로필을 찾을 수 없습니다.";
+
     return null;
   };
 
-  const handleCreate = async () => {
+  const handleSubmit = async () => {
     setErrorMsg(null);
     const error = validateForm();
     if (error) return setErrorMsg(error);
@@ -72,21 +134,31 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
     try {
       setSubmitting(true);
 
-      await createProfile({
+      const payload = {
         title: name.trim(),
         avatarKey: selectedAvatarKey,
         poster: selectedAvatar.poster,
-
         adultOnly,
         ageLimit,
         profileLock,
         language,
         pin: profileLock ? pin : "",
-      });
+      };
+
+      if (isEdit) {
+        await updateProfile(profileId as string, payload);
+      } else {
+        await createProfile(payload as any);
+      }
 
       handleClose();
     } catch (e: any) {
-      setErrorMsg(e?.message ?? "프로필 생성에 실패했습니다.");
+      setErrorMsg(
+        e?.message ??
+          (isEdit
+            ? "프로필 수정에 실패했습니다."
+            : "프로필 생성에 실패했습니다.")
+      );
     } finally {
       setSubmitting(false);
     }
@@ -95,6 +167,7 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
   const handleClose = () => {
     if (submitting) return;
     setAvatarPopupOpen(false);
+    setOpenlanguage(false);
     onClose();
   };
 
@@ -106,14 +179,15 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
   }, [open]);
 
   if (!open) return null;
+  if (isEdit && !editingProfile) return null; // 대상 없으면 안 보여주기
 
   return (
     <div className="modal-dim" onClick={handleClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-body">
           <div className="modal-header">
-            <h2>현재 프로필 관리</h2>
-            <button className="modal-close" onClick={handleClose}>
+            <h2>{isEdit ? "프로필 수정" : "프로필 생성"}</h2>
+            <button className="modal-close" onClick={handleClose} type="button">
               ✕
             </button>
           </div>
@@ -121,13 +195,15 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
           <div className="modal-wrap">
             <div className="avatar-preview">
               <img src={selectedAvatar.poster} alt={selectedAvatar.title} />
-              <p
+
+              <button
+                type="button"
                 className="change-btn"
                 onClick={() => setAvatarPopupOpen(true)}
                 disabled={submitting}
               >
                 <img src="/images/change-btn.png" alt="" />
-              </p>
+              </button>
             </div>
 
             <div className="field">
@@ -143,13 +219,13 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
               </div>
 
               <div className="toggle-group">
-                {/* 시청 제한 */}
                 <div className="toggle-option">
                   <label>시청 제한</label>
                   <button
                     type="button"
                     className={`toggle-btn ${adultOnly ? "on" : "off"}`}
                     onClick={() => setAdultOnly((v) => !v)}
+                    disabled={submitting}
                   >
                     <span className="toggle-knob" />
                   </button>
@@ -176,17 +252,18 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
                       value={ageLimit}
                       onChange={(e) => setAgeLimit(Number(e.target.value))}
                       className="age-slider"
+                      disabled={submitting}
                     />
                   </div>
                 )}
 
-                {/* 프로필 잠금 */}
                 <div className="toggle-option">
                   <label>프로필 잠금</label>
                   <button
                     type="button"
                     className={`toggle-btn ${profileLock ? "on" : "off"}`}
                     onClick={() => setProfileLock((v) => !v)}
+                    disabled={submitting}
                   >
                     <span className="toggle-knob" />
                   </button>
@@ -202,6 +279,7 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
                       }
                       placeholder="숫자 4자리"
                       inputMode="numeric"
+                      disabled={submitting}
                     />
 
                     <p>잠금 비밀번호 재확인</p>
@@ -214,6 +292,7 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
                       }
                       placeholder="숫자 4자리"
                       inputMode="numeric"
+                      disabled={submitting}
                     />
                   </div>
                 )}
@@ -223,17 +302,19 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
                 <p>기본 음성 및 자막</p>
 
                 <div className="language-select">
-                  <p
+                  <button
+                    type="button"
                     className={`language-btn ${openlanguage ? "open" : ""}`}
                     onClick={() => setOpenlanguage((v) => !v)}
+                    disabled={submitting}
                   >
                     <div className="language-title">
                       <span>{language}</span>
-                      <p>
+                      <span>
                         <img src="/images/profile-arrow.png" alt="" />
-                      </p>
+                      </span>
                     </div>
-                  </p>
+                  </button>
 
                   {openlanguage && (
                     <>
@@ -245,7 +326,8 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
                         {(["한국어", "日本語", "中文", "English"] as const).map(
                           (p) => (
                             <li key={p}>
-                              <p
+                              <button
+                                type="button"
                                 className={language === p ? "active" : ""}
                                 onClick={() => {
                                   setLanguage(p);
@@ -253,7 +335,7 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
                                 }}
                               >
                                 {p}
-                              </p>
+                              </button>
                             </li>
                           )
                         )}
@@ -269,21 +351,22 @@ const ProfilePopup: React.FC<ProfileCreateModalProps> = ({ open, onClose }) => {
                 className="btn del"
                 onClick={handleClose}
                 disabled={submitting}
+                type="button"
               >
                 취소
               </button>
               <button
                 className="btn create"
-                onClick={handleCreate}
+                onClick={handleSubmit}
                 disabled={submitting}
+                type="button"
               >
-                {submitting ? "저장 중..." : "저장"}
+                {submitting ? "저장 중..." : isEdit ? "변경 저장" : "저장"}
               </button>
             </div>
           </div>
         </div>
 
-        {/* Avatar 선택 팝업 */}
         <AvatarSelPopup
           open={avatarPopupOpen}
           selectedKey={selectedAvatarKey}

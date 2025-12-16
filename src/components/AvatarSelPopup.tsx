@@ -16,16 +16,6 @@ const AvatarSelPopup: React.FC<AvatarPickerPopupProps> = ({
 }) => {
   if (!open) return null;
 
-  const chunkArray = <T,>(arr: T[], size: number): T[][] => {
-    const result: T[][] = [];
-    for (let i = 0; i < arr.length; i += size) {
-      result.push(arr.slice(i, i + size));
-    }
-    return result;
-  };
-
-  const avatarGroups = chunkArray(profile, 4);
-
   return (
     <div className="avatar-dim" onClick={onClose}>
       <div className="avatar-modal" onClick={(e) => e.stopPropagation()}>
@@ -36,29 +26,25 @@ const AvatarSelPopup: React.FC<AvatarPickerPopupProps> = ({
           </button>
         </div>
 
+        {/* ✅ SCSS의 Scroll Area 클래스 적용 */}
         <div className="avatar-content">
-          {avatarGroups.map((group, index) => (
-            <div key={index} className="avatar-section">
-              <h4 className="avatar-section-title">{group[0].key}</h4>
+          <p className="avatar-section-title">프로필을 선택하세요</p>
 
-              <ul className="avatar-grid">
-                {group.map((a) => (
-                  <li
-                    key={a.id}
-                    className={`avatar-item ${
-                      a.key === selectedKey ? "active" : ""
-                    }`}
-                    onClick={() => {
-                      onSelect(a.key);
-                      onClose();
-                    }}
-                  >
-                    <img src={a.poster} alt={a.key} />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {/* ✅ grid는 ul에 붙어야 4열 적용됩니다 */}
+          <ul className="avatar-grid">
+            {profile.map((item) => (
+              <li
+                key={item.key}
+                className="avatar-item"
+                onClick={() => onSelect(item.key)} // ✅ 클릭한 key로 선택
+              >
+                {/* (선택) 키/타이틀 표시하고 싶으면 */}
+                {/* <p className="avatar-key">{item.title}</p> */}
+
+                <img src={item.poster} alt={item.title} />
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
