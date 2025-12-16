@@ -1,0 +1,70 @@
+@use "../../App.scss" as *;
+
+.hero_bg {
+  width: 100%;
+  height: 100vh;
+  background-image: url("../images/landing_banner.png");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  max-width: none;
+  position: relative;
+
+  .hero_copy {
+    position: absolute;
+    top: 370px;
+    left: 240px;
+    @include myTitle32($fw: 600, $ta: left);
+
+    .hero_copy2 {
+      padding: 0 90px;
+    }
+  }
+
+  .Nstar_btn a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 244px;
+    height: 44px;
+    background: $main1;
+    border-radius: 8px;
+
+    @include myTitle20($fw: 400, $ta: center);
+    color: $grey10;
+
+    position: absolute;
+    bottom: 240px;
+    left: 600px;
+  }
+}
+
+.hero_banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 1440px;
+  background: #2E2E2E;
+  padding: 1.6rem 3.2rem;
+  border-radius: 8px;
+
+  .hero_banner-left {
+    display: flex;
+    align-items: center;
+
+    .popcon_ex {
+      padding: 0 2.8rem;
+
+      strong {
+        @include myTitle24($ta: left);
+        color: $grey10;
+      }
+
+      p {
+        @include myTitle20($fw: 500, $ta: left);
+        color: $grey10;
+      }
+    }
+  }
+}

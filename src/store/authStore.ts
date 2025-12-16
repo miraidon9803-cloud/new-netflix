@@ -5,6 +5,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   signInWithPopup,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { auth, db } from "../firebase/firebase";
 import {
@@ -73,12 +74,18 @@ export interface MembershipInfo {
 // Zustand 상태 타입
 interface AuthState {
   user: AppUser | null;
+  loading: boolean;
+  initAuth: () => () => void; // unsubscribe 반환
+
   onMember: (data: JoinData) => Promise<void>;
   onLogin: (email: string, password: string) => Promise<void>;
   onGoogleLogin: () => Promise<void>;
   onKakaoLogin: (navigate: (path: string) => void) => Promise<void>;
   onLogout: () => Promise<void>;
   saveMembership: (membership: MembershipInfo) => Promise<void>;
+
+  updateProfile: (data: { phone: string }) => Promise<void>;
+  cancelMembership: () => Promise<void>;
 }
 
 const googleProvider = new GoogleAuthProvider();
@@ -87,6 +94,39 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
+      loading: true,
+
+      initAuth: () => {
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+          try {
+            if (!firebaseUser) {
+              set({ user: null, loading: false });
+              return;
+            }
+
+            // Firestore에 저장된 유저 데이터 가져오기
+            const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+
+            if (userDoc.exists()) {
+              set({ user: userDoc.data() as AppUser, loading: false });
+            } else {
+              // 문서 없으면 기본 유저 구성
+              const defaultUser: AppUser = {
+                uid: firebaseUser.uid,
+                email: firebaseUser.email || "",
+                phone: "",
+                createdAt: new Date(),
+              };
+              set({ user: defaultUser, loading: false });
+            }
+          } catch (e) {
+            console.error("initAuth 실패:", e);
+            set({ user: null, loading: false });
+          }
+        });
+
+        return unsubscribe;
+      },
 
       // 회원가입
       onMember: async ({ email, password, phone }) => {

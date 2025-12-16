@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./scss/Header.scss";
 import SearchModal from "./SearchModal";
 
@@ -16,15 +16,16 @@ const mainMenu: MenuItem[] = [
 ];
 
 const Header = () => {
+  const location = useLocation();
+  const isLand = location.pathname === "/land";
+  const isAuth = location.pathname === "/auth";
+
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const handleSearchOpen = () => {
-    setIsSearchOpen(true);
-  };
+  const handleSearchOpen = () => setIsSearchOpen(true);
+  const handleSearchClose = () => setIsSearchOpen(false);
 
-  const handleSearchClose = () => {
-    setIsSearchOpen(false);
-  };
+  const hideHeaderUI = isLand || isAuth;
 
   return (
     <>
@@ -37,44 +38,48 @@ const Header = () => {
               </Link>
             </h1>
 
-            <ul className="main-menu">
-              {mainMenu.map((m) => (
-                <li className="main-text" key={m.id}>
-                  <Link to={m.path}>{m.title}</Link>
+            {!hideHeaderUI && (
+              <ul className="main-menu">
+                {mainMenu.map((m) => (
+                  <li className="main-text" key={m.id}>
+                    <Link to={m.path}>{m.title}</Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {!hideHeaderUI && (
+            <div className="header-right">
+              <ul>
+                <li>
+                  <Link to="/bell">
+                    <img src="/images/bell-btn.png" alt="bell" />
+                  </Link>
                 </li>
-              ))}
-            </ul>
-          </div>
 
-          <div className="header-right">
-            <ul>
-              <li>
-                <Link to="/bell">
-                  <img src="/images/bell-btn.png" alt="bell" />
-                </Link>
-              </li>
+                <li>
+                  <button
+                    className="search-btn"
+                    onClick={handleSearchOpen}
+                    aria-label="검색"
+                    type="button"
+                  >
+                    <img src="/images/search-btn.png" alt="search" />
+                  </button>
+                </li>
 
-              <li>
-                <button
-                  className="search-btn"
-                  onClick={handleSearchOpen}
-                  aria-label="검색"
-                >
-                  <img src="/images/search-btn.png" alt="search" />
-                </button>
-              </li>
-
-              <li>
-                <Link to="/mypage">
-                  <img src="/images/ham-btn.png" alt="ham" />
-                </Link>
-              </li>
-            </ul>
-          </div>
+                <li>
+                  <Link to="/mypage">
+                    <img src="/images/ham-btn.png" alt="ham" />
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
       </header>
 
-      {/* Search Modal */}
       {isSearchOpen && <SearchModal onClose={handleSearchClose} />}
     </>
   );
