@@ -12,71 +12,77 @@ const NetDetail = () => {
     seasons,
     episodes,
     tvRating,
-    onFetchTvDetail,
-    onFetchSeason,
-    onFetchEpisode,
-    onFetchTvRating,
+    videos,
+    fetchTvDetail,
+    fetchTvRating,
+    fetchSeasons,
+    fetchEpisodes,
+    fetchVideos,
   } = useMovieStore();
 
-  const pickRating = (results: any[]) => {
-    const kr = results.find((r) => r.iso_3166_1 === "KR")?.rating;
-    if (kr) return { country: "KR", rating: kr };
-
-    const us = results.find((r) => r.iso_3166_1 === "US")?.rating;
-    if (us) return { country: "US", rating: us };
-
-    const first = results[0]?.rating;
-    if (first) return { country: results[0]?.iso_3166_1 ?? "", rating: first };
-
-    return { country: "", rating: null };
-  };
-
   const [activeSeason, setActiveSeason] = useState<number | null>(null);
+  const [play, setPlay] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
-    onFetchTvDetail(id);
-    onFetchSeason(id);
-    setActiveSeason(null);
-    onFetchTvRating(id);
-  }, [id, onFetchTvDetail, onFetchSeason]);
+    if (!tvId) return;
+    fetchTvDetail(tvId);
+    fetchTvRating(tvId);
+    fetchSeasons(tvId);
+    fetchVideos(tvId, "tv");
+  }, [tvId, fetchTvDetail, fetchTvRating, fetchSeasons, fetchVideos]);
 
-  // 시즌 목록이 들어오면 첫 시즌 자동 로드 (원하시면 제거 가능)
   useEffect(() => {
-    if (!id) return;
-    if (seasons.length === 0) return;
+    if (!tvId || seasons.length === 0) return;
 
-    const first = seasons[0].season_number;
-    setActiveSeason(first);
-    onFetchEpisode(String(id), first);
-  }, [id, seasons, onFetchEpisode]);
+    const normalSeason = seasons.find((s) => s.season_number > 0);
+    if (!normalSeason) return;
 
-  if (!id) return <p>잘못된 접근입니다.</p>;
+    // ✅ 이미 같은 시즌이면 state 변경 X
+    if (activeSeason === normalSeason.season_number) return;
+
+    setActiveSeason(normalSeason.season_number);
+    fetchEpisodes(tvId, normalSeason.season_number);
+  }, [tvId, seasons, activeSeason, fetchEpisodes]);
+
+  if (!tvId) return <p>잘못된 접근입니다.</p>;
   if (!tvDetail) return <p>작품 불러오는 중..</p>;
 
-  const title = tvDetail.name;
+  const trailer =
+    videos.find((v) => v.site === "YouTube" && v.type === "Trailer") ??
+    videos.find((v) => v.site === "YouTube");
+
+  if (!trailer) return null;
 
   return (
     <div className="detail-page">
       <div className="detail-inner">
         <div className="left-side">
-          <img
-            src={
-              tvDetail.poster_path
-                ? `https://image.tmdb.org/t/p/w300${tvDetail.poster_path}`
-                : ""
-            }
-            alt={title}
-          />
+          <div className="media-box">
+            <iframe
+              className="trailer-video"
+              src={`https://www.youtube.com/embed/${trailer.key}?autoplay=${
+                play ? 1 : 0
+              }&mute=1`}
+              title="YouTube trailer"
+              allow="autoplay; encrypted-media"
+              allowFullScreen
+            />
+          </div>
 
           <div className="text-box">
             <div className="title-wrap">
-              <h1>{title}</h1>
-              <button>재생</button>
+              <h1>{tvDetail.name}</h1>
+              <button
+                onClick={() => {
+                  if (!play) setPlay(true);
+                }}
+              >
+                재생
+              </button>
             </div>
 
             <div className="text-content">
-              <p>{tvRating ? tvRating : "정보 없음"}</p>
+              <p>{tvRating ?? "정보 없음"}</p>
               <p>{tvDetail.first_air_date}</p>
               <p>시즌 {activeSeason ?? "-"}</p>
               <p>HD</p>
@@ -109,7 +115,7 @@ const NetDetail = () => {
                   }`}
                   onClick={() => {
                     setActiveSeason(s.season_number);
-                    onFetchEpisode(tvId, s.season_number);
+                    fetchEpisodes(tvId, s.season_number);
                   }}
                 >
                   {s.name}
@@ -120,7 +126,6 @@ const NetDetail = () => {
 
           <div>
             <h3>에피소드</h3>
-
             <ul className="episode-list">
               {episodes.map((ep) => (
                 <li key={ep.id}>
@@ -133,7 +138,7 @@ const NetDetail = () => {
 
                   <div className="episode-title">
                     <h3>
-                      {ep.episode_number}:{ep.name}
+                      {ep.episode_number}. {ep.name}
                     </h3>
                     <p>{ep.overview}</p>
                     <button>Play</button>

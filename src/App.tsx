@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import ProfileSelect from "./pages/ProfileSelect";
 import MypageMain from "./pages/MypageMain";
 import NetDatail from "./pages/NetDetail";
+import MovieDetail from "./pages/MovieDetail";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -38,6 +39,7 @@ function App() {
         <Route path="auth" element={<FullLogin />} />
 
         <Route path="/tv/:id" element={<NetDatail />} />
+        <Route path="/movie/:id" element={<MovieDetail />} />
       </Route>
     </Routes>
   );

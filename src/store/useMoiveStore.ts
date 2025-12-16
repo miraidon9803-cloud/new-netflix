@@ -1,118 +1,214 @@
 import { create } from "zustand";
-import type { MovieState } from "../types/movie";
+import type {
+  Movie,
+  MovieDetail,
+  TvDetail,
+  Season,
+  Episode,
+  Video,
+} from "../types/movie";
+import axios from "axios";
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+const BASE_URL = "https://api.themoviedb.org/3";
 
-export const useMovieStore = create<MovieState>((set) => ({
+type MovieStore = {
+  /* ================== LIST ================== */
+  movies: Movie[];
+
+  /* ================== DETAIL ================== */
+  movieDetail: MovieDetail | null;
+  tvDetail: TvDetail | null;
+
+  /* ================== RATING ================== */
+  movieRating: string | null;
+  tvRating: string | null;
+
+  /* ================== MEDIA ================== */
+  videos: Video[];
+
+  /* ================== TV ONLY ================== */
+  seasons: Season[];
+  episodes: Episode[];
+
+  /* ================== ACTION ================== */
+  fetchPopularMovies: () => Promise<void>;
+  fetchMovieDetail: (id: string) => Promise<void>;
+  fetchTvDetail: (id: string) => Promise<void>;
+  fetchMovieRating: (id: string) => Promise<void>;
+  fetchTvRating: (id: string) => Promise<void>;
+  fetchVideos: (id: string, type: "movie" | "tv") => Promise<void>;
+  fetchSeasons: (tvId: string) => Promise<void>;
+  fetchEpisodes: (tvId: string, season: number) => Promise<void>;
+  clearDetail: () => void;
+};
+
+export const useMovieStore = create<MovieStore>((set) => ({
+  /* ================== STATE ================== */
   movies: [],
+
+  movieDetail: null,
+  tvDetail: null,
+
+  movieRating: null,
+  tvRating: null,
+
   videos: [],
   seasons: [],
   episodes: [],
 
-  // ✅ 추가: 영화 상세
-  movieDetail: null,
-  onFetchMovieDetail: async (id: string) => {
+  /* ================== MOVIE LIST ================== */
+  fetchPopularMovies: async () => {
     if (!API_KEY) return;
 
     const res = await fetch(
-      `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=ko-KR`
+      `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=ko-KR&page=1`
+    );
+    const data = await res.json();
+
+    const enriched = await Promise.all(
+      data.results.map(async (movie: Movie) => {
+        // 🔹 연령 등급
+        const ageRes = await fetch(
+          `${BASE_URL}/movie/${movie.id}/release_dates?api_key=${API_KEY}`
+        );
+        const ageData = await ageRes.json();
+
+        const kr = ageData.results?.find((r: any) => r.iso_3166_1 === "KR")
+          ?.release_dates?.[0]?.certification;
+
+        // 🔹 로고
+        const logoRes = await fetch(
+          `${BASE_URL}/movie/${movie.id}/images?api_key=${API_KEY}`
+        );
+        const logoData = await logoRes.json();
+        const logo = logoData.logos?.[0]?.file_path ?? null;
+
+        return { ...movie, rating: kr ?? null, logo };
+      })
+    );
+
+    set({ movies: enriched });
+  },
+
+  /* ================== DETAIL ================== */
+  fetchMovieDetail: async (id) => {
+    if (!API_KEY) return;
+
+    const res = await fetch(
+      `${BASE_URL}/movie/${id}?api_key=${API_KEY}&language=ko-KR`
     );
     const data = await res.json();
     set({ movieDetail: data });
   },
 
-  // ✅ 기존: TV 상세
-  tvDetail: null,
-  onFetchTvDetail: async (id: string) => {
+  fetchTvDetail: async (id) => {
     if (!API_KEY) return;
 
     const res = await fetch(
-      `https://api.themoviedb.org/3/tv/${id}?api_key=${API_KEY}&language=ko-KR`
+      `${BASE_URL}/tv/${id}?api_key=${API_KEY}&language=ko-KR`
     );
     const data = await res.json();
     set({ tvDetail: data });
   },
 
-  // 인기 영화
-  onFetchPopular: async () => {
-    if (!API_KEY) return;
-    const res = await fetch(
-      `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=ko-KR&page=1`
-    );
-    const data = await res.json();
-
-    const movieExtra = await Promise.all(
-      data.results.map(async (movie: any) => {
-        const resAge = await fetch(
-          `https://api.themoviedb.org/3/movie/${movie.id}/release_dates?api_key=${API_KEY}`
-        );
-        const dataAge = await resAge.json();
-        const krInfo = dataAge.results?.find(
-          (item: any) => item.iso_3166_1 === "KR"
-        );
-        const cAge = krInfo?.release_dates?.[0]?.certification || "none";
-
-        const resLogo = await fetch(
-          `https://api.themoviedb.org/3/movie/${movie.id}/images?api_key=${API_KEY}`
-        );
-        const dataLogo = await resLogo.json();
-        const logo = dataLogo.logos?.[0]?.file_path || null;
-
-        return { ...movie, cAge, logo };
-      })
-    );
-
-    set({ movies: movieExtra });
-  },
-  tvRating: null,
-  onFetchTvRating: async (tvId: string) => {
+  /* ================== RATING ================== */
+  fetchMovieRating: async (id) => {
     if (!API_KEY) return;
 
     try {
       const res = await fetch(
-        `https://api.themoviedb.org/3/tv/${tvId}/content_ratings?api_key=${API_KEY}`
+        `${BASE_URL}/movie/${id}/release_dates?api_key=${API_KEY}`
       );
       const data = await res.json();
 
-      const results = data?.results ?? [];
+      const results = data.results ?? [];
+      const kr =
+        results.find((r: any) => r.iso_3166_1 === "KR")?.release_dates?.[0]
+          ?.certification ?? null;
+      const us =
+        results.find((r: any) => r.iso_3166_1 === "US")?.release_dates?.[0]
+          ?.certification ?? null;
+
+      set({ movieRating: kr || us });
+    } catch {
+      set({ movieRating: null });
+    }
+  },
+
+  fetchTvRating: async (id) => {
+    if (!API_KEY) return;
+
+    try {
+      const res = await fetch(
+        `${BASE_URL}/tv/${id}/content_ratings?api_key=${API_KEY}`
+      );
+      const data = await res.json();
+
+      const results = data.results ?? [];
       const kr = results.find((r: any) => r.iso_3166_1 === "KR")?.rating;
       const us = results.find((r: any) => r.iso_3166_1 === "US")?.rating;
-      const first = results[0]?.rating;
 
-      set({ tvRating: kr ?? us ?? first ?? null });
+      set({ tvRating: kr || us || null });
     } catch {
       set({ tvRating: null });
     }
   },
 
-  // 영화 비디오
-  onFetchVideo: async (id: string) => {
-    if (!API_KEY) return [];
-    const res = await fetch(
-      `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${API_KEY}&language=ko-KR`
-    );
-    const data = await res.json();
-    set({ videos: data.results ?? [] });
-    return data.results ?? [];
-  },
+  /* ================== MEDIA ================== */
+  fetchVideos: async (id: string, type: "movie" | "tv") => {
+    const koRes = await axios.get(`${BASE_URL}/${type}/${id}/videos`, {
+      params: {
+        api_key: API_KEY,
+        language: "ko-KR",
+      },
+    });
 
-  // TV 시즌 목록
-  onFetchSeason: async (id: string) => {
+    if (koRes.data.results.length > 0) {
+      set({ videos: koRes.data.results });
+      return;
+    }
+
+    // 2️⃣ 영어 fallback
+    const enRes = await axios.get(`${BASE_URL}/${type}/${id}/videos`, {
+      params: {
+        api_key: API_KEY,
+        language: "en-US",
+      },
+    });
+
+    set({ videos: enRes.data.results });
+  },
+  /* ================== TV ONLY ================== */
+  fetchSeasons: async (tvId) => {
     if (!API_KEY) return;
+
     const res = await fetch(
-      `https://api.themoviedb.org/3/tv/${id}?api_key=${API_KEY}&language=ko-KR`
+      `${BASE_URL}/tv/${tvId}?api_key=${API_KEY}&language=ko-KR`
     );
     const data = await res.json();
     set({ seasons: data.seasons ?? [] });
   },
 
-  // TV 에피소드 목록
-  onFetchEpisode: async (id: string, season: number) => {
+  fetchEpisodes: async (tvId, season) => {
     if (!API_KEY) return;
+
     const res = await fetch(
-      `https://api.themoviedb.org/3/tv/${id}/season/${season}?api_key=${API_KEY}&language=ko-KR`
+      `${BASE_URL}/tv/${tvId}/season/${season}?api_key=${API_KEY}&language=ko-KR`
     );
     const data = await res.json();
     set({ episodes: data.episodes ?? [] });
   },
+
+  /* ================== CLEAN ================== */
+  clearDetail: () =>
+    set({
+      movieDetail: null,
+      tvDetail: null,
+      seasons: [],
+      episodes: [],
+      videos: [],
+      movieRating: null,
+      tvRating: null,
+    }),
 }));

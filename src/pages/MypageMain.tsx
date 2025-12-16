@@ -78,7 +78,9 @@ const MypageMain = () => {
             </div>
 
             <ul className="profile-section">
-              <li onClick={() => setAvatarPopupOpen(true)}>현재 프로필 관리</li>
+              <li onClick={() => setOpenProfilePopup(true)}>
+                현재 프로필 관리
+              </li>
               <li onClick={() => setShowAccount((v) => !v)}>계정</li>
               <li onClick={() => setShowApp((v) => !v)}>앱 설정</li>
               <li>고객센터</li>

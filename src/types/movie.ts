@@ -19,6 +19,7 @@ export interface Video {
   name: string;
   site: string; // YouTube 등
   type: string; // Trailer, Teaser 등
+  official: string;
 }
 
 // TV 타입
