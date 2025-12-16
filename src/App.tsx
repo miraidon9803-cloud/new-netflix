@@ -7,6 +7,7 @@ import Join from "./pages/Join";
 import Footer from "./components/Footer";
 import Membership from "./pages/Membership";
 import Shorts from "./components/Shorts";
+import Wishlist from "./components/Wishlist";
 
 function App() {
   const location = useLocation();
@@ -19,6 +20,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/shorts" element={<Shorts />} />
+        <Route path="/wishlist" element={<Wishlist/>} />
         <Route path="login" element={<Login />} />
         <Route path="join" element={<Join />} />
         <Route path="membership" element={<Membership />} />
