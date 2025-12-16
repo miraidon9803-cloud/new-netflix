@@ -27,7 +27,7 @@ const Login: React.FC<LoginProps> = ({ onNext }) => {
       setEmail("");
       setPassword("");
       setError("");
-      navigate("/mypage");
+      navigate("/mypage/profile");
     } catch (err) {
       console.error("로그인 실패:", err);
       setError("로그인 중 오류가 발생했습니다.");

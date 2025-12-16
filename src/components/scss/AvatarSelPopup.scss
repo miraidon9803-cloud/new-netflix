@@ -1,6 +1,3 @@
-/* =======================
-   Dim
-======================= */
 .avatar-dim {
   position: fixed;
   inset: 0;
@@ -12,9 +9,6 @@
   justify-content: center;
 }
 
-/* =======================
-   Modal
-======================= */
 .avatar-modal {
   width: 1000px;
   height: 700px;
@@ -27,9 +21,6 @@
   overflow: hidden; // 이중 스크롤 방지
 }
 
-/* =======================
-   Header (고정)
-======================= */
 .avatar-header {
   flex-shrink: 0;
   padding: 20px 24px;

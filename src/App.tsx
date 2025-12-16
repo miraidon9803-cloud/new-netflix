@@ -1,14 +1,14 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-
 import Main from "./pages/Main";
-
-import Mypage from "./pages/Mypage";
 import Layout from "./pages/Layout";
 import FullLogin from "./pages/FullLogin";
 import Landing from "./pages/LandingPage";
+import ProfileGate from "./components/ProfileGate";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
+import ProfileSelect from "./pages/ProfileSelect";
+import MypageMain from "./pages/MypageMain";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -20,10 +20,20 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route path="/profiles" element={<ProfileSelect />} />
+
+      <Route
+        path="/"
+        element={
+          <ProfileGate>
+            <Layout />
+          </ProfileGate>
+        }
+      >
         <Route path="land" element={<Landing />} />
         <Route index element={<Main />} />
-        <Route path="mypage" element={<Mypage />} />
+        <Route path="mypage" element={<MypageMain />} />
+        <Route path="mypage/profile" element={<ProfileSelect />} />
         <Route path="auth" element={<FullLogin />} />
       </Route>
     </Routes>
