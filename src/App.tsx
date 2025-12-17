@@ -16,6 +16,8 @@ import GuestOnly from "./components/GuestOnly";
 import { useAuthStore } from "./store/authStore";
 import { useProfileStore } from "./store/Profile";
 import { useEffect } from "react";
+import Wishlist from "./components/Wishlist";
+import WishlistDetail from "./components/WishlistDetail";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -61,6 +63,8 @@ function App() {
             <Route path="tv/:id" element={<NetDatail />} />
             <Route path="movie/:id" element={<MovieDetail />} />
             <Route path="storgebox" element={<StorageBox />} />
+            <Route path="wishlist" element={<Wishlist />} />
+            <Route path="/wishlist/:folderId" element={<WishlistDetail />} />
           </Route>
         </Route>
 

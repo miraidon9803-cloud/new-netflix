@@ -16,7 +16,7 @@ const SideNav = () => {
       <Link to={"/"}>
         <img src="../../../public/images/icon/홈-active.png" alt="" />
       </Link>
-      <Link to={"/"}>
+      <Link to={"/wishlist"}>
         <img src="../../../public/images/icon/위시리스트.png" alt="" />
       </Link>
       <Link to={"/storgebox"}>
