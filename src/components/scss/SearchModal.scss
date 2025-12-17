@@ -14,25 +14,6 @@
   to {
     opacity: 1;
   }
-// Search 팝업 내부 스타일
-.search-popup {
-  width: 100%;
-  min-width: 100%;
-}
-
-// Search 타이틀
-.search-title-wrapper {
-  @include myFlex(10px, space-between, center);
-  margin-bottom: 20px; // Search와 input 사이 간격
-}
-
-.search-title {
-  font-family: "SUIT";
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 140%;
-  letter-spacing: -0.6px;
-  color: $grey10;
 }
 
 @keyframes searchModalSlideUp {
@@ -102,39 +83,10 @@
   .title-wrapper {
     @include myFlex(10px, space-between, center);
     margin-bottom: 20px;
-  // min-width: 100%;
-  padding: 12px 24px;
-  font-family: "SUIT";
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 140%;
-  letter-spacing: -0.4px;
-  border-radius: 50px;
-  border: 1px solid #ffcdcd;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.4) 0%,
-    rgba(255, 255, 255, 0.28) 50%,
-    rgba(255, 255, 255, 0.4) 100%
-  );
-  box-shadow: 0 0 5px 0 rgba(255, 184, 184, 0.25),
-    0 0 10px 0 rgba(255, 86, 86, 0.25), 0 0 20px 0 rgba(229, 9, 20, 0.5),
-    0 0 30px 0 rgba(229, 9, 20, 0.3);
-  color: $grey10;
-  outline: none;
-  transition: all 0.3s;
-  box-sizing: border-box;
-
-  &::placeholder {
-    color: $grey8; // #D2D2D2
-  }
-
-  &:focus {
-    border-color: $grey10;
   }
 
   .title {
-    font-family: 'SUIT';
+    font-family: "SUIT";
     font-size: 24px;
     font-weight: 600;
     line-height: 140%;
@@ -216,15 +168,22 @@
   .search-input {
     width: 100%;
     padding: 12px 24px;
-    font-family: 'SUIT';
+    font-family: "SUIT";
     font-size: 16px;
     font-weight: 400;
     line-height: 140%;
     letter-spacing: -0.4px;
     border-radius: 50px;
-    border: 1px solid #FFCDCD;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.40) 0%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0.40) 100%);
-    box-shadow: 0 0 5px 0 rgba(255, 184, 184, 0.25), 0 0 10px 0 rgba(255, 86, 86, 0.25), 0 0 20px 0 rgba(229, 9, 20, 0.50), 0 0 30px 0 rgba(229, 9, 20, 0.30);
+    border: 1px solid #ffcdcd;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 0.28) 50%,
+      rgba(255, 255, 255, 0.4) 100%
+    );
+    box-shadow: 0 0 5px 0 rgba(255, 184, 184, 0.25),
+      0 0 10px 0 rgba(255, 86, 86, 0.25), 0 0 20px 0 rgba(229, 9, 20, 0.5),
+      0 0 30px 0 rgba(229, 9, 20, 0.3);
     color: $grey10;
     outline: none;
     transition: all 0.3s;
@@ -246,7 +205,7 @@
   }
 
   .section-title {
-    font-family: 'SUIT';
+    font-family: "SUIT";
     font-size: 16px;
     font-weight: 400;
     line-height: 140%;
@@ -260,7 +219,7 @@
   }
 
   .go-link {
-    font-family: 'SUIT';
+    font-family: "SUIT";
     font-size: 16px;
     font-weight: 400;
     line-height: 140%;
@@ -283,7 +242,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    font-family: 'SUIT';
+    font-family: "SUIT";
     font-size: 16px;
     font-weight: 400;
     line-height: 140%;
@@ -310,7 +269,7 @@
     background-color: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50px;
-    font-family: 'SUIT';
+    font-family: "SUIT";
     font-size: 16px;
     font-weight: 400;
     line-height: 140%;
@@ -360,7 +319,7 @@
   }
 
   .card-rank {
-    font-family: 'Esamanru';
+    font-family: "Esamanru";
     font-size: 32px;
     font-weight: 500;
     line-height: 140%;
@@ -602,7 +561,7 @@
     // 검색어를 입력해주세요 - 430px 이하
     .search-input {
       padding: 8px 4%;
-      font-family: 'SUIT';
+      font-family: "SUIT";
       font-size: 14px;
       font-weight: 400;
       line-height: 140%;
@@ -619,7 +578,7 @@
 
     // 최근 검색어, 가장 많이 찾아본 콘텐츠 - 430px 이하
     .section-title {
-      font-family: 'SUIT';
+      font-family: "SUIT";
       font-size: 16px;
       font-weight: 400;
       line-height: 140%;
@@ -629,7 +588,7 @@
 
     // 전체삭제 - 430px 이하
     .clear-all-btn {
-      font-family: 'SUIT';
+      font-family: "SUIT";
       font-size: 16px;
       font-weight: 400;
       line-height: 140%;
@@ -649,7 +608,7 @@
     // 최근검색어 태그 내용 - 430px 이하
     .tag {
       padding: 6px 12px;
-      font-family: 'SUIT';
+      font-family: "SUIT";
       font-size: 14px;
       font-weight: 400;
       line-height: 140%;

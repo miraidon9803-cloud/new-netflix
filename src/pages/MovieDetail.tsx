@@ -20,6 +20,7 @@ const MovieDetail = () => {
   const { onAddWatching } = useWatchingStore();
 
   const [play, setPlay] = useState(false);
+  const [playerNonce, setPlayerNonce] = useState(0);
 
   /* ================== FETCH ================== */
   useEffect(() => {
@@ -40,27 +41,38 @@ const MovieDetail = () => {
     videos.find((v) => v.site === "YouTube" && v.type === "Trailer") ??
     videos.find((v) => v.site === "YouTube");
 
-  // ✅ 재생 시 보관함(watching)에 저장
+  /* ================== SAVE WATCHING ================== */
   const saveToWatching = async () => {
-    if (!movieDetail?.poster_path) return;
+    if (!movieDetail) return;
+
+    // ✅ 썸네일은 poster/backdrop 중 하나만 있어도 OK (watchingStore 규칙에 맞춤)
+    const hasThumb = !!(movieDetail.poster_path || movieDetail.backdrop_path);
+    if (!hasThumb) return;
 
     try {
       await onAddWatching({
         id: movieDetail.id,
-        mediaType: "movie", // ✅ 핵심
+        mediaType: "movie",
         title: movieDetail.title,
+
         poster_path: movieDetail.poster_path,
         backdrop_path: movieDetail.backdrop_path,
+
         release_date: movieDetail.release_date,
-      });
+        runtime: movieDetail.runtime,
+      } as any);
     } catch (e) {
       console.error("watching 저장 실패:", e);
     }
   };
 
+  /* ================== PLAY ================== */
   const onPlay = async () => {
     await saveToWatching();
-    if (!play) setPlay(true);
+
+    setPlay(true);
+    // ✅ autoplay가 잘 안 먹는 브라우저/상황 대비: iframe 강제 리마운트
+    setPlayerNonce(Date.now());
   };
 
   return (
@@ -70,10 +82,11 @@ const MovieDetail = () => {
           <div className="media-box">
             {trailer ? (
               <iframe
+                key={`${trailer.key}-${playerNonce}`}
                 className="trailer-video"
                 src={`https://www.youtube.com/embed/${trailer.key}?autoplay=${
                   play ? 1 : 0
-                }&mute=1&playsinline=1`}
+                }&mute=1&playsinline=1&nonce=${playerNonce}`}
                 title="YouTube trailer"
                 allow="autoplay; encrypted-media"
                 allowFullScreen

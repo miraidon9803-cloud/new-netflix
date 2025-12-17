@@ -31,24 +31,24 @@ const NetDetail = () => {
 
   const { onAddWatching } = useWatchingStore();
 
-  //  사용자가 직접 선택한 시즌만 state로 관리 (초기 자동 선택은 state로 안 함)
+  // 사용자가 직접 선택한 시즌만 state로 관리
   const [activeSeason, setActiveSeason] = useState<number | null>(null);
   const [seasonOpen, setSeasonOpen] = useState(false);
 
-  //  왼쪽 iframe에서 재생할 유튜브 key
+  // 왼쪽 iframe에서 재생할 유튜브 key
   const [selectedVideoKey, setSelectedVideoKey] = useState<string | null>(null);
 
-  //  autoplay 토글 + iframe 강제 리마운트용 nonce
+  // autoplay 토글 + iframe 강제 리마운트용 nonce
   const [play, setPlay] = useState(false);
   const [playerNonce, setPlayerNonce] = useState(0);
 
-  //  seasons가 들어오면 "첫 정상 시즌"을 계산값으로 잡음 (setState 없음)
+  // seasons가 들어오면 "첫 정상 시즌"을 계산값으로 잡음
   const defaultSeasonNumber = useMemo(() => {
     const normal = seasons.find((s) => s.season_number > 0);
     return normal?.season_number ?? null;
   }, [seasons]);
 
-  //  실제로 화면/로직에서 사용할 시즌 번호
+  // 실제로 화면/로직에서 사용할 시즌 번호
   const selectedSeasonNumber = activeSeason ?? defaultSeasonNumber;
 
   const activeSeasonObj = useMemo(() => {
@@ -58,7 +58,7 @@ const NetDetail = () => {
     );
   }, [seasons, selectedSeasonNumber]);
 
-  //  진입 시 기본 데이터 로드
+  // 진입 시 기본 데이터 로드
   useEffect(() => {
     if (!tvId) return;
     fetchTvDetail(tvId);
@@ -67,7 +67,7 @@ const NetDetail = () => {
     fetchVideos(tvId, "tv"); // 기본(전체 tv) 영상
   }, [tvId, fetchTvDetail, fetchTvRating, fetchSeasons, fetchVideos]);
 
-  //  선택된 시즌 번호가 바뀌면 에피소드 로드 (effect에서 setState 없음)
+  // 선택된 시즌 번호가 바뀌면 에피소드 로드
   useEffect(() => {
     if (!tvId || !selectedSeasonNumber) return;
     fetchEpisodes(tvId, selectedSeasonNumber);
@@ -76,66 +76,83 @@ const NetDetail = () => {
   if (!tvId) return <p>잘못된 접근입니다.</p>;
   if (!tvDetail) return <p>작품 불러오는 중..</p>;
 
-  //  기본 트레일러 선택 (store의 videos 기준)
+  // 기본 트레일러 선택 (store의 videos 기준)
   const defaultTrailer: Video | undefined =
     (videos as Video[]).find(
       (v) => v.site === "YouTube" && v.type === "Trailer"
     ) ?? (videos as Video[]).find((v) => v.site === "YouTube");
 
-  //  최종 iframe key
+  // 최종 iframe key
   const iframeKey = selectedVideoKey ?? defaultTrailer?.key;
 
   if (!iframeKey) return <p>재생할 영상이 없습니다.</p>;
 
-  //  재생 누르면 보관함(watching)에 저장
-  const saveToWatching = async () => {
-    if (!tvDetail?.poster_path) return;
+  // ✅ 에피소드 재생/클릭 시 보관함(watching)에 저장 (시즌/몇화 + still_path)
+  const saveEpisodeToWatching = async (ep: any) => {
+    if (!tvDetail) return;
+    if (!selectedSeasonNumber) return;
+    if (!ep?.episode_number) return;
+
+    // 썸네일은 still/backdrop/poster 중 하나만 있어도 OK
+    const hasThumb = !!(
+      ep?.still_path ||
+      tvDetail?.backdrop_path ||
+      tvDetail?.poster_path
+    );
+    if (!hasThumb) return;
 
     try {
       await onAddWatching({
+        mediaType: "tv",
         id: tvDetail.id,
         name: tvDetail.name,
-        title: tvDetail.name,
-        mediaType: "tv",
+
+        // 작품 썸네일 fallback
         poster_path: tvDetail.poster_path,
         backdrop_path: tvDetail.backdrop_path,
-        media_type: "tv",
+
+        // 에피소드 썸네일 우선
+        still_path: ep.still_path,
+
+        // ✅ 보던 위치
+        season_number: selectedSeasonNumber,
+        episode_number: ep.episode_number,
+        episode_name: ep.name,
+
         first_air_date: tvDetail.first_air_date,
-        //  어떤 시즌에서 재생했는지 남기고 싶으면(옵션)
-        season_number: selectedSeasonNumber ?? undefined,
       } as any);
     } catch (e) {
-      console.error("watching 저장 실패:", e);
+      console.error("watching(episode) 저장 실패:", e);
     }
   };
 
-  //  왼쪽 상단 "재생" 버튼: 기본 트레일러 재생
+  // 왼쪽 상단 "재생" 버튼: 기본 트레일러 재생
+  // (보관함은 "현재 선택된 시즌의 1화"로 저장해두면 자연스럽게 이어보기 가능)
   const onPlayDefault = async () => {
-    await saveToWatching();
+    // ✅ 선택된 시즌의 첫 에피소드가 있으면 그걸 보관함에 저장
+    const firstEp = episodes?.[0];
+    if (firstEp) await saveEpisodeToWatching(firstEp);
 
     setSelectedVideoKey(null); // 기본 트레일러로
     setPlay(true);
     setPlayerNonce(Date.now());
   };
 
-  //  에피소드/시즌 재생: 시즌 영상으로 교체 + 재생
-  const onPlaySeason = async () => {
+  // ✅ 에피소드 클릭 재생: 보관함 저장 + (현재는 시즌 트레일러를 재생하는 구조 유지)
+  const onPlayEpisode = async (ep: any) => {
     if (!tvId || !selectedSeasonNumber) return;
 
-    await saveToWatching();
+    await saveEpisodeToWatching(ep);
 
     try {
-      //  store fetchVideos가 (tvId, "tv", seasonNumber?) => Promise<Video[]> 여야 함
       const seasonVideos = await fetchVideos(tvId, "tv", selectedSeasonNumber);
 
       const picked =
         seasonVideos.find(
-          (v) => v.site === "YouTube" && v.type === "Trailer"
-        ) ?? seasonVideos.find((v) => v.site === "YouTube");
+          (v: Video) => v.site === "YouTube" && v.type === "Trailer"
+        ) ?? seasonVideos.find((v: Video) => v.site === "YouTube");
 
-      if (picked?.key) setSelectedVideoKey(picked.key);
-      else setSelectedVideoKey(null);
-
+      setSelectedVideoKey(picked?.key ?? null);
       setPlay(true);
       setPlayerNonce(Date.now());
     } catch (e) {
@@ -223,7 +240,7 @@ const NetDetail = () => {
                   tabIndex={seasonOpen ? 0 : -1}
                   style={{ display: seasonOpen ? "flex" : "none" }}
                   onClick={() => {
-                    // 클릭에서만 state 변경 (경고 사라짐)
+                    // 클릭에서만 state 변경
                     setActiveSeason(s.season_number);
 
                     setPlay(false);
@@ -251,16 +268,25 @@ const NetDetail = () => {
 
           {/* 에피소드 리스트 */}
           <ul className="episode-list">
-            {episodes.map((ep) => (
+            {episodes.map((ep: any) => (
               <li key={ep.id}>
                 <div className="episode-content">
-                  {ep.still_path && (
+                  {ep.still_path ? (
                     <img
                       src={`https://image.tmdb.org/t/p/w500${ep.still_path}`}
                       alt={ep.name}
                     />
+                  ) : (
+                    // still이 없으면 대체 이미지(작품 포스터/백드롭)
+                    <img
+                      src={`https://image.tmdb.org/t/p/w500${
+                        tvDetail.backdrop_path || tvDetail.poster_path || ""
+                      }`}
+                      alt={ep.name}
+                    />
                   )}
-                  <p className="episode-btn" onClick={onPlaySeason}>
+
+                  <p className="episode-btn" onClick={() => onPlayEpisode(ep)}>
                     <img src="/images/play.png" alt="" />
                   </p>
                 </div>
