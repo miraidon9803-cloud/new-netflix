@@ -1,61 +1,176 @@
-import React, { useEffect, useRef } from "react";
-import { useNetflixStore } from "../store/NetflixStore";
-import "./scss/SFNFantasy.scss";
-import { Link } from "react-router-dom";
+import React, { useEffect, useMemo, useRef } from 'react';
+import { useNetflixStore } from '../store/NetflixStore';
+import './scss/SFNFantasy.scss';
 
-const IMG_BASE = "https://image.tmdb.org/t/p/w500";
+const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
+const FALLBACK_POSTER = '/images/icon/no_poster.png';
 
-const SFNFantasy = () => {
-  const { SFNFTop10, onFetchSFTop10 } = useNetflixStore();
+type SFItem = {
+  id: number;
+  poster_path: string | null;
+  name?: string | null;
+  title?: string | null;
+
+  isNetflixOriginal?: boolean;
+  isNew3Months?: boolean;
+  isOld1Year?: boolean;
+};
+
+/* ✅ 랜덤 셔플 (Fisher–Yates) */
+function shuffle<T>(array: T[]): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+const SFNFantasy: React.FC = () => {
+  const { SFNFTop10, onFetchSFTop10 } = useNetflixStore() as {
+    SFNFTop10: SFItem[];
+    onFetchSFTop10: () => void;
+  };
 
   const scrollRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     onFetchSFTop10();
-  }, []);
+  }, [onFetchSFTop10]);
 
-  // 리스트 위 휠 = 가로 스크롤 / 페이지 세로 스크롤 막기
-  useEffect(() => {
+  /* ✅ store 데이터가 바뀔 때마다 1번만 랜덤 */
+  const randomizedList = useMemo(() => {
+    return shuffle(SFNFTop10 ?? []);
+  }, [SFNFTop10]);
+
+  // ✅ 드래그 상태
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const startScrollLeftRef = useRef(0);
+
+  const getTitle = (item: SFItem) => (item.name ?? item.title ?? 'poster') as string;
+
+  const getBadgeType = (item: SFItem): 'netflix' | 'new' | 'old' | null => {
+    if (item.isNetflixOriginal) return 'netflix';
+    if (item.isNew3Months) return 'new';
+    if (item.isOld1Year) return 'old';
+    return null;
+  };
+
+  // ✅ 마우스 드래그
+  const onMouseDown: React.MouseEventHandler<HTMLUListElement> = (e) => {
     const el = scrollRef.current;
     if (!el) return;
 
-    const onWheel = (e: WheelEvent) => {
-      const el = scrollRef.current;
-      if (!el) return;
+    isDraggingRef.current = true;
+    el.classList.add('dragging');
 
-      const atLeftEnd = el.scrollLeft === 0;
-      const atRightEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
+    startXRef.current = e.pageX;
+    startScrollLeftRef.current = el.scrollLeft;
+  };
 
-      // 스크롤이 양 끝일 때 → 기본 동작 허용 (페이지 스크롤)
-      if ((atLeftEnd && e.deltaY < 0) || (atRightEnd && e.deltaY > 0)) {
-        return; // preventDefault() 안함
-      }
+  const onMouseMove: React.MouseEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el || !isDraggingRef.current) return;
 
-      // 그 외엔 가로 스크롤 처리
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        e.stopPropagation();
-        el.scrollLeft += e.deltaY;
-      }
-    };
+    e.preventDefault();
+    const dx = e.pageX - startXRef.current;
+    el.scrollLeft = startScrollLeftRef.current - dx;
+  };
 
-    el.addEventListener("wheel", onWheel, { passive: false });
+  const endDrag = () => {
+    const el = scrollRef.current;
+    if (!el) return;
 
-    return () => el.removeEventListener("wheel", onWheel);
-  }, []);
+    isDraggingRef.current = false;
+    el.classList.remove('dragging');
+  };
+
+  // ✅ 터치 드래그
+  const onTouchStart: React.TouchEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    isDraggingRef.current = true;
+    el.classList.add('dragging');
+
+    startXRef.current = e.touches[0].pageX;
+    startScrollLeftRef.current = el.scrollLeft;
+  };
+
+  const onTouchMove: React.TouchEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el || !isDraggingRef.current) return;
+
+    const dx = e.touches[0].pageX - startXRef.current;
+    el.scrollLeft = startScrollLeftRef.current - dx;
+  };
+
+  const onTouchEnd: React.TouchEventHandler<HTMLUListElement> = () => {
+    endDrag();
+  };
 
   return (
     <div className="sfTopWrap">
       <p>SF&판타지 시리즈</p>
 
-      <ul className="sfTopList" ref={scrollRef}>
-        {SFNFTop10.map((movie) => (
-          <li key={movie.id} className="sfItem">
-            <Link to={`/tv/${movie.id}`}>
-              <img src={`${IMG_BASE}${movie.poster_path}`} alt={movie.title} />
-            </Link>
-          </li>
-        ))}
+      <ul
+        className="sfTopList"
+        ref={scrollRef}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={endDrag}
+        onMouseLeave={endDrag}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}>
+        {randomizedList.map((item) => {
+          const badge = getBadgeType(item);
+          const posterSrc = item.poster_path ? `${IMG_BASE}${item.poster_path}` : FALLBACK_POSTER;
+
+          return (
+            <li key={item.id} className="sfItem">
+              <div className="posterWrap">
+                {badge === 'netflix' && (
+                  <img
+                    className="netflixBadge"
+                    src="/images/icon/오리지널_뱃지.png"
+                    alt="Netflix Original"
+                    draggable={false}
+                  />
+                )}
+
+                {badge === 'new' && (
+                  <img
+                    className="newBadge"
+                    src="/images/icon/뉴_뱃지.png"
+                    alt="New (3 months)"
+                    draggable={false}
+                  />
+                )}
+
+                {badge === 'old' && (
+                  <img
+                    className="oldBadge"
+                    src="/images/icon/곧 종료_뱃지.png"
+                    alt="Old (1 year+)"
+                    draggable={false}
+                  />
+                )}
+
+                <img
+                  className="poster"
+                  src={posterSrc}
+                  alt={getTitle(item)}
+                  draggable={false}
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = FALLBACK_POSTER;
+                  }}
+                />
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

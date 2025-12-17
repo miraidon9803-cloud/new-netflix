@@ -1,8 +1,9 @@
 @use '../../App.scss' as BG;
 
 .OriginalWrap {
-  margin-top: 4rem;
   background-color: BG.$BG;
+  margin-top: 8rem; // PC
+
   > p {
     font-size: 2.4rem;
     font-weight: 600;
@@ -12,17 +13,88 @@
   .original {
     display: flex;
     margin-top: 1.6rem;
-    overflow-x: auto; // 가로 스크롤 허용
+    overflow-x: auto;
     overflow-y: hidden;
-
     gap: 2.4rem;
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    scrollbar-width: none;
+
     li {
-      height: 66rem;
-      aspect-ratio: 17/33;
+      flex: 0 0 20%;
+      aspect-ratio: 17 / 33;
+      position: relative;
+
       transform-origin: center bottom;
       transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        border-radius: 0.8rem;
+        -webkit-user-drag: none;
+      }
+
       &:hover {
         transform: translateY(-0.4rem) scale(1.03);
+      }
+    }
+  }
+
+  /* ===========================
+     🟦 태블릿 (≤1440px)
+     =========================== */
+  @media (max-width: 1440px) {
+    /* ❗ padding → margin 으로 변경 */
+    > p {
+      font-size: 2rem;
+    }
+    margin: 4rem 1.6rem 0 1.6rem;
+
+    .original {
+      gap: 1.6rem;
+
+      li {
+        flex: 0 0 25%; // 4개 보이기
+
+        img {
+          border-radius: 0.8rem; // 태블릿 둥글기
+        }
+      }
+    }
+  }
+
+  /* ===========================
+     🟩 모바일 (≤430px)
+     =========================== */
+  @media (max-width: 430px) {
+    margin: 2.8rem 1.6rem 0; // 수정된 모바일 기준
+
+    > p {
+      font-size: 1.8rem;
+    }
+
+    .original {
+      gap: 1.2rem;
+
+      li {
+        flex: 0 0 40%; // 2.5개
+        aspect-ratio: 160/309;
+
+        img {
+          border-radius: 0.4rem;
+        }
+
+        &:hover {
+          transform: translateY(-0.2rem) scale(1.01);
+        }
       }
     }
   }
