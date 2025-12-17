@@ -24,6 +24,7 @@ import {
 
 import { useProfileStore } from "./Profile";
 
+/** Kakao SDK 타입 */
 interface KakaoSDK {
   isInitialized(): boolean;
   init(appKey: string): void;
@@ -85,9 +86,23 @@ interface AuthState {
   /** 편의 상태 */
   isLogin: boolean;
 
+  /** ✅ 멤버십까지 완료(온보딩 완료) */
+  onboardingDone: boolean;
+
+  /** ✅ Join 단계에서 임시 저장(비밀번호 포함 → persist 금지) */
+  tempJoin: JoinData | null;
+  setTempJoin: (data: JoinData) => void;
+  clearTempJoin: () => void;
+
   initAuth: () => () => void;
 
+  /**
+   * ✅ (호환용) 기존 Join이 onMember를 호출해도 "회원생성" 안 되도록 변경
+   * - 이제 회원생성은 Membership에서 finalizeJoinWithMembership로만 합니다.
+   */
   onMember: (data: JoinData) => Promise<void>;
+
+  /** 기존 로그인 */
   onLogin: (email: string, password: string) => Promise<void>;
 
   onGoogleLogin: () => Promise<void>;
@@ -95,6 +110,10 @@ interface AuthState {
 
   onLogout: () => Promise<void>;
 
+  /** ✅ Membership에서 최종 회원가입 + 멤버십 저장 + 로그인 완료 */
+  finalizeJoinWithMembership: (membership: MembershipInfo) => Promise<void>;
+
+  /** 기존 로그인 유저의 멤버십 저장/변경 */
   saveMembership: (membership: MembershipInfo) => Promise<void>;
   cancelMembership: () => Promise<void>;
   updateProfile: (data: { phone: string }) => Promise<void>;
@@ -122,9 +141,13 @@ export const useAuthStore = create<AuthState>()(
       authReady: false,
       loading: true,
       isLogin: false,
+      onboardingDone: false,
+
+      tempJoin: null,
+      setTempJoin: (data) => set({ tempJoin: data }),
+      clearTempJoin: () => set({ tempJoin: null }),
 
       initAuth: () => {
-        // ✅ init 시작할 때 로딩
         set({ loading: true });
 
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -133,6 +156,7 @@ export const useAuthStore = create<AuthState>()(
               set({
                 user: null,
                 isLogin: false,
+                onboardingDone: false,
                 authReady: true,
                 loading: false,
               });
@@ -144,31 +168,36 @@ export const useAuthStore = create<AuthState>()(
             const snap = await getDoc(userRef);
 
             if (snap.exists()) {
+              const data = snap.data() as AppUser;
+
               set({
-                user: snap.data() as AppUser,
+                user: data,
                 isLogin: true,
+                onboardingDone: !!data.membership,
                 authReady: true,
                 loading: false,
               });
             } else {
               const newUser = buildDefaultUser(firebaseUser);
               await setDoc(userRef, newUser, { merge: true });
+
               set({
                 user: newUser,
                 isLogin: true,
+                onboardingDone: !!newUser.membership,
                 authReady: true,
                 loading: false,
               });
             }
 
-            // ✅ 로그인 상태 확정 후 프로필 로드
             await useProfileStore.getState().loadProfiles();
           } catch (e) {
             console.error("initAuth 실패:", e);
             set({
               user: null,
               isLogin: false,
-              authReady: true, // ✅ 실패해도 ready는 true로 (무한 로딩 방지)
+              onboardingDone: false,
+              authReady: true,
               loading: false,
             });
           }
@@ -177,38 +206,63 @@ export const useAuthStore = create<AuthState>()(
         return unsubscribe;
       },
 
+      /**
+       * ✅ 이제 onMember는 "임시 저장"만 합니다.
+       * (기존 Join 코드가 아직 onMember를 호출해도 안전하게 동작)
+       */
       onMember: async ({ email, password, phone }) => {
-        set({ loading: true });
-        try {
-          const userCredential = await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
-          const firebaseUser = userCredential.user;
+        set({ tempJoin: { email, password, phone } });
+      },
 
+      /**
+       * ✅ Membership 화면에서 호출:
+       * - tempJoin으로 Firebase 계정 생성
+       * - Firestore users 문서 생성 (membership 포함)
+       * - 로그인/온보딩 완료 처리
+       */
+      finalizeJoinWithMembership: async (membership) => {
+        const temp = get().tempJoin;
+        if (!temp)
+          throw new Error("회원가입 정보가 없습니다. 다시 진행해주세요.");
+
+        set({ loading: true });
+
+        try {
+          // 1) 여기서 실제 회원 생성 (이 시점이 '회원가입 완료')
+          const cred = await createUserWithEmailAndPassword(
+            auth,
+            temp.email,
+            temp.password
+          );
+          const firebaseUser = cred.user;
+
+          // 2) Firestore 저장
           const userRef = doc(db, "users", firebaseUser.uid);
 
           const newUser: AppUser = {
             uid: firebaseUser.uid,
-            email: firebaseUser.email || "",
-            phone,
+            email: firebaseUser.email || temp.email,
+            phone: temp.phone,
             provider: "password",
             createdAt: serverTimestamp(),
+            membership, // ✅ 멤버십까지 포함해서 저장
           };
 
           await setDoc(userRef, newUser, { merge: true });
 
+          // 3) 전역 상태 업데이트 (온보딩 완료)
           set({
             user: newUser,
             isLogin: true,
+            onboardingDone: true,
             authReady: true,
             loading: false,
+            tempJoin: null, // ✅ 비밀번호 포함 데이터 즉시 제거
           });
 
           await useProfileStore.getState().loadProfiles();
         } catch (err) {
-          console.error("회원가입 실패:", err);
+          console.error("finalizeJoinWithMembership 실패:", err);
           set({ loading: false });
           throw err;
         }
@@ -228,18 +282,23 @@ export const useAuthStore = create<AuthState>()(
           const snap = await getDoc(userRef);
 
           if (snap.exists()) {
+            const data = snap.data() as AppUser;
+
             set({
-              user: snap.data() as AppUser,
+              user: data,
               isLogin: true,
+              onboardingDone: !!data.membership,
               authReady: true,
               loading: false,
             });
           } else {
             const defaultUser = buildDefaultUser(firebaseUser);
             await setDoc(userRef, defaultUser, { merge: true });
+
             set({
               user: defaultUser,
               isLogin: true,
+              onboardingDone: !!defaultUser.membership,
               authReady: true,
               loading: false,
             });
@@ -283,6 +342,7 @@ export const useAuthStore = create<AuthState>()(
           set({
             user: userInfo,
             isLogin: true,
+            onboardingDone: !!userInfo.membership,
             authReady: true,
             loading: false,
           });
@@ -328,21 +388,30 @@ export const useAuthStore = create<AuthState>()(
 
           const userRef = doc(db, "users", uid);
           const userSnap = await getDoc(userRef);
+
+          let finalUser: AppUser = kakaoUser;
+
           if (!userSnap.exists()) {
             await setDoc(userRef, kakaoUser, { merge: true });
+          } else {
+            const data = userSnap.data() as AppUser;
+            finalUser = { ...data, ...kakaoUser, provider: "kakao" };
           }
 
           set({
-            user: kakaoUser,
+            user: finalUser,
             isLogin: true,
+            onboardingDone: !!finalUser.membership,
             authReady: true,
             loading: false,
           });
 
-          // 카카오는 Firebase Auth가 아니라 rules에 막힐 수 있음 (기존 주석 유지)
-          // await useProfileStore.getState().loadProfiles();
-
-          navigate?.("/mypage/profile");
+          // ✅ 온보딩 여부에 따라 이동
+          if (finalUser.membership) {
+            navigate?.("/mypage/profile");
+          } else {
+            navigate?.("/auth");
+          }
         } catch (err) {
           console.error("카카오 로그인 중 오류:", err);
           set({ loading: false });
@@ -350,23 +419,30 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
+      /**
+       * ✅ 기존 로그인 유저가 멤버십 선택/변경할 때 사용
+       * (신규 회원가입 플로우는 finalizeJoinWithMembership를 사용)
+       */
       saveMembership: async (membership) => {
         const currentUser = auth.currentUser;
-        if (!currentUser) throw new Error("로그인이 필요합니다.");
+        const uid = currentUser?.uid ?? get().user?.uid;
+        if (!uid) throw new Error("로그인이 필요합니다.");
 
-        const userRef = doc(db, "users", currentUser.uid);
+        const userRef = doc(db, "users", uid);
         await setDoc(userRef, { membership }, { merge: true });
 
         set((state) => ({
           user: state.user ? { ...state.user, membership } : state.user,
+          onboardingDone: true,
         }));
       },
 
       cancelMembership: async () => {
         const currentUser = auth.currentUser;
-        if (!currentUser) throw new Error("로그인이 필요합니다.");
+        const uid = currentUser?.uid ?? get().user?.uid;
+        if (!uid) throw new Error("로그인이 필요합니다.");
 
-        const userRef = doc(db, "users", currentUser.uid);
+        const userRef = doc(db, "users", uid);
         await updateDoc(userRef, { membership: deleteField() });
 
         set((state) => ({
@@ -376,14 +452,16 @@ export const useAuthStore = create<AuthState>()(
                 return rest;
               })()
             : state.user,
+          onboardingDone: false,
         }));
       },
 
       updateProfile: async ({ phone }) => {
         const currentUser = auth.currentUser;
-        if (!currentUser) throw new Error("로그인이 필요합니다.");
+        const uid = currentUser?.uid ?? get().user?.uid;
+        if (!uid) throw new Error("로그인이 필요합니다.");
 
-        const userRef = doc(db, "users", currentUser.uid);
+        const userRef = doc(db, "users", uid);
         await setDoc(userRef, { phone }, { merge: true });
 
         set((state) => ({
@@ -393,16 +471,29 @@ export const useAuthStore = create<AuthState>()(
 
       onLogout: async () => {
         await signOut(auth);
-        set({ user: null, isLogin: false, loading: false, authReady: true });
+        set({
+          user: null,
+          isLogin: false,
+          onboardingDone: false,
+          loading: false,
+          authReady: true,
+          tempJoin: null,
+        });
         useProfileStore.getState().resetProfiles();
       },
     }),
     {
       name: "auth-store",
       storage: createJSONStorage(() => localStorage),
+
+      /**
+       * ✅ 보안상 tempJoin(비밀번호 포함)은 절대 저장하면 안 됩니다.
+       * 그래서 partialize에서 제외합니다.
+       */
       partialize: (state) => ({
         user: state.user,
-        isLogin: state.isLogin, // ✅ 같이 저장 (첫 렌더 깜빡임 줄임)
+        isLogin: state.isLogin,
+        onboardingDone: state.onboardingDone,
       }),
     }
   )
