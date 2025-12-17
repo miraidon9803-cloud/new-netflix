@@ -156,8 +156,8 @@ const SearchModal: React.FC<SearchModalProps> = ({ onClose }) => {
       <div className="search-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="search-popup">
           {/* Search 타이틀 */}
-          <div className="search-title-wrapper">
-            <h1 className="search-title">Search</h1>
+          <div className="title-wrapper">
+            <h1 className="title">Search</h1>
             <button
               className="close-btn"
               aria-label="닫기"
