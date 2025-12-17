@@ -437,8 +437,8 @@
   }
 
   .player-video-main {
-    width: 464px;    
-    height: 825px;    
+    width: 464px;
+    height: 825px;
     object-fit: cover;
     display: block;
   }
@@ -600,6 +600,7 @@
     }
   }
 }
+
 @media (max-width: 665px) and (min-width: 431px) {
   .player-arrow-left {
     left: 0% // 좌측 카드 안쪽으로
@@ -662,8 +663,8 @@
 
   // 메인 콘텐츠 조정
   .shorts-content {
-    margin: 0 16px !important;
-    padding: 0 0 100px !important; // 모바일 헤더 아래 간격 조정
+    margin: 60px 16px 0 !important; // 모바일 헤더 높이(60px) 만큼
+    padding: 0 0 100px !important;
   }
 
   // 쇼츠 타이틀 숨김 (모바일 헤더에 있으므로)

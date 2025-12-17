@@ -8,6 +8,7 @@ import Footer from "./components/Footer";
 import Membership from "./pages/Membership";
 import Shorts from "./components/Shorts";
 import Wishlist from "./components/Wishlist";
+import WishlistDetail from "./components/WishlistDetail";
 
 function App() {
   const location = useLocation();
@@ -24,6 +25,7 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="join" element={<Join />} />
         <Route path="membership" element={<Membership />} />
+        <Route path="/wishlist/:folderId" element={<WishlistDetail/>} />
       </Routes>
       {/* Shorts 페이지에서는 Footer 숨김 */}
       {!isShorts && <Footer />}
