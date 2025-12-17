@@ -3,7 +3,7 @@
 .detail-inner {
   display: flex;
   max-width: 1441px;
-  height: 1414px;
+  height: 100%;
   margin: 0 auto;
   gap: 24px;
 
@@ -68,21 +68,89 @@
     }
   }
   .season-box {
+    .season-dropdown {
+      .season-trigger {
+        width: 97px;
+        height: 40px;
+        // padding: 16px;
+        color: #fff;
+        background-color: l.$grey3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        border-radius: 4px;
+      }
+      .season-item {
+        width: 97px;
+        padding: 16px;
+        color: #fff;
+        background-color: l.$grey3;
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        // border-radius: 0 0 4px 4px;
+      }
+      .season-item:last-child {
+        border-radius: 0 0 4px 4px;
+      }
+      .chev {
+        display: flex;
+        align-items: center;
+      }
+
+      .chev.open {
+        transform: rotate(180deg);
+      }
+    }
     width: 58.8rem;
     .episode-list {
-      img {
-        width: 220px;
-        // height: 14rem;
-      }
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
       li {
         display: flex;
-        width: 587px;
+        gap: 12px;
       }
       .episode-title {
-        width: 354px;
-        @include l.myTitle16();
-        color: l.$grey10;
-        text-align: left;
+        h3 {
+          @include l.myTitle16();
+          color: l.$grey10;
+          text-align: left;
+          margin-bottom: 10px;
+        }
+      }
+
+      .episode-content {
+        position: relative;
+        width: 220px;
+        flex: 0 0 220px;
+
+        img {
+          width: 100%;
+          display: block;
+        }
+
+        .episode-btn {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 10;
+
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          width: 48px;
+          height: 48px;
+          border-radius: 999px;
+          border: 0;
+          cursor: pointer;
+          background: rgba(0, 0, 0, 0.6);
+          color: #fff;
+        }
       }
     }
   }

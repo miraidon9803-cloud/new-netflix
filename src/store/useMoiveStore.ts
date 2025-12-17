@@ -37,7 +37,14 @@ type MovieStore = {
   fetchTvDetail: (id: string) => Promise<void>;
   fetchMovieRating: (id: string) => Promise<void>;
   fetchTvRating: (id: string) => Promise<void>;
-  fetchVideos: (id: string, type: "movie" | "tv") => Promise<void>;
+
+  // ✅ 변경: return Video[] + (선택) seasonNumber 지원
+  fetchVideos: (
+    id: string,
+    type: "movie" | "tv",
+    seasonNumber?: number
+  ) => Promise<Video[]>;
+
   fetchSeasons: (tvId: string) => Promise<void>;
   fetchEpisodes: (tvId: string, season: number) => Promise<void>;
   clearDetail: () => void;
@@ -68,7 +75,6 @@ export const useMovieStore = create<MovieStore>((set) => ({
 
     const enriched = await Promise.all(
       data.results.map(async (movie: Movie) => {
-        // 🔹 연령 등급
         const ageRes = await fetch(
           `${BASE_URL}/movie/${movie.id}/release_dates?api_key=${API_KEY}`
         );
@@ -77,7 +83,6 @@ export const useMovieStore = create<MovieStore>((set) => ({
         const kr = ageData.results?.find((r: any) => r.iso_3166_1 === "KR")
           ?.release_dates?.[0]?.certification;
 
-        // 🔹 로고
         const logoRes = await fetch(
           `${BASE_URL}/movie/${movie.id}/images?api_key=${API_KEY}`
         );
@@ -156,29 +161,42 @@ export const useMovieStore = create<MovieStore>((set) => ({
   },
 
   /* ================== MEDIA ================== */
-  fetchVideos: async (id: string, type: "movie" | "tv") => {
-    const koRes = await axios.get(`${BASE_URL}/${type}/${id}/videos`, {
-      params: {
-        api_key: API_KEY,
-        language: "ko-KR",
-      },
-    });
-
-    if (koRes.data.results.length > 0) {
-      set({ videos: koRes.data.results });
-      return;
+  fetchVideos: async (
+    id: string,
+    type: "movie" | "tv",
+    seasonNumber?: number
+  ) => {
+    if (!API_KEY) {
+      set({ videos: [] });
+      return [];
     }
 
-    // 2️⃣ 영어 fallback
-    const enRes = await axios.get(`${BASE_URL}/${type}/${id}/videos`, {
-      params: {
-        api_key: API_KEY,
-        language: "en-US",
-      },
+    const endpoint =
+      type === "tv" && typeof seasonNumber === "number"
+        ? `${BASE_URL}/tv/${id}/season/${seasonNumber}/videos`
+        : `${BASE_URL}/${type}/${id}/videos`;
+
+    // 1) ko
+    const koRes = await axios.get(endpoint, {
+      params: { api_key: API_KEY, language: "ko-KR" },
     });
 
-    set({ videos: enRes.data.results });
+    const koList = (koRes.data?.results ?? []) as Video[];
+    if (koList.length > 0) {
+      set({ videos: koList });
+      return koList; // ✅ 중요
+    }
+
+    // 2) en fallback
+    const enRes = await axios.get(endpoint, {
+      params: { api_key: API_KEY, language: "en-US" },
+    });
+
+    const enList = (enRes.data?.results ?? []) as Video[];
+    set({ videos: enList });
+    return enList; // ✅ 중요
   },
+
   /* ================== TV ONLY ================== */
   fetchSeasons: async (tvId) => {
     if (!API_KEY) return;

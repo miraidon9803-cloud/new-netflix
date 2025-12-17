@@ -232,28 +232,30 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
                 </div>
 
                 {adultOnly && (
-                  <div className="age-limit-wrap">
-                    <div className="age-labels">
-                      {AGE_LEVELS.map((item) => (
-                        <span
-                          key={item.value}
-                          className={ageLimit === item.value ? "active" : ""}
-                        >
-                          {item.label}
-                        </span>
-                      ))}
-                    </div>
+                  <div className="age-wrap">
+                    <div className="age-limit-wrap">
+                      <input
+                        type="range"
+                        min={0}
+                        max={AGE_LEVELS.length - 1}
+                        step={1}
+                        value={ageLimit}
+                        onChange={(e) => setAgeLimit(Number(e.target.value))}
+                        className="age-slider"
+                        disabled={submitting}
+                      />
 
-                    <input
-                      type="range"
-                      min={0}
-                      max={AGE_LEVELS.length - 1}
-                      step={1}
-                      value={ageLimit}
-                      onChange={(e) => setAgeLimit(Number(e.target.value))}
-                      className="age-slider"
-                      disabled={submitting}
-                    />
+                      <div className="age-labels">
+                        {AGE_LEVELS.map((item) => (
+                          <span
+                            key={item.value}
+                            className={ageLimit === item.value ? "active" : ""}
+                          >
+                            {item.label}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 )}
 

@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { useMovieStore } from "../store/useMoiveStore";
+import { useWatchingStore } from "../store/WatichingStore";
 import "./scss/NetDetail.scss";
 
 const MovieDetail = () => {
@@ -15,6 +16,8 @@ const MovieDetail = () => {
     fetchMovieRating,
     fetchVideos,
   } = useMovieStore();
+
+  const { onAddWatching } = useWatchingStore();
 
   const [play, setPlay] = useState(false);
 
@@ -37,6 +40,29 @@ const MovieDetail = () => {
     videos.find((v) => v.site === "YouTube" && v.type === "Trailer") ??
     videos.find((v) => v.site === "YouTube");
 
+  // ✅ 재생 시 보관함(watching)에 저장
+  const saveToWatching = async () => {
+    if (!movieDetail?.poster_path) return;
+
+    try {
+      await onAddWatching({
+        id: movieDetail.id,
+        mediaType: "movie", // ✅ 핵심
+        title: movieDetail.title,
+        poster_path: movieDetail.poster_path,
+        backdrop_path: movieDetail.backdrop_path,
+        release_date: movieDetail.release_date,
+      });
+    } catch (e) {
+      console.error("watching 저장 실패:", e);
+    }
+  };
+
+  const onPlay = async () => {
+    await saveToWatching();
+    if (!play) setPlay(true);
+  };
+
   return (
     <div className="detail-page">
       <div className="detail-inner">
@@ -47,7 +73,7 @@ const MovieDetail = () => {
                 className="trailer-video"
                 src={`https://www.youtube.com/embed/${trailer.key}?autoplay=${
                   play ? 1 : 0
-                }&mute=1`}
+                }&mute=1&playsinline=1`}
                 title="YouTube trailer"
                 allow="autoplay; encrypted-media"
                 allowFullScreen
@@ -60,15 +86,7 @@ const MovieDetail = () => {
           <div className="text-box">
             <div className="title-wrap">
               <h1>{movieDetail.title}</h1>
-              {trailer && (
-                <button
-                  onClick={() => {
-                    if (!play) setPlay(true);
-                  }}
-                >
-                  재생
-                </button>
-              )}
+              {trailer && <button onClick={onPlay}>재생</button>}
             </div>
 
             <div className="text-content">
