@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { useMovieStore } from "../store/useMoiveStore";
+import { useWatchingStore } from "../store/WatichingStore";
 import "./scss/NetDetail.scss";
 
 type Video = {
@@ -28,21 +29,36 @@ const NetDetail = () => {
     fetchVideos,
   } = useMovieStore();
 
+  const { onAddWatching } = useWatchingStore();
+
+  //  사용자가 직접 선택한 시즌만 state로 관리 (초기 자동 선택은 state로 안 함)
   const [activeSeason, setActiveSeason] = useState<number | null>(null);
   const [seasonOpen, setSeasonOpen] = useState(false);
 
-  // ✅ 왼쪽 iframe에서 재생할 유튜브 key
+  //  왼쪽 iframe에서 재생할 유튜브 key
   const [selectedVideoKey, setSelectedVideoKey] = useState<string | null>(null);
 
-  // ✅ autoplay 토글 + iframe 강제 리마운트용 nonce
+  //  autoplay 토글 + iframe 강제 리마운트용 nonce
   const [play, setPlay] = useState(false);
   const [playerNonce, setPlayerNonce] = useState(0);
 
-  const activeSeasonObj = useMemo(() => {
-    return seasons.find((s) => s.season_number === activeSeason);
-  }, [seasons, activeSeason]);
+  //  seasons가 들어오면 "첫 정상 시즌"을 계산값으로 잡음 (setState 없음)
+  const defaultSeasonNumber = useMemo(() => {
+    const normal = seasons.find((s) => s.season_number > 0);
+    return normal?.season_number ?? null;
+  }, [seasons]);
 
-  // ✅ 진입 시 기본 데이터 로드 (기본 트레일러도 여기서 가져옴)
+  //  실제로 화면/로직에서 사용할 시즌 번호
+  const selectedSeasonNumber = activeSeason ?? defaultSeasonNumber;
+
+  const activeSeasonObj = useMemo(() => {
+    if (!selectedSeasonNumber) return null;
+    return (
+      seasons.find((s) => s.season_number === selectedSeasonNumber) ?? null
+    );
+  }, [seasons, selectedSeasonNumber]);
+
+  //  진입 시 기본 데이터 로드
   useEffect(() => {
     if (!tvId) return;
     fetchTvDetail(tvId);
@@ -51,65 +67,78 @@ const NetDetail = () => {
     fetchVideos(tvId, "tv"); // 기본(전체 tv) 영상
   }, [tvId, fetchTvDetail, fetchTvRating, fetchSeasons, fetchVideos]);
 
-  // ✅ 첫 시즌 자동 선택 + 에피소드 로드
+  //  선택된 시즌 번호가 바뀌면 에피소드 로드 (effect에서 setState 없음)
   useEffect(() => {
-    if (!tvId || seasons.length === 0) return;
-    if (activeSeason !== null) return;
-
-    const normalSeason = seasons.find((s) => s.season_number > 0);
-    if (!normalSeason) return;
-
-    setActiveSeason(normalSeason.season_number);
-    fetchEpisodes(tvId, normalSeason.season_number);
-  }, [tvId, seasons, activeSeason, fetchEpisodes]);
+    if (!tvId || !selectedSeasonNumber) return;
+    fetchEpisodes(tvId, selectedSeasonNumber);
+  }, [tvId, selectedSeasonNumber, fetchEpisodes]);
 
   if (!tvId) return <p>잘못된 접근입니다.</p>;
   if (!tvDetail) return <p>작품 불러오는 중..</p>;
 
-  // ✅ 기본 트레일러 선택 (store의 videos 기준)
+  //  기본 트레일러 선택 (store의 videos 기준)
   const defaultTrailer: Video | undefined =
     (videos as Video[]).find(
       (v) => v.site === "YouTube" && v.type === "Trailer"
     ) ?? (videos as Video[]).find((v) => v.site === "YouTube");
 
-  // ✅ 최종적으로 왼쪽 iframe이 재생할 key
+  //  최종 iframe key
   const iframeKey = selectedVideoKey ?? defaultTrailer?.key;
 
-  // 영상이 하나도 없으면 iframe을 못 띄웁니다
   if (!iframeKey) return <p>재생할 영상이 없습니다.</p>;
 
-  // ✅ 왼쪽 상단 "재생" 버튼: 기본 트레일러 재생
-  const onPlayDefault = () => {
-    setSelectedVideoKey(null); // 기본 트레일러로 돌아가기
-    setPlay(true);
-    setPlayerNonce(Date.now()); // ✅ 강제 리마운트
-  };
-
-  // ✅ 오른쪽 Play 버튼: 시즌 영상으로 왼쪽 iframe 교체 + 재생
-  const onPlaySeason = async () => {
-    if (!tvId || !activeSeason) return;
+  //  재생 누르면 보관함(watching)에 저장
+  const saveToWatching = async () => {
+    if (!tvDetail?.poster_path) return;
 
     try {
-      // ✅ 시즌 영상 가져오기 (store가 Video[] return 해야 함)
-      const seasonVideos = (await fetchVideos(
-        tvId,
-        "tv",
-        activeSeason
-      )) as Video[];
+      await onAddWatching({
+        id: tvDetail.id,
+        name: tvDetail.name,
+        title: tvDetail.name,
+        mediaType: "tv",
+        poster_path: tvDetail.poster_path,
+        backdrop_path: tvDetail.backdrop_path,
+        media_type: "tv",
+        first_air_date: tvDetail.first_air_date,
+        //  어떤 시즌에서 재생했는지 남기고 싶으면(옵션)
+        season_number: selectedSeasonNumber ?? undefined,
+      } as any);
+    } catch (e) {
+      console.error("watching 저장 실패:", e);
+    }
+  };
+
+  //  왼쪽 상단 "재생" 버튼: 기본 트레일러 재생
+  const onPlayDefault = async () => {
+    await saveToWatching();
+
+    setSelectedVideoKey(null); // 기본 트레일러로
+    setPlay(true);
+    setPlayerNonce(Date.now());
+  };
+
+  //  에피소드/시즌 재생: 시즌 영상으로 교체 + 재생
+  const onPlaySeason = async () => {
+    if (!tvId || !selectedSeasonNumber) return;
+
+    await saveToWatching();
+
+    try {
+      //  store fetchVideos가 (tvId, "tv", seasonNumber?) => Promise<Video[]> 여야 함
+      const seasonVideos = await fetchVideos(tvId, "tv", selectedSeasonNumber);
 
       const picked =
         seasonVideos.find(
           (v) => v.site === "YouTube" && v.type === "Trailer"
         ) ?? seasonVideos.find((v) => v.site === "YouTube");
 
-      // 시즌 영상이 없으면 기본 트레일러로 fallback
       if (picked?.key) setSelectedVideoKey(picked.key);
       else setSelectedVideoKey(null);
 
       setPlay(true);
-      setPlayerNonce(Date.now()); // ✅ 강제 리마운트 (핵심)
+      setPlayerNonce(Date.now());
     } catch (e) {
-      // 실패해도 기본 트레일러 재생으로 fallback
       setSelectedVideoKey(null);
       setPlay(true);
       setPlayerNonce(Date.now());
@@ -122,7 +151,7 @@ const NetDetail = () => {
         <div className="left-side">
           <div className="media-box">
             <iframe
-              key={`${iframeKey}-${playerNonce}`} // ✅ src 바뀔 때마다 완전 새로 로드
+              key={`${iframeKey}-${playerNonce}`}
               className="trailer-video"
               src={`https://www.youtube.com/embed/${iframeKey}?autoplay=${
                 play ? 1 : 0
@@ -144,7 +173,7 @@ const NetDetail = () => {
             <div className="text-content">
               <p>{tvRating ?? "정보 없음"}</p>
               <p>{tvDetail.first_air_date}</p>
-              <p>시즌 {activeSeason ?? "-"}</p>
+              <p>시즌 {selectedSeasonNumber ?? "-"}</p>
               <p>HD</p>
             </div>
 
@@ -188,17 +217,15 @@ const NetDetail = () => {
                 <li
                   key={s.id}
                   className={`season-item ${
-                    activeSeason === s.season_number ? "active" : ""
+                    selectedSeasonNumber === s.season_number ? "active" : ""
                   }`}
                   role="button"
                   tabIndex={seasonOpen ? 0 : -1}
                   style={{ display: seasonOpen ? "flex" : "none" }}
                   onClick={() => {
+                    // 클릭에서만 state 변경 (경고 사라짐)
                     setActiveSeason(s.season_number);
-                    fetchEpisodes(tvId, s.season_number);
 
-                    // 시즌 바꾸면 자동재생 유지/해제는 취향인데,
-                    // 보통은 멈추고 사용자가 Play 눌러서 재생하게 하는 게 자연스럽습니다.
                     setPlay(false);
                     setSelectedVideoKey(null);
                     setPlayerNonce(Date.now());
@@ -208,10 +235,11 @@ const NetDetail = () => {
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       setActiveSeason(s.season_number);
-                      fetchEpisodes(tvId, s.season_number);
+
                       setPlay(false);
                       setSelectedVideoKey(null);
                       setPlayerNonce(Date.now());
+
                       setSeasonOpen(false);
                     }
                   }}

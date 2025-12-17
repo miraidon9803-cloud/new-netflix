@@ -1,4 +1,6 @@
 // src/store/authStore.ts
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 import {
   createUserWithEmailAndPassword,
@@ -6,7 +8,10 @@ import {
   signOut,
   signInWithPopup,
   onAuthStateChanged,
+  GoogleAuthProvider,
+  type User as FirebaseUser,
 } from "firebase/auth";
+
 import { auth, db } from "../firebase/firebase";
 import {
   doc,
@@ -14,12 +19,11 @@ import {
   getDoc,
   updateDoc,
   deleteField,
+  serverTimestamp,
 } from "firebase/firestore";
-import { create } from "zustand";
-import { GoogleAuthProvider } from "firebase/auth";
-import { persist, createJSONStorage } from "zustand/middleware";
 
-// Kakao SDK 타입 정의
+import { useProfileStore } from "./Profile";
+
 interface KakaoSDK {
   isInitialized(): boolean;
   init(appKey: string): void;
@@ -45,7 +49,12 @@ interface KakaoSDK {
   };
 }
 
-// 커스텀 유저 타입 정의
+export interface MembershipInfo {
+  type: "adStandard" | "standard" | "premium";
+  name: string;
+  price: number;
+}
+
 export interface AppUser {
   uid: string;
   email: string;
@@ -54,189 +63,248 @@ export interface AppUser {
   nickname?: string;
   photoURL?: string;
   provider?: string;
-  createdAt: Date;
+  createdAt: any;
   membership?: MembershipInfo;
 }
 
-// 회원가입 데이터 타입
 export interface JoinData {
   email: string;
   password: string;
   phone: string;
 }
 
-export interface MembershipInfo {
-  type: "adStandard" | "standard" | "premium";
-  name: string;
-  price: number;
-}
-
-// Zustand 상태 타입
 interface AuthState {
   user: AppUser | null;
+
+  /** ✅ onAuthStateChanged 1번이라도 타면 true */
+  authReady: boolean;
+
+  /** ✅ UI 로딩 */
   loading: boolean;
-  initAuth: () => () => void; // unsubscribe 반환
+
+  /** 편의 상태 */
+  isLogin: boolean;
+
+  initAuth: () => () => void;
 
   onMember: (data: JoinData) => Promise<void>;
   onLogin: (email: string, password: string) => Promise<void>;
-  onGoogleLogin: () => Promise<void>;
-  onKakaoLogin: (navigate: (path: string) => void) => Promise<void>;
-  onLogout: () => Promise<void>;
-  saveMembership: (membership: MembershipInfo) => Promise<void>;
 
-  updateProfile: (data: { phone: string }) => Promise<void>;
+  onGoogleLogin: () => Promise<void>;
+  onKakaoLogin: (navigate?: (path: string) => void) => Promise<void>;
+
+  onLogout: () => Promise<void>;
+
+  saveMembership: (membership: MembershipInfo) => Promise<void>;
   cancelMembership: () => Promise<void>;
+  updateProfile: (data: { phone: string }) => Promise<void>;
 }
 
 const googleProvider = new GoogleAuthProvider();
 
+const buildDefaultUser = (
+  firebaseUser: FirebaseUser,
+  extra?: Partial<AppUser>
+): AppUser => ({
+  uid: firebaseUser.uid,
+  email: firebaseUser.email || "",
+  phone: "",
+  provider: "password",
+  createdAt: serverTimestamp(),
+  ...extra,
+});
+
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
+
+      authReady: false,
       loading: true,
+      isLogin: false,
 
       initAuth: () => {
+        // ✅ init 시작할 때 로딩
+        set({ loading: true });
+
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
           try {
             if (!firebaseUser) {
-              set({ user: null, loading: false });
+              set({
+                user: null,
+                isLogin: false,
+                authReady: true,
+                loading: false,
+              });
+              useProfileStore.getState().resetProfiles();
               return;
             }
 
-            // Firestore에 저장된 유저 데이터 가져오기
-            const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+            const userRef = doc(db, "users", firebaseUser.uid);
+            const snap = await getDoc(userRef);
 
-            if (userDoc.exists()) {
-              set({ user: userDoc.data() as AppUser, loading: false });
+            if (snap.exists()) {
+              set({
+                user: snap.data() as AppUser,
+                isLogin: true,
+                authReady: true,
+                loading: false,
+              });
             } else {
-              // 문서 없으면 기본 유저 구성
-              const defaultUser: AppUser = {
-                uid: firebaseUser.uid,
-                email: firebaseUser.email || "",
-                phone: "",
-                createdAt: new Date(),
-              };
-              set({ user: defaultUser, loading: false });
+              const newUser = buildDefaultUser(firebaseUser);
+              await setDoc(userRef, newUser, { merge: true });
+              set({
+                user: newUser,
+                isLogin: true,
+                authReady: true,
+                loading: false,
+              });
             }
+
+            // ✅ 로그인 상태 확정 후 프로필 로드
+            await useProfileStore.getState().loadProfiles();
           } catch (e) {
             console.error("initAuth 실패:", e);
-            set({ user: null, loading: false });
+            set({
+              user: null,
+              isLogin: false,
+              authReady: true, // ✅ 실패해도 ready는 true로 (무한 로딩 방지)
+              loading: false,
+            });
           }
         });
 
         return unsubscribe;
       },
 
-      // 회원가입
       onMember: async ({ email, password, phone }) => {
+        set({ loading: true });
         try {
           const userCredential = await createUserWithEmailAndPassword(
             auth,
             email,
             password
           );
-
           const firebaseUser = userCredential.user;
+
+          const userRef = doc(db, "users", firebaseUser.uid);
 
           const newUser: AppUser = {
             uid: firebaseUser.uid,
             email: firebaseUser.email || "",
             phone,
-            createdAt: new Date(),
+            provider: "password",
+            createdAt: serverTimestamp(),
           };
 
-          await setDoc(doc(db, "users", firebaseUser.uid), newUser);
+          await setDoc(userRef, newUser, { merge: true });
 
-          set({ user: newUser });
-          alert("회원가입 완료");
+          set({
+            user: newUser,
+            isLogin: true,
+            authReady: true,
+            loading: false,
+          });
+
+          await useProfileStore.getState().loadProfiles();
         } catch (err) {
           console.error("회원가입 실패:", err);
-          alert("회원가입 실패");
+          set({ loading: false });
+          throw err;
         }
       },
 
-      // 로그인
       onLogin: async (email, password) => {
+        set({ loading: true });
         try {
           const userCredential = await signInWithEmailAndPassword(
             auth,
             email,
             password
           );
-
           const firebaseUser = userCredential.user;
-          const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
 
-          if (userDoc.exists()) {
-            set({ user: userDoc.data() as AppUser });
+          const userRef = doc(db, "users", firebaseUser.uid);
+          const snap = await getDoc(userRef);
+
+          if (snap.exists()) {
+            set({
+              user: snap.data() as AppUser,
+              isLogin: true,
+              authReady: true,
+              loading: false,
+            });
           } else {
-            const defaultUser: AppUser = {
-              uid: firebaseUser.uid,
-              email: firebaseUser.email || "",
-
-              phone: "",
-              createdAt: new Date(),
-            };
-            set({ user: defaultUser });
+            const defaultUser = buildDefaultUser(firebaseUser);
+            await setDoc(userRef, defaultUser, { merge: true });
+            set({
+              user: defaultUser,
+              isLogin: true,
+              authReady: true,
+              loading: false,
+            });
           }
 
-          alert("로그인 성공");
+          await useProfileStore.getState().loadProfiles();
         } catch (err) {
           console.error("로그인 실패:", err);
-          alert("로그인 실패");
+          set({ loading: false });
+          throw err;
         }
       },
 
-      // 구글 로그인
       onGoogleLogin: async () => {
+        set({ loading: true });
         try {
           const result = await signInWithPopup(auth, googleProvider);
-          const user = result.user;
+          const gUser = result.user;
 
-          const userRef = doc(db, "users", user.uid);
+          const userRef = doc(db, "users", gUser.uid);
           const userSnap = await getDoc(userRef);
 
           let userInfo: AppUser;
 
           if (!userSnap.exists()) {
             userInfo = {
-              uid: user.uid,
-              email: user.email || "",
-              phone: user.phoneNumber || "",
-              name: user.displayName || "",
-              photoURL: user.photoURL || "",
+              uid: gUser.uid,
+              email: gUser.email || "",
+              phone: gUser.phoneNumber || "",
+              name: gUser.displayName || "",
+              photoURL: gUser.photoURL || "",
               provider: "google",
-              createdAt: new Date(),
+              createdAt: serverTimestamp(),
             };
-
-            await setDoc(userRef, userInfo);
+            await setDoc(userRef, userInfo, { merge: true });
           } else {
             const data = userSnap.data() as AppUser;
-            userInfo = {
-              ...data,
-              provider: data.provider ?? "google",
-            };
+            userInfo = { ...data, provider: data.provider ?? "google" };
           }
 
-          set({ user: userInfo });
-          alert("구글 로그인 성공!");
+          set({
+            user: userInfo,
+            isLogin: true,
+            authReady: true,
+            loading: false,
+          });
+
+          await useProfileStore.getState().loadProfiles();
         } catch (err) {
           console.error("구글 로그인 실패:", err);
+          set({ loading: false });
+          throw err;
         }
       },
 
-      // 카카오 로그인
-      onKakaoLogin: async (navigate: (path: string) => void) => {
+      onKakaoLogin: async (navigate) => {
+        set({ loading: true });
         try {
           const Kakao = (window as unknown as { Kakao: KakaoSDK }).Kakao;
 
           if (!Kakao.isInitialized()) {
             Kakao.init("b3fc478b356ae6fee151857a00679e07");
-            console.log("Kakao SDK 초기화 완료");
           }
 
-          const authObj = await new Promise<unknown>((resolve, reject) => {
+          await new Promise<unknown>((resolve, reject) => {
             Kakao.Auth.login({
               scope: "profile_nickname, profile_image",
               success: resolve,
@@ -244,14 +312,7 @@ export const useAuthStore = create<AuthState>()(
             });
           });
 
-          console.log("카카오 로그인 성공:", authObj);
-
-          const res = await Kakao.API.request({
-            url: "/v2/user/me",
-          });
-
-          console.log("카카오 사용자 정보:", res);
-
+          const res = await Kakao.API.request({ url: "/v2/user/me" });
           const uid: string = String(res.id);
 
           const kakaoUser: AppUser = {
@@ -262,29 +323,43 @@ export const useAuthStore = create<AuthState>()(
             nickname: res.kakao_account?.profile?.nickname ?? "카카오사용자",
             photoURL: res.kakao_account?.profile?.profile_image_url ?? "",
             provider: "kakao",
-            createdAt: new Date(),
+            createdAt: serverTimestamp(),
           };
 
           const userRef = doc(db, "users", uid);
           const userSnap = await getDoc(userRef);
-
           if (!userSnap.exists()) {
-            await setDoc(userRef, kakaoUser);
-            console.log("신규 카카오 회원 Firestore에 등록 완료");
-          } else {
-            console.log("기존 카카오 회원 Firestore 데이터 있음");
+            await setDoc(userRef, kakaoUser, { merge: true });
           }
 
-          set({ user: kakaoUser });
+          set({
+            user: kakaoUser,
+            isLogin: true,
+            authReady: true,
+            loading: false,
+          });
 
-          alert(`${kakaoUser.nickname}님, 카카오 로그인 성공!`);
+          // 카카오는 Firebase Auth가 아니라 rules에 막힐 수 있음 (기존 주석 유지)
+          // await useProfileStore.getState().loadProfiles();
 
-          if (navigate) {
-            navigate("/mypage");
-          }
+          navigate?.("/mypage/profile");
         } catch (err) {
           console.error("카카오 로그인 중 오류:", err);
+          set({ loading: false });
+          throw err;
         }
+      },
+
+      saveMembership: async (membership) => {
+        const currentUser = auth.currentUser;
+        if (!currentUser) throw new Error("로그인이 필요합니다.");
+
+        const userRef = doc(db, "users", currentUser.uid);
+        await setDoc(userRef, { membership }, { merge: true });
+
+        set((state) => ({
+          user: state.user ? { ...state.user, membership } : state.user,
+        }));
       },
 
       cancelMembership: async () => {
@@ -292,10 +367,7 @@ export const useAuthStore = create<AuthState>()(
         if (!currentUser) throw new Error("로그인이 필요합니다.");
 
         const userRef = doc(db, "users", currentUser.uid);
-
-        await updateDoc(userRef, {
-          membership: deleteField(),
-        });
+        await updateDoc(userRef, { membership: deleteField() });
 
         set((state) => ({
           user: state.user
@@ -307,18 +379,11 @@ export const useAuthStore = create<AuthState>()(
         }));
       },
 
-      // 로그아웃
-      onLogout: async () => {
-        await signOut(auth);
-        set({ user: null });
-      },
-
       updateProfile: async ({ phone }) => {
         const currentUser = auth.currentUser;
         if (!currentUser) throw new Error("로그인이 필요합니다.");
 
         const userRef = doc(db, "users", currentUser.uid);
-
         await setDoc(userRef, { phone }, { merge: true });
 
         set((state) => ({
@@ -326,25 +391,19 @@ export const useAuthStore = create<AuthState>()(
         }));
       },
 
-      //멤버쉽저장
-      //멤버쉽저장
-      saveMembership: async (membership) => {
-        const currentUser = auth.currentUser;
-        if (!currentUser) throw new Error("로그인이 필요합니다.");
-
-        const userRef = doc(db, "users", currentUser.uid);
-
-        await setDoc(userRef, { membership }, { merge: true });
-
-        set((state) => ({
-          user: state.user ? { ...state.user, membership } : state.user,
-        }));
+      onLogout: async () => {
+        await signOut(auth);
+        set({ user: null, isLogin: false, loading: false, authReady: true });
+        useProfileStore.getState().resetProfiles();
       },
     }),
     {
-      name: "auth-store", // localStorage key
+      name: "auth-store",
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ user: state.user }), // user만 저장
+      partialize: (state) => ({
+        user: state.user,
+        isLogin: state.isLogin, // ✅ 같이 저장 (첫 렌더 깜빡임 줄임)
+      }),
     }
   )
 );
