@@ -39,96 +39,114 @@ const Payment = () => {
             결제 정보는 암호화되며, 결제 방법은 언제든지 변경할 수 있습니다.
           </p>
 
-          {/* 결제 수단 */}
-          <section className="payment-section">
-            <h2 className="section-title">결제 수단</h2>
+          <section className="payment-content">
+            {/* 결제 수단 */}
+            <div className="payment-methods">
+              <h2 className="section-title">결제 수단</h2>
 
-            <Swiper
-              slidesPerView="auto"
-              spaceBetween={12}
-              freeMode
-              className="payment-swiper"
-            >
-              <SwiperSlide className="payment-slide">
-                <button type="button" className="payment-method active">
-                  <img
-                    src="/images/payment/logo_naverpay.png"
-                    alt="네이버페이"
-                  />
-                </button>
-              </SwiperSlide>
-
-              <SwiperSlide className="payment-slide">
-                <button type="button" className="payment-method">
-                  <img
-                    src="/images/payment/icon_kakaopay.png"
-                    alt="카카오페이"
-                  />
-                </button>
-              </SwiperSlide>
-
-              <SwiperSlide className="payment-slide">
-                <button type="button" className="payment-method">
-                  <img
-                    src="/images/payment/logo_samsungpay.png"
-                    alt="삼성페이"
-                  />
-                </button>
-              </SwiperSlide>
-
-              <SwiperSlide className="payment-slide">
-                <button type="button" className="payment-method">
-                  <img src="/images/payment/logo_tosspay.png" alt="토스페이" />
-                </button>
-              </SwiperSlide>
-
-              <SwiperSlide className="payment-slide">
-                <button type="button" className="payment-method payment-card">
-                  <span className="payment-text">카드 결제</span>
-                </button>
-              </SwiperSlide>
-            </Swiper>
-          </section>
-
-          {/* 선택된 멤버십 */}
-          <section className="payment-section">
-            <h2 className="section-title">선택된 멤버십</h2>
-
-            <div className="membership-summary">
-              <div className="membership-info">
-                <span className="membership-price">매월 7,000원</span>
-                <span className="membership-name">광고형 스탠다드</span>
-              </div>
-
-              <button
-                type="button"
-                className="membership-change-btn"
-                onClick={() => setIsPopupOpen(true)}
+              <Swiper
+                slidesPerView="auto"
+                spaceBetween={12}
+                grabCursor
+                modules={[FreeMode]}
+                freeMode={{
+                  enabled: true,
+                  momentum: true,
+                  momentumRatio: 0.35,
+                  momentumBounce: false,
+                  minimumVelocity: 0.05,
+                  sticky: true,
+                }}
+                resistanceRatio={0.85}
+                touchRatio={0.9}
+                speed={400}
+                watchOverflow
+                className="payment-swiper"
               >
-                변경
-              </button>
+                <SwiperSlide className="payment-slide">
+                  <button type="button" className="payment-method active">
+                    <img
+                      src="/images/payment/logo_naverpay.png"
+                      alt="네이버페이"
+                    />
+                  </button>
+                </SwiperSlide>
+
+                <SwiperSlide className="payment-slide">
+                  <button type="button" className="payment-method">
+                    <img
+                      src="/images/payment/icon_kakaopay.png"
+                      alt="카카오페이"
+                    />
+                  </button>
+                </SwiperSlide>
+
+                <SwiperSlide className="payment-slide">
+                  <button type="button" className="payment-method">
+                    <img
+                      src="/images/payment/logo_samsungpay.png"
+                      alt="삼성페이"
+                    />
+                  </button>
+                </SwiperSlide>
+
+                <SwiperSlide className="payment-slide">
+                  <button type="button" className="payment-method">
+                    <img
+                      src="/images/payment/logo_tosspay.png"
+                      alt="토스페이"
+                    />
+                  </button>
+                </SwiperSlide>
+
+                <SwiperSlide className="payment-slide">
+                  <button type="button" className="payment-method payment-card">
+                    <span className="payment-text">카드 결제</span>
+                  </button>
+                </SwiperSlide>
+              </Swiper>
             </div>
-          </section>
 
-          {/* 약관 동의 */}
-          <section className="payment-section agreement-section">
-            <h2 className="section-title">약관 동의</h2>
+            {/* 선택된 멤버십 */}
+            <div className="payment-membership">
+              <h2 className="section-title">선택된 멤버십</h2>
 
-            {/* 약관 1 */}
-            <label className="agreement-item">
-              <input type="checkbox" className="agreement-checkbox" />
-              <span className="agreement-text">
-                [필수] Netflix 이용약관 및 개인정보 처리방침에 동의합니다.
-              </span>
-            </label>
+              <div className="membership-summary">
+                <div className="membership-info">
+                  <span className="membership-price">매월 7,000원</span>
+                  <span className="membership-name">광고형 스탠다드</span>
+                </div>
 
-            {/* 약관 2 */}
-            <label className="agreement-item">
-              <input type="checkbox" className="agreement-checkbox" />
-              <span className="agreement-text">
-                [필수] 본인의 개인 정보를 제3자에 제공하는 데에 동의합니다.
-              </span>
-            </label>
+                <button
+                  type="button"
+                  className="membership-change-btn"
+                  onClick={() => setIsPopupOpen(true)}
+                >
+                  변경
+                </button>
+              </div>
+            </div>
+
+            {/* 약관 동의 */}
+            <div className="payment-agreement">
+              <h2 className="section-title">약관 동의</h2>
+
+              {/* 약관 1 */}
+              <label className="agreement-item">
+                <input type="checkbox" className="agreement-checkbox" />
+                <span className="agreement-text">
+                  [필수] Netflix 이용약관 및 개인정보 처리방침에 동의합니다.
+                </span>
+              </label>
+
+              {/* 약관 2 */}
+              <label className="agreement-item">
+                <input type="checkbox" className="agreement-checkbox" />
+                <span className="agreement-text">
+                  [필수] 본인의 개인 정보를 제3자에 제공하는 데에 동의합니다.
+                </span>
+              </label>
+            </div>
           </section>
 
           {/* 버튼 */}
