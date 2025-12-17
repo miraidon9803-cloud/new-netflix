@@ -1,4 +1,4 @@
-@use '../../App.scss' as *;
+@use "../../App.scss" as *;
 
 // ================================================
 // SearchModal 스타일 - 팀 컨벤션 적용
@@ -54,7 +54,7 @@
 }
 
 .search-title {
-  font-family: 'SUIT';
+  font-family: "SUIT";
   font-size: 24px;
   font-weight: 600;
   line-height: 140%;
@@ -99,15 +99,22 @@
   width: 100%;
   // min-width: 100%;
   padding: 12px 24px;
-  font-family: 'SUIT';
+  font-family: "SUIT";
   font-size: 16px;
   font-weight: 400;
   line-height: 140%;
   letter-spacing: -0.4px;
   border-radius: 50px;
-  border: 1px solid #FFCDCD;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.40) 0%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0.40) 100%);
-  box-shadow: 0 0 5px 0 rgba(255, 184, 184, 0.25), 0 0 10px 0 rgba(255, 86, 86, 0.25), 0 0 20px 0 rgba(229, 9, 20, 0.50), 0 0 30px 0 rgba(229, 9, 20, 0.30);
+  border: 1px solid #ffcdcd;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.28) 50%,
+    rgba(255, 255, 255, 0.4) 100%
+  );
+  box-shadow: 0 0 5px 0 rgba(255, 184, 184, 0.25),
+    0 0 10px 0 rgba(255, 86, 86, 0.25), 0 0 20px 0 rgba(229, 9, 20, 0.5),
+    0 0 30px 0 rgba(229, 9, 20, 0.3);
   color: $grey10;
   outline: none;
   transition: all 0.3s;
@@ -154,7 +161,7 @@
 }
 
 .section-title {
-  font-family: 'SUIT';
+  font-family: "SUIT";
   font-size: 16px;
   font-weight: 400;
   line-height: 140%;
@@ -168,7 +175,7 @@
 }
 
 .go-link {
-  font-family: 'SUIT';
+  font-family: "SUIT";
   font-size: 16px;
   font-weight: 400;
   line-height: 140%;
@@ -191,7 +198,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-family: 'SUIT';
+  font-family: "SUIT";
   font-size: 16px;
   font-weight: 400;
   line-height: 140%;
@@ -217,7 +224,7 @@
   background-color: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50px;
-  font-family: 'SUIT';
+  font-family: "SUIT";
   font-size: 16px;
   font-weight: 400;
   line-height: 140%;
@@ -257,6 +264,18 @@
   grid-template-columns: repeat(3, 1fr);
   column-gap: 26px; // 카드 사이 가로 간격
   row-gap: 40px; // 세로 간격 (임시)
+  .card-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 5%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+    @include myTitle14();
+    color: $grey10;
+    text-align: center;
+    border-radius: 0 0 8px 8px;
+  }
 }
 
 .content-card {
@@ -267,7 +286,7 @@
 }
 
 .card-rank {
-  font-family: 'Esamanru';
+  font-family: "Esamanru";
   font-size: 32px;
   font-weight: 500;
   line-height: 140%;
@@ -309,19 +328,6 @@
   border-radius: 8px;
   background-color: lightgray;
   transition: transform 0.3s ease;
-}
-
-.card-title {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 5%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
-  @include myTitle14();
-  color: $grey10;
-  text-align: center;
-  border-radius: 0 0 8px 8px;
 }
 
 // 검색 결과 없음
@@ -466,7 +472,6 @@
     }
   }
 
-
   // 카드 이미지 반응형 + max 사이즈 유지
   .card-image-wrapper {
     width: 100%;
@@ -500,7 +505,6 @@
     height: auto;
   }
 }
-
 
 // @media (max-width: 1024px) {
 //   .card-rank {
@@ -537,7 +541,7 @@
   // 검색어를 입력해주세요 - 430px 이하
   .search-input {
     padding: 8px 4%;
-    font-family: 'SUIT';
+    font-family: "SUIT";
     font-size: 14px;
     font-weight: 400;
     line-height: 140%;
@@ -563,7 +567,7 @@
 
   // 최근 검색어, 가장 많이 찾아본 콘텐츠 - 430px 이하
   .section-title {
-    font-family: 'SUIT';
+    font-family: "SUIT";
     font-size: 16px;
     font-weight: 400;
     line-height: 140%;
@@ -573,7 +577,7 @@
 
   // 전체삭제 - 430px 이하
   .clear-all-btn {
-    font-family: 'SUIT';
+    font-family: "SUIT";
     font-size: 16px;
     font-weight: 400;
     line-height: 140%;
@@ -593,7 +597,7 @@
   // 최근검색어 태그 내용 - 430px 이하
   .tag {
     padding: 6px 12px;
-    font-family: 'SUIT';
+    font-family: "SUIT";
     font-size: 14px;
     font-weight: 400;
     line-height: 140%;
