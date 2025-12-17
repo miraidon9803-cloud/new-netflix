@@ -55,7 +55,7 @@
       @include myFlex(16px, flex-start, center);
     }
 
-    .back-btn {
+    .wishlist-detail-back-btn {
       background: none;
       border: none;
       cursor: pointer;
@@ -238,10 +238,10 @@
     gap: 0;
   }
 
-  // 콘텐츠 수정 팝업 (406 x 308)
+  
   .popup-content-edit {
     width: 406px;
-    height: 308px;
+    // height: 308px;
     display: flex;
     flex-direction: column;
 
@@ -268,16 +268,11 @@
     cursor: pointer;
     color: $grey10;
     @include myTitle16(400, left);
-    margin-bottom: 0;
-
-    &:first-child {
-      margin-bottom: 0;
-      border-radius: 4px 4px 0 0;
-    }
+    margin-bottom: 0;    
 
     &:last-child {
       margin-bottom: 40px;
-      border-radius: 0 0 4px 4px;
+      
     }
 
     svg {
@@ -317,6 +312,7 @@
   .popup-folder-item {
     display: flex;
     width: 100%;
+    margin: 8px 0;
     padding: 12px 18px;
     align-items: center;
     gap: 12px;
@@ -326,14 +322,8 @@
     color: $grey10;
     @include myTitle16(400, left);
     transition: background-color 0.2s;
-
-    &:first-child {
-      border-radius: 4px 4px 0 0;
-    }
-
-    &:last-child {
-      border-radius: 0 0 4px 4px;
-    }
+    border-radius: 4px;
+    
 
     &:hover {
       background: $grey4;

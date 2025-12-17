@@ -7,14 +7,14 @@
 
 .wishlist-page {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   min-height: 100vh;
   background-color: $BG;
   position: relative;
 
   // 전역 Footer 숨김
-  & ~ footer,
-  & + footer {
+  &~footer,
+  &+footer {
     display: none !important;
   }
 
@@ -75,6 +75,7 @@
     padding: 42px 60px 60px;
     max-width: calc(100% - 130px);
     box-sizing: border-box;
+    min-height: calc(100vh - 250px); // Footer 높이를 고려한 최소 높이
   }
 
   // ================================================
@@ -154,7 +155,7 @@
   // 폴더 정보 (이름 + 드롭다운)
   .folder-info {
     @include myFlex(4px, center, center);
-    margin-top: 16px;
+    // margin-top: 16px;
     width: 100%;
     max-width: 220px;
   }
@@ -244,7 +245,8 @@
     width: 100%;
     max-width: 1570px;
     margin: 0 auto;
-    padding-left: 130px;
+    margin-top: auto; // 콘텐츠가 적어도 Footer를 하단으로
+    // padding-left: 130px;
     box-sizing: border-box;
   }
 
@@ -397,6 +399,7 @@
 
 @media (max-width: 1440px) {
   .wishlist-page {
+
     // 사이드 네비게이션 숨김
     .wishlist-sidenav {
       display: none;
@@ -459,16 +462,18 @@
     }
   }
 }
-
 // ================================================
 // 반응형: 430px 이하
 // ================================================
 
 @media (max-width: 430px) {
+
+  // 전역 Header 숨김 (wishlist-page가 있을 때)
+  body:has(.wishlist-page) header {
+    display: none;
+  }
+
   .wishlist-page {
-    header {
-      display: none;
-    }
 
     // 모바일 전용 헤더 표시
     .wishlist-mobile-header {

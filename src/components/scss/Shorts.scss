@@ -424,7 +424,7 @@
     width: 100%;
     max-width: 1570px;
     margin: 0 auto;
-    padding-left: 130px;
+    // padding-left: 130px;
     box-sizing: border-box;
   }
 }
@@ -643,11 +643,12 @@
 
 // 반응형 - 430px 이하
 @media (max-width: 430px) {
-  .shorts-page {
-    header {
-      display: none;
-    }
+  // 전역 Header 숨김 (shorts-page가 있을 때)
+  body:has(.shorts-page) header {
+    display: none;
+  }
 
+  .shorts-page {
     // 모바일 전용 헤더 표시
     .shorts-mobile-header {
       display: flex;
@@ -665,7 +666,7 @@
 
     // 메인 콘텐츠 조정
     .shorts-content {
-      margin: 0 16px !important;
+      margin: 60px 16px 0 !important;
       padding: 0 0 100px !important;
     }
 
