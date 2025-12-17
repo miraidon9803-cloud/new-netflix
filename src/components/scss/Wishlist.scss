@@ -85,6 +85,7 @@
   .wishlist-header {
     @include myFlex(10px, space-between, center);
     margin-bottom: 26px;
+    max-width: 1320px; // 콘텐츠 최대 너비 제한
 
     .wishlist-title {
       @include myTitle24(600, left);
@@ -116,6 +117,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     row-gap: 40px;
+    max-width: 1320px; // 그리드도 동일하게 제한
   }
 
   // ================================================

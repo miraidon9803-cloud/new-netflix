@@ -264,11 +264,17 @@ const Shorts: React.FC = () => {
     }
   };
 
-  // 배경 클릭으로 닫기
+  // 배경(오버레이) 클릭으로 닫기
   const handleOverlayClick = (e: React.MouseEvent) => {
+    // 클릭한 요소가 player-overlay 자체일 때만 닫기
     if (e.target === e.currentTarget) {
       closePlayer();
     }
+  };
+
+  // player-container 클릭 시 이벤트 전파 중지
+  const handleContainerClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
   };
 
   // 이전 영상 (순환)
@@ -381,7 +387,7 @@ const Shorts: React.FC = () => {
         {/* 플레이어 모드 */}
         {viewMode === 'player' && (
           <div className="player-overlay" onClick={handleOverlayClick}>
-            <div className="player-container">
+            <div className="player-container" onClick={handleContainerClick}>
               {/* 좌측 화살표 (430px 이하에서 숨김) */}
               <button className="player-arrow player-arrow-left" onClick={goPrev}>
                 <ArrowLeftIcon />
@@ -482,7 +488,7 @@ const Shorts: React.FC = () => {
           <img src="/images/icon/홈.png" alt="" />
           
         </Link>
-        <Link to="/" className="bottom-nav-item">
+        <Link to="/wishlist" className="bottom-nav-item">
           <img src="/images/icon/위시리스트.png" alt="" />
           
         </Link>

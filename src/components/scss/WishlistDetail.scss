@@ -7,7 +7,7 @@
 
 .wishlist-detail-page {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   min-height: 100vh;
   background-color: $BG;
   position: relative;
@@ -40,6 +40,20 @@
     margin-left: 130px;
     padding: 42px 60px 60px;
     max-width: calc(100% - 130px);
+    box-sizing: border-box;
+    min-height: calc(100vh - 250px); // Footer 높이를 고려한 최소 높이
+  }
+
+  // ================================================
+  // Footer (1441px 이상에서 표시)
+  // ================================================
+
+  .wishlist-detail-footer {
+    display: block;
+    width: 100%;
+    max-width: 1570px;
+    margin: 0 auto;
+    margin-top: auto; // 콘텐츠가 적어도 Footer를 하단으로
     box-sizing: border-box;
   }
 
@@ -364,6 +378,11 @@
       display: none;
     }
 
+    // Footer 숨김
+    .wishlist-detail-footer {
+      display: none;
+    }
+
     // 메인 콘텐츠 조정
     .wishlist-detail-content {
       margin: 0 auto !important;
@@ -371,10 +390,10 @@
       max-width: 100%;
     }
 
-    // 그리드 5열
+    // 그리드 5열, gap 24px
     .wishlist-detail-grid {
       grid-template-columns: repeat(5, 1fr);
-      row-gap: 32px;
+      gap: 24px;
     }
 
     // 콘텐츠 정보
@@ -430,11 +449,10 @@
       }
     }
 
-    // 그리드 3열
+    // 그리드 3열, gap 16px
     .wishlist-detail-grid {
       grid-template-columns: repeat(3, 1fr);
-      column-gap: 16px;
-      row-gap: 20px;
+      gap: 16px;
     }
 
     // 콘텐츠 이미지

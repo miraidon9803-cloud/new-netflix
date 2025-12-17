@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import SideNav from './SideNav';
+import Footer from './Footer';
 import type { Content, SortOrder } from '../types/search';
 import './scss/WishlistDetail.scss';
 
@@ -15,17 +16,58 @@ interface FolderData {
   contents: Content[];
 }
 
-// 초기 폴더 데이터 생성
+// localStorage 키
+const FOLDERS_STORAGE_KEY = 'wishlist_folders';
+
+// 초기 폴더 데이터 생성 (중복 없이, 폴더별 다른 개수)
 const createInitialFolders = (): FolderData[] => {
   const posterContents = netflixData.filter((item: Content) => item.type === 'poster');
   
+  // 중복 제거를 위해 title 기준으로 unique한 콘텐츠만 추출
+  const uniqueContents: Content[] = [];
+  const seenTitles = new Set<string>();
+  
+  for (const content of posterContents) {
+    if (!seenTitles.has(content.title)) {
+      seenTitles.add(content.title);
+      uniqueContents.push(content);
+    }
+  }
+  
+  // 폴더별로 다른 개수의 콘텐츠 배치 (이동 테스트 용이하도록)
   return [
-    { id: 1, name: '이번 주말용', contents: posterContents.slice(0, 12) },
-    { id: 2, name: '정주행 미드', contents: posterContents.slice(12, 24) },
-    { id: 3, name: '코난 극장판', contents: posterContents.slice(24, 36) },
-    { id: 4, name: '심심할 때 보기', contents: posterContents.slice(36, 48) },
-    { id: 5, name: '그레이 아나토미', contents: posterContents.slice(48, 60) },
+    { id: 1, name: '이번 주말용', contents: uniqueContents.slice(0, 8) },      // 8개
+    { id: 2, name: '정주행 미드', contents: uniqueContents.slice(8, 20) },     // 12개
+    { id: 3, name: '코난 극장판', contents: uniqueContents.slice(20, 26) },    // 6개
+    { id: 4, name: '심심할 때 보기', contents: uniqueContents.slice(26, 41) }, // 15개
+    { id: 5, name: '그레이 아나토미', contents: uniqueContents.slice(41, 51) }, // 10개
   ];
+};
+
+// localStorage에서 폴더 데이터 불러오기
+const loadFoldersFromStorage = (): FolderData[] => {
+  try {
+    const stored = localStorage.getItem(FOLDERS_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      // 데이터 유효성 검사
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load folders from localStorage:', error);
+  }
+  return createInitialFolders();
+};
+
+// localStorage에 폴더 데이터 저장
+const saveFoldersToStorage = (folders: FolderData[]): void => {
+  try {
+    localStorage.setItem(FOLDERS_STORAGE_KEY, JSON.stringify(folders));
+  } catch (error) {
+    console.error('Failed to save folders to localStorage:', error);
+  }
 };
 
 // SVG 아이콘 컴포넌트들
@@ -89,12 +131,19 @@ const CheckIcon: React.FC = () => (
   </svg>
 );
 
+const ResetIcon: React.FC = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+    <path d="M1 4V10H7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M3.51 15C4.15839 16.8404 5.38734 18.4202 7.01166 19.5014C8.63598 20.5826 10.5677 21.1066 12.5157 20.9945C14.4637 20.8824 16.3226 20.1402 17.8121 18.8798C19.3017 17.6193 20.3413 15.9089 20.7742 14.0064C21.2072 12.1038 21.0101 10.1135 20.2126 8.33111C19.4152 6.54871 18.0605 5.07374 16.3528 4.12803C14.6451 3.18233 12.6769 2.81925 10.7447 3.09712C8.81245 3.37499 7.02091 4.27756 5.64 5.66L1 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 const WishlistDetail: React.FC = () => {
   const { folderId } = useParams<{ folderId: string }>();
   const navigate = useNavigate();
   
   const [sortOrder, setSortOrder] = useState<SortOrder>('latest');
-  const [folders, setFolders] = useState<FolderData[]>(createInitialFolders);
+  const [folders, setFolders] = useState<FolderData[]>(loadFoldersFromStorage);
   const [sortedContents, setSortedContents] = useState<Content[]>([]);
   
   // 팝업 상태
@@ -114,6 +163,11 @@ const WishlistDetail: React.FC = () => {
   const currentFolder = folders.find(f => f.id === currentFolderId);
   const folderName = currentFolder?.name || '폴더';
   const contents = currentFolder?.contents || [];
+
+  // folders 변경 시 localStorage에 저장
+  useEffect(() => {
+    saveFoldersToStorage(folders);
+  }, [folders]);
 
   // 콘텐츠 정렬
   useEffect(() => {
@@ -188,6 +242,15 @@ const WishlistDetail: React.FC = () => {
 
   const handleBack = (): void => {
     navigate('/wishlist');
+  };
+
+  // 데이터 초기화 (테스트용)
+  const handleReset = (): void => {
+    if (window.confirm('모든 폴더 데이터를 초기 상태로 되돌리시겠습니까?')) {
+      const initialFolders = createInitialFolders();
+      setFolders(initialFolders);
+      saveFoldersToStorage(initialFolders);
+    }
   };
 
   // 콘텐츠 길게 누르기 시작
@@ -312,17 +375,27 @@ const WishlistDetail: React.FC = () => {
             </button>
             <h1 className="wishlist-detail-title">{folderName}</h1>
           </div>
-          <button className="sort-btn" onClick={toggleSort}>
-            {getSortLabel()}
-            <SortIcon />
-          </button>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <button 
+              className="sort-btn" 
+              onClick={handleReset}
+              title="데이터 초기화"
+              style={{ opacity: 0.7 }}
+            >
+              <ResetIcon />
+            </button>
+            <button className="sort-btn" onClick={toggleSort}>
+              {getSortLabel()}
+              <SortIcon />
+            </button>
+          </div>
         </div>
 
         <div className="wishlist-detail-grid">
           {sortedContents.map((content, index) => (
             <div 
               className="wishlist-detail-card" 
-              key={index}
+              key={`${content.title}-${index}`}
               onMouseDown={() => handleContentMouseDown(content)}
               onMouseUp={handleContentMouseUp}
               onMouseLeave={handleContentMouseUp}
@@ -426,6 +499,11 @@ const WishlistDetail: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Footer (1441px 이상에서 표시) */}
+      <div className="wishlist-detail-footer">
+        <Footer />
+      </div>
 
       <nav className="wishlist-detail-bottom-nav">
         <a href="/" className="bottom-nav-item">
