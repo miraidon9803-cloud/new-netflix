@@ -10,7 +10,7 @@ const SideNav = () => {
       <Link to={"/"}>
         <img src="../../../public/images/icon/바로가기.png" alt="" />
       </Link>
-      <Link to={"/"}>
+      <Link to={"/shorts"}>
         <img src="../../../public/images/icon/쇼츠.png" alt="" />
       </Link>
       <Link to={"/"}>

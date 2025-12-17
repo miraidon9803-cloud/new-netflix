@@ -18,6 +18,7 @@ import { useProfileStore } from "./store/Profile";
 import { useEffect } from "react";
 import Wishlist from "./components/Wishlist";
 import WishlistDetail from "./components/WishlistDetail";
+import Shorts from "./components/Shorts";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -65,6 +66,7 @@ function App() {
             <Route path="storgebox" element={<StorageBox />} />
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="/wishlist/:folderId" element={<WishlistDetail />} />
+            <Route path="/shorts" element={<Shorts />} />
           </Route>
         </Route>
 
