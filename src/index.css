@@ -1,125 +1,109 @@
-/*  SUIT FONT FAMILY (FULL WEIGHT SET)                         */
+/* ------------------------- */
+/*       SUIT FONT SET       */
+/* ------------------------- */
 @font-face {
-  font-family: 'SUIT';
-  src: url('/src/assets/fonts/SUIT-Thin.otf') format('opentype');
+  font-family: "SUIT";
+  src: url("/src/assets/fonts/SUIT-Thin.otf") format("opentype");
   font-weight: 100;
   font-style: normal;
 }
 @font-face {
-  font-family: 'SUIT';
-  src: url('/src/assets/fonts/SUIT-ExtraLight.otf') format('opentype');
+  font-family: "SUIT";
+  src: url("/src/assets/fonts/SUIT-ExtraLight.otf") format("opentype");
   font-weight: 200;
   font-style: normal;
 }
 @font-face {
-  font-family: 'SUIT';
-  src: url('/src/assets/fonts/SUIT-Light.otf') format('opentype');
+  font-family: "SUIT";
+  src: url("/src/assets/fonts/SUIT-Light.otf") format("opentype");
   font-weight: 300;
   font-style: normal;
 }
 @font-face {
-  font-family: 'SUIT';
-  src: url('/src/assets/fonts/SUIT-Regular.otf') format('opentype');
+  font-family: "SUIT";
+  src: url("/src/assets/fonts/SUIT-Regular.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
 }
 @font-face {
-  font-family: 'SUIT';
-  src: url('/src/assets/fonts/SUIT-Medium.otf') format('opentype');
+  font-family: "SUIT";
+  src: url("/src/assets/fonts/SUIT-Medium.otf") format("opentype");
   font-weight: 500;
   font-style: normal;
 }
 @font-face {
-  font-family: 'SUIT';
-  src: url('/src/assets/fonts/SUIT-SemiBold.otf') format('opentype');
+  font-family: "SUIT";
+  src: url("/src/assets/fonts/SUIT-SemiBold.otf") format("opentype");
   font-weight: 600;
   font-style: normal;
 }
 @font-face {
-  font-family: 'SUIT';
-  src: url('/src/assets/fonts/SUIT-Bold.otf') format('opentype');
+  font-family: "SUIT";
+  src: url("/src/assets/fonts/SUIT-Bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
 }
 @font-face {
-  font-family: 'SUIT';
-  src: url('/src/assets/fonts/SUIT-ExtraBold.otf') format('opentype');
+  font-family: "SUIT";
+  src: url("/src/assets/fonts/SUIT-ExtraBold.otf") format("opentype");
   font-weight: 800;
   font-style: normal;
 }
 @font-face {
-  font-family: 'SUIT';
-  src: url('/src/assets/fonts/SUIT-Heavy.otf') format('opentype');
+  font-family: "SUIT";
+  src: url("/src/assets/fonts/SUIT-Heavy.otf") format("opentype");
   font-weight: 900;
   font-style: normal;
 }
 
-/*  ESAMANRU FONT FAMILY                                       */
+/* ------------------------- */
+/*     ESAMANRU FONT SET     */
+/* ------------------------- */
 @font-face {
-  font-family: 'Esamanru';
-  src: url('/src/assets/fonts/esamanru Light.ttf') format('truetype');
+  font-family: "Esamanru";
+  src: url("/src/assets/fonts/esamanru Light.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
 }
 @font-face {
-  font-family: 'Esamanru';
-  src: url('/src/assets/fonts/esamanru Medium.ttf') format('truetype');
+  font-family: "Esamanru";
+  src: url("/src/assets/fonts/esamanru Medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
 }
 @font-face {
-  font-family: 'Esamanru';
-  src: url('/src/assets/fonts/esamanru Bold.ttf') format('truetype');
+  font-family: "Esamanru";
+  src: url("/src/assets/fonts/esamanru Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }
 
-@font-face {
-  font-family: 'SUIT';
-  src: url('/src/assets/fonts/SUIT-ExtraLight.otf') format('opentype');
-  font-style: normal;
-}
+/* ------------------------- */
+/*     GLOBAL RESET & BASE   */
+/* ------------------------- */
 
-@font-face {
-  font-family: 'SUIT';
-  src: url('/src/assets/fonts/SUIT-Regular.otf') format('opentype');
-  font-weight: 400;
-  /* 400 (Regular) */
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'SUIT';
-  src: url('/src/assets/fonts/SUIT-Medium.otf') format('opentype');
-  font-weight: 500;
-  /* 400 (Medium) */
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'SUIT';
-  src: url('/src/assets/fonts/SUIT-SemiBold.otf') format('opentype');
-  font-weight: 600;
-  /* 600 (SUIT-SemiBold) */
-  font-style: normal;
-}
-
-/* body 기본 폰트 */
-body {
-  font-family: 'SUIT', sans-serif;
-  font-size: 16px;
-}
-
-/* 모든 요소 초기화 */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* li 장식 제거 */
-li {
-  list-style: none;
+html {
+  font-size: 10px;
+  font-family: "Pretendard", sans-serif;
+}
+
+body {
+  font-family: "SUIT", sans-serif;
+  font-size: 16px;
+  overflow-y: scroll;
+  background-color: #0e0e0f;
+}
+
+/* 스크롤 숨기기 */
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 /* a 태그 초기화 */
@@ -128,7 +112,12 @@ a {
   color: inherit;
 }
 
-/* 이미지 정렬 */
+/* li 장식 제거 */
+li {
+  list-style: none;
+}
+
+/* 이미지 기본 */
 img {
   vertical-align: middle;
   max-width: 100%;
@@ -141,34 +130,19 @@ address {
   font-style: normal;
 }
 
-/* blind 요소 */
+/* blind 처리 */
 .blind {
   position: absolute;
   top: -99999px;
 }
 
-/* 버튼 기본 */
+/* button 초기 */
 button {
   cursor: pointer;
 }
 
-/* html 기본 폰트 */
-html {
-  font-size: 10px;
-  font-family: 'Pretendard', sans-serif;
-}
-
-/* inner layout */
+/* 레이아웃 중앙정렬 컨테이너 */
 .inner {
   max-width: 1440px;
   margin: 0 auto;
-}
-
-/* 스크롤 숨기기 */
-body {
-  overflow-y: scroll;
-}
-::-webkit-scrollbar {
-  width: 0;
-  height: 0;
 }

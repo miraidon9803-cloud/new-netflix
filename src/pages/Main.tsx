@@ -1,25 +1,36 @@
-import { useEffect } from 'react';
-import './scss/Main.scss';
+import { useEffect } from "react";
+import "./scss/Main.scss";
 // import NetflixOriginal from '../components/NetflixOriginal';
-import { useNetflixStore } from '../store/NetflixStore';
-import MainBanner from '../components/MainBanner';
-import InfiniSubmenu from '../components/InfiniSubmenu';
-import Originals from '../components/Originals';
-import NowPlay from '../components/NowPlay';
-import ComingSoon from '../components/ComingSoon';
-import WalkingDead from '../components/WalkingDead';
-import SideNav from '../components/SideNav';
-import StrangerNew from '../components/StrangerNew';
-import TodayTop10 from '../components/TodayTop10';
-import MovieTop10 from '../components/MovieTop10';
-import SFNFantasy from '../components/SFNFantasy';
-import TrandingSeries from '../components/TrandingSeries';
+import { useNetflixStore } from "../store/NetflixStore";
+import MainBanner from "../components/MainBanner";
+import InfiniSubmenu from "../components/InfiniSubmenu";
+import Originals from "../components/Originals";
+import NowPlay from "../components/NowPlay";
+import ComingSoon from "../components/ComingSoon";
+import WalkingDead from "../components/WalkingDead";
+import SideNav from "../components/SideNav";
+import StrangerNew from "../components/StrangerNew";
+import TodayTop10 from "../components/TodayTop10";
+import MovieTop10 from "../components/MovieTop10";
+import SFNFantasy from "../components/SFNFantasy";
+import TrandingSeries from "../components/TrandingSeries";
+import ChoiceContentTxt from "../components/ChoiceContentTxt";
+// import { useNavigate } from "react-router-dom";
 
 const Main = () => {
-  const { onFetchOriginal, original } = useNetflixStore();
+  // const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const hasVisited = localStorage.getItem("hasVisitedLanding");
+  //   if (!hasVisited) {
+  //     navigate("/land", { replace: true });
+  //   }
+  // }, [navigate]);
+  const { onFetchOriginal } = useNetflixStore();
   useEffect(() => {
     onFetchOriginal();
   }, [onFetchOriginal]);
+
   return (
     <div className="Main">
       <SideNav />
@@ -35,6 +46,7 @@ const Main = () => {
       <WalkingDead />
       <TrandingSeries />
       <SFNFantasy />
+      <ChoiceContentTxt />
     </div>
   );
 };

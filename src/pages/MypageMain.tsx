@@ -1,0 +1,130 @@
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
+import "./scss/MypageMain.scss";
+import Acount from "../components/Acount";
+import { useState } from "react";
+import AppPopup from "../components/AppPopup";
+import MemberPopup from "../components/MemberPopup";
+import { useProfileStore } from "../store/Profile";
+import ProfilePopup from "../components/ProfilePopup";
+
+import AvatarSelPopup from "../components/AvatarSelPopup";
+import { profile } from "../data/profile";
+
+const MypageMain = () => {
+  const user = useAuthStore((s) => s.user);
+  const { onLogout } = useAuthStore();
+  const membership = user?.membership;
+  const navigate = useNavigate();
+
+  const profiles = useProfileStore((s) => s.profiles);
+  const activeProfileId = useProfileStore((s) => s.activeProfileId);
+  const activeProfile = profiles.find((p) => p.id === activeProfileId);
+
+  const updateProfile = useProfileStore((s) => s.updateProfile);
+
+  const [showAccount, setShowAccount] = useState(false);
+  const [showApp, setShowApp] = useState(false);
+  const [showMember, setShowMember] = useState(false);
+
+  const [openProfilePopup, setOpenProfilePopup] = useState(false);
+
+  const [avatarPopupOpen, setAvatarPopupOpen] = useState(false);
+
+  const [selectedAvatarKey, setSelectedAvatarKey] = useState(
+    activeProfile?.avatarKey ?? profile?.[0]?.key ?? ""
+  );
+
+  if (!activeProfile) return null;
+
+  const handleLogout = () => {
+    onLogout();
+    navigate("/");
+  };
+
+  return (
+    <div className="inner-mypageMain">
+      <div className="mypageMain-wrap">
+        <div className="title">
+          <h1>나의 넷플릭스</h1>
+        </div>
+
+        <div className="main-content">
+          <div className="content-left">
+            <div>
+              <img src={activeProfile.poster} alt="" />
+            </div>
+            <p className="nickname">{activeProfile.title}</p>
+
+            <Link to="profile">
+              <p className="profile-change">프로필변경</p>
+            </Link>
+          </div>
+
+          <div className="content-right">
+            <div className="title-wrap">
+              <div className="content-title">
+                <p>나의 멤버십</p>
+                <p className="membership-grade">
+                  {membership?.name ?? "멤버십 없음"}
+                </p>
+              </div>
+              <p
+                onClick={() => setShowMember((v) => !v)}
+                className="content-out"
+              >
+                변경 및 해지
+              </p>
+            </div>
+
+            <ul className="profile-section">
+              <li onClick={() => setOpenProfilePopup(true)}>
+                현재 프로필 관리
+              </li>
+              <li onClick={() => setShowAccount((v) => !v)}>계정</li>
+              <li onClick={() => setShowApp((v) => !v)}>앱 설정</li>
+              <li>고객센터</li>
+            </ul>
+
+            <AvatarSelPopup
+              open={avatarPopupOpen}
+              selectedKey={selectedAvatarKey}
+              onSelect={async (key) => {
+                setSelectedAvatarKey(key);
+
+                const picked = profile.find((a) => a.key === key);
+                if (!picked) return;
+
+                await updateProfile(activeProfile.id, {
+                  title: activeProfile.title,
+                  avatarKey: picked.key,
+                  poster: picked.poster,
+                });
+
+                setAvatarPopupOpen(false);
+              }}
+              onClose={() => setAvatarPopupOpen(false)}
+            />
+
+            <ProfilePopup
+              open={openProfilePopup}
+              onClose={() => setOpenProfilePopup(false)}
+              mode="edit"
+              profileId={activeProfileId ?? undefined}
+            />
+
+            {showAccount && <Acount onClose={() => setShowAccount(false)} />}
+            {showApp && <AppPopup onClose={() => setShowApp(false)} />}
+            {showMember && <MemberPopup onClose={() => setShowMember(false)} />}
+
+            <button onClick={handleLogout} className="logout-btn">
+              로그아웃
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default MypageMain;

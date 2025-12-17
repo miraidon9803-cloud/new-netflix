@@ -1,0 +1,193 @@
+@use "../../App.scss" as l;
+
+.member-inner {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  /* 수직 중앙 정렬 */
+  justify-content: center;
+  /* 수평 중앙 정렬 */
+  background: rgba(0, 0, 0, 0.75);
+
+  .member-wrap {
+    width: 1000px;
+    height: 700px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: l.$grey2;
+    border-radius: 8px;
+
+    .member-content {
+      width: 952px;
+      height: 652px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .member-header {
+        position: relative;
+
+        h1 {
+          @include l.myTitle20();
+          color: l.$grey10;
+          margin-bottom: 32px;
+        }
+
+        .close {
+          position: absolute;
+          top: 0;
+          left: 470px;
+          background: none;
+          border: none;
+          color: #aaa;
+          font-size: 20px;
+          cursor: pointer;
+        }
+      }
+
+      .membership-options {
+        width: 35.8rem;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        label {
+          padding: 12px 18px;
+          @include l.myTitle16();
+          text-align: left;
+          background: l.$grey3;
+        }
+      }
+
+      .plan-selection {
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+      }
+
+      .plan-selection input[type="radio"] {
+        display: none;
+      }
+
+      .plan-selection label {
+        @include l.myTitle16();
+        margin-top: 8px;
+        color: l.$grey10;
+        display: flex;
+        align-items: center;
+        border-radius: 4px;
+
+        position: relative;
+        &::before {
+          content: "";
+          position: absolute;
+          right: 16px;
+          width: 18px;
+          height: 18px;
+          //   border-radius: 50%;
+          //   border: 2px solid l.$grey6;
+          background: transparent;
+        }
+
+        &.active {
+          background-color: l.$grey4;
+
+          &::before {
+            background-image: url("/images/Symbol.png");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 12px 12px;
+          }
+        }
+      }
+
+      .plan-selection input[type="radio"] {
+        margin-right: 10px;
+        cursor: pointer;
+      }
+
+      .plan-selection label.active {
+        background-color: l.$grey4;
+      }
+
+      .details-btn {
+        @include l.myTitle14();
+        text-align: right;
+        text-decoration: underline;
+        color: l.$grey7;
+      }
+
+      .payment-method {
+        margin-top: 20px;
+        .payment-select {
+          position: relative;
+        }
+        .payment-list {
+          position: absolute;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          cursor: pointer;
+        }
+        p {
+          @include l.myTitle16(400, left);
+          color: l.$grey10;
+        }
+
+        .payment-btn {
+          margin-bottom: 12px;
+          cursor: pointer;
+        }
+
+        .payment-title {
+          display: flex;
+          justify-content: space-between;
+        }
+      }
+
+      .change-payment-btn {
+        background-color: l.$grey4;
+        color: l.$grey10;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 14px;
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+
+      .btn-wrap {
+        width: 100%;
+        margin-top: 150px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .cancel-btn,
+      .save-btn {
+        @include l.myTitle16();
+        background-color: l.$main1;
+        color: l.$grey10;
+        padding: 12px 24px;
+        border: none;
+        width: 100%;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+
+      .cancel-btn {
+        color: l.$grey7;
+        background: none;
+        border: 1px solid l.$grey7;
+      }
+
+      .save-btn {
+        background-color: l.$main1;
+      }
+    }
+  }
+}

@@ -19,6 +19,11 @@
         width: 22rem;
         aspect-ratio: 11/16;
         border-radius: 0.8rem;
+        transform-origin: center bottom;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        &:hover {
+          transform: translateY(-0.4rem) scale(1.03);
+        }
       }
     }
   }

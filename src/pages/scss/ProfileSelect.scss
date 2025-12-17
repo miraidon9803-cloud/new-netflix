@@ -1,0 +1,98 @@
+@use "../../App.scss" as l;
+
+.inner-profile {
+  margin-top: 180px;
+  // width: 119.6rem;
+  height: 87.2rem;
+  // display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  h1 {
+    @include l.myTitle24();
+    color: l.$grey10;
+    margin-bottom: 46px;
+  }
+  .profile-wrap {
+    width: 100%;
+    height: 37.8rem;
+    // background: red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .profile-content {
+    .add {
+      width: 220px;
+      height: 220px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      background-color: l.$grey2;
+      border-radius: 8px;
+      padding: 32px 70px;
+      gap: 10px;
+      margin-bottom: 35px;
+      .add-box {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        @include l.myTitle16();
+        color: l.$grey10;
+        gap: 16px;
+      }
+    }
+
+    ul {
+      display: flex;
+      justify-content: center;
+      align-items: end;
+      gap: 24px;
+      li {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      li img {
+        width: 220px;
+        // height: 220px;
+      }
+      .profile-title {
+        @include l.myTitle16();
+      }
+
+      .add {
+        width: 220px;
+        height: 220px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        background-color: l.$grey2;
+        border-radius: 8px;
+        padding: 32px 70px;
+        gap: 10px;
+
+        .add-box {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          height: 100%;
+          @include l.myTitle16();
+          color: l.$grey10;
+          gap: 16px;
+        }
+        img {
+          width: 36px;
+          height: 36px;
+        }
+      }
+    }
+  }
+}

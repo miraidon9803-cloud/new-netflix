@@ -3,17 +3,27 @@
 .OriginalWrap {
   margin-top: 4rem;
   background-color: BG.$BG;
+  > p {
+    font-size: 2.4rem;
+    font-weight: 600;
+    line-height: 140%;
+  }
 
   .original {
     display: flex;
     margin-top: 1.6rem;
-    overflow-x: auto; // 🔥 가로 스크롤 허용
+    overflow-x: auto; // 가로 스크롤 허용
     overflow-y: hidden;
 
     gap: 2.4rem;
     li {
       height: 66rem;
       aspect-ratio: 17/33;
+      transform-origin: center bottom;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      &:hover {
+        transform: translateY(-0.4rem) scale(1.03);
+      }
     }
   }
 }

@@ -1,13 +1,20 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import "./scss/Login.scss";
 
-const Login: React.FC = () => {
-  const { onLogin } = useAuthStore();
+interface LoginProps {
+  onNext?: () => void;
+}
+
+const Login: React.FC<LoginProps> = ({ onNext }) => {
+  const { onLogin, onGoogleLogin, onKakaoLogin } = useAuthStore();
+  const loading = useAuthStore((s) => s.loading);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -23,10 +30,30 @@ const Login: React.FC = () => {
       setEmail("");
       setPassword("");
       setError("");
-      navigate("/");
+      navigate("/mypage/profile", { replace: true });
     } catch (err) {
       console.error("로그인 실패:", err);
       setError("로그인 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleGoogle = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    try {
+      await onGoogleLogin();
+      navigate("/mypage/profile", { replace: true });
+    } catch (err) {
+      alert("로그인 실패: " + (err as Error).message);
+    }
+  };
+
+  const handleKakao = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    try {
+      await onKakaoLogin(); // navigate를 store에서 안 받도록 바꿨으면 여기서 이동
+      navigate("/mypage/profile", { replace: true });
+    } catch (err) {
+      alert("로그인 실패: " + (err as Error).message);
     }
   };
 
@@ -41,6 +68,7 @@ const Login: React.FC = () => {
           <h1>
             <img src="/images/Netflix_Logo.png" alt="" />
           </h1>
+
           <div className="login-right2">
             <h2>LOGIN</h2>
 
@@ -71,25 +99,32 @@ const Login: React.FC = () => {
 
               {error && <p className="error-msg">{error}</p>}
 
-              <button type="submit" className="login-btn">
-                로그인
+              <button type="submit" className="login-btn" disabled={loading}>
+                {loading ? "로그인 중..." : "로그인"}
               </button>
             </form>
 
-            <p className="signup-text">
-              계정이 없으신가요?{" "}
-              <Link to="/join">
-                <span>회원가입</span>
-              </Link>
+            <p onClick={onNext} className="signup-text">
+              계정이 없으신가요? <span>회원가입</span>
             </p>
 
             <div className="social-login">
-              <button type="button" className="google-btn">
+              <button
+                onClick={handleGoogle}
+                type="button"
+                className="google-btn"
+                disabled={loading}
+              >
                 <img src="/images/google.png" alt="google" />
                 <p>구글 로그인</p>
               </button>
 
-              <button type="button" className="kakao-btn">
+              <button
+                onClick={handleKakao}
+                type="button"
+                className="kakao-btn"
+                disabled={loading}
+              >
                 <img src="/images/kakao.png" alt="kakao" />
                 <p>카카오 로그인</p>
               </button>
