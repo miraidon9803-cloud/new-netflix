@@ -18,6 +18,10 @@
 
     li {
       border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
 
       a {
         display: block;
@@ -47,6 +51,13 @@
           cursor: pointer;
         }
       }
+    }
+    .storage-title {
+      // margin-top: 20px;
+      display: flex;
+      text-align: left;
+      justify-content: center;
+      align-items: center;
     }
   }
 }

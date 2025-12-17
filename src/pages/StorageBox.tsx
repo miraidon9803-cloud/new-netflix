@@ -56,7 +56,7 @@ const StorageBox = () => {
               </Link>
 
               <div className="storage-title">
-                <h3>{title}</h3>
+                <p>{title}</p>
 
                 {item.mediaType === "tv" &&
                   item.season_number != null &&
@@ -68,11 +68,9 @@ const StorageBox = () => {
                   )}
 
                 <p>
-                  <button
-                    onClick={() => onRemoveWatching(activeProfileId, item)}
-                  >
+                  <p onClick={() => onRemoveWatching(activeProfileId, item)}>
                     삭제
-                  </button>
+                  </p>
                 </p>
               </div>
             </li>
