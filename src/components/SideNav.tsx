@@ -1,25 +1,25 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './scss/SideNav.scss';
+import React from "react";
+import { Link } from "react-router-dom";
+import "./scss/SideNav.scss";
 
 const SideNav = () => {
   return (
     <div className="sideNav">
       <img className="logo" src="/images/icon/Netflix-Logo.png" alt="" />
       <div></div>
-      <Link to={'/'}>
+      <Link to={"/"}>
         <img src="../../../public/images/icon/바로가기.png" alt="" />
       </Link>
-      <Link to={'/'}>
+      <Link to={"/shorts"}>
         <img src="../../../public/images/icon/쇼츠.png" alt="" />
       </Link>
-      <Link to={'/'}>
+      <Link to={"/"}>
         <img src="../../../public/images/icon/홈-active.png" alt="" />
       </Link>
-      <Link to={'/'}>
+      <Link to={"/wishlist"}>
         <img src="../../../public/images/icon/위시리스트.png" alt="" />
       </Link>
-      <Link to={'/'}>
+      <Link to={"/storgebox"}>
         <img src="../../../public/images/icon/보관함.png" alt="" />
       </Link>
     </div>

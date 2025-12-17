@@ -1,0 +1,52 @@
+@use "../../App.scss" as l;
+
+.storage-inner {
+  max-width: 1440px;
+  margin: 0 auto;
+
+  h2 {
+    @include l.myTitle32();
+    color: l.$grey10;
+    text-align: left;
+    margin: 20px 20px 20px 0;
+  }
+
+  .list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+
+    li {
+      border-radius: 10px;
+
+      a {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      img {
+        width: 46.4rem;
+        height: 28rem;
+        display: block;
+        object-fit: cover;
+      }
+
+      h3 {
+        padding: 10px 12px;
+        color: l.$grey10;
+        @include l.myTitle16();
+      }
+
+      p {
+        padding: 0 12px 12px;
+        margin: 0;
+
+        button {
+          width: 100%;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

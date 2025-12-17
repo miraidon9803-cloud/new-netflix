@@ -1,15 +1,23 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { useProfileStore } from "../store/Profile";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useAuthStore } from "../store/authStore";
+import { useProfileStore } from "../store/Profile";
 
-const ProfileGate = ({ children }: { children: React.ReactNode }) => {
+const ProfileGate = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const user = useAuthStore((s) => s.user);
+  const loading = useAuthStore((s) => s.loading);
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
 
   useEffect(() => {
-    const needProfile = location.pathname.startsWith("/mypage");
-    if (!needProfile) return;
+    if (loading) return;
+
+    if (!user) {
+      navigate("/auth", { replace: true, state: { from: location.pathname } });
+      return;
+    }
 
     if (!activeProfileId) {
       navigate("/profile", {
@@ -17,9 +25,9 @@ const ProfileGate = ({ children }: { children: React.ReactNode }) => {
         state: { from: location.pathname },
       });
     }
-  }, [activeProfileId, location.pathname, navigate]);
+  }, [loading, user, activeProfileId, location.pathname, navigate]);
 
-  return <>{children}</>;
+  return <Outlet />;
 };
 
 export default ProfileGate;
