@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 interface MembershipProps {
   onPrev?: () => void;
 }
+
 const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
   const MEMBERS = {
     adStandard: {
@@ -17,17 +18,39 @@ const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
     standard: { type: "standard" as const, name: "스탠다드", price: 13500 },
     premium: { type: "premium" as const, name: "프리미엄", price: 17000 },
   };
+
   const navigate = useNavigate();
   const [selected, setSelected] = useState<MembershipType>("adStandard");
-  const { saveMembership } = useAuthStore();
+
+  // ✅ 신규 가입 플로우 여부 판단: tempJoin 있으면 "멤버십에서 회원가입 완료"해야 함
+  const tempJoin = useAuthStore((s) => s.tempJoin);
+  const finalizeJoinWithMembership = useAuthStore(
+    (s) => s.finalizeJoinWithMembership
+  );
+
+  // ✅ 기존 로그인 유저 요금제 변경은 그대로 saveMembership
+  const saveMembership = useAuthStore((s) => s.saveMembership);
+
   const handleNext = async () => {
     try {
-      await saveMembership(MEMBERS[selected]);
-      navigate("/mypage");
+      const plan = MEMBERS[selected];
+
+      if (tempJoin) {
+        // ✅ 신규 가입: 여기서 회원가입 + 멤버십 저장 + 로그인 완료
+        await finalizeJoinWithMembership(plan);
+      } else {
+        // ✅ 기존 로그인: 멤버십만 저장/변경
+        await saveMembership(plan);
+      }
+
+      // ✅ 멤버십 완료 후: 프로필 선택으로 보내는 게 흐름이 가장 자연스러움
+      navigate("/mypage/profile", { replace: true });
     } catch (e) {
-      alert("멤버십 저장 실패");
+      console.error(e);
+      alert("멤버십 저장/가입 완료 실패");
     }
   };
+
   return (
     <div className="inner-membership">
       <div className="membership-wrap">

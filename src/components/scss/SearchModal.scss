@@ -1,4 +1,4 @@
-@use '../../App.scss' as *;
+@use "../../App.scss" as *;
 
 // ================================================
 // SearchModal 스타일 - 팀 컨벤션 적용
@@ -14,6 +14,25 @@
   to {
     opacity: 1;
   }
+// Search 팝업 내부 스타일
+.search-popup {
+  width: 100%;
+  min-width: 100%;
+}
+
+// Search 타이틀
+.search-title-wrapper {
+  @include myFlex(10px, space-between, center);
+  margin-bottom: 20px; // Search와 input 사이 간격
+}
+
+.search-title {
+  font-family: "SUIT";
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 140%;
+  letter-spacing: -0.6px;
+  color: $grey10;
 }
 
 @keyframes searchModalSlideUp {
@@ -83,6 +102,35 @@
   .title-wrapper {
     @include myFlex(10px, space-between, center);
     margin-bottom: 20px;
+  // min-width: 100%;
+  padding: 12px 24px;
+  font-family: "SUIT";
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: -0.4px;
+  border-radius: 50px;
+  border: 1px solid #ffcdcd;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.28) 50%,
+    rgba(255, 255, 255, 0.4) 100%
+  );
+  box-shadow: 0 0 5px 0 rgba(255, 184, 184, 0.25),
+    0 0 10px 0 rgba(255, 86, 86, 0.25), 0 0 20px 0 rgba(229, 9, 20, 0.5),
+    0 0 30px 0 rgba(229, 9, 20, 0.3);
+  color: $grey10;
+  outline: none;
+  transition: all 0.3s;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: $grey8; // #D2D2D2
+  }
+
+  &:focus {
+    border-color: $grey10;
   }
 
   .title {
