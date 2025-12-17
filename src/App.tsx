@@ -11,6 +11,7 @@ import ProfileSelect from "./pages/ProfileSelect";
 import MypageMain from "./pages/MypageMain";
 import NetDatail from "./pages/NetDetail";
 import MovieDetail from "./pages/MovieDetail";
+import Payment from "./components/Payment";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -40,6 +41,7 @@ function App() {
 
         <Route path="/tv/:id" element={<NetDatail />} />
         <Route path="/movie/:id" element={<MovieDetail />} />
+        <Route path="payment" element={<Payment />} />
       </Route>
     </Routes>
   );

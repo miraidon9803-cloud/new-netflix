@@ -1,0 +1,299 @@
+@use '../../App.scss' as *;
+
+.payment-wrapper {
+  .payment-page {
+    min-height: 100vh;
+    background-color: $BG;
+    position: relative;
+  }
+
+  /* *배경* */
+  .payment-bg {
+    position: fixed;
+    inset: 0;
+    background: url("/images/payment/Login_bg 1.png") no-repeat center / cover;
+    z-index: 0;
+  }
+
+  /* *중앙 카드* */
+  .payment-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 700px;
+    max-width: 119.6rem;
+    margin: 0 auto;
+    padding: 1.1rem 3.62rem 2.68rem 3.62rem;
+    background: rgba(44, 44, 44, 0.50);
+    border-radius: 1.6rem;
+    backdrop-filter: blur(15px);
+    border: 1px solid #8A8A8A;
+  }
+
+  /* Header */
+  .payment-header {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    /* 또는 padding */
+    // background-color: #272323;
+
+    @include myFlex(1rem, center);
+    margin-bottom: 1.5rem;
+    position: relative;
+
+    .pay-back-btn {
+      // position: absolute;
+      // left: 0;
+      // background: none;
+      // border: none;
+      // cursor: pointer;
+      // background-color: rgb(0, 0, 0);
+      // z-index: 3;
+
+      img {
+        // filter: invert(1);
+        // background-color: aqua;
+      }
+    }
+
+    .payment-title {
+      @include myTitle24(500);
+      color: $grey10;
+      flex: 1;
+      text-align: center;
+    }
+  }
+
+  .payment-info {
+    @include myTitle14(400, center);
+    color: $grey8;
+    margin-bottom: 2.4rem;
+  }
+
+
+
+  /* =========================
+  Section Common
+========================= */
+
+  .payment-section {
+    margin-bottom: 2.5rem;
+
+    .section-title {
+      @include myTitle16(500, left);
+      color: $grey10;
+      margin-bottom: 1rem;
+    }
+  }
+
+  /* =========================
+  Payment Method (Swiper)
+========================= */
+
+  .payment-swiper {
+    width: 100%;
+  }
+
+  .payment-slide {
+    width: auto;
+  }
+
+  .payment-method {
+    width: 8.5rem;
+    height: 4.5rem;
+    background-color: $grey3;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    @include myFlex(0, center, center);
+    cursor: pointer;
+
+    img {
+      max-width: 70%;
+      max-height: 60%;
+      object-fit: contain;
+    }
+
+    &.active {
+      border-color: $grey10;
+    }
+
+    &.payment-card {
+      .payment-text {
+        @include myTitle14(500);
+        color: $grey10;
+      }
+    }
+  }
+
+  /* =========================
+  Membership Summary
+========================= */
+
+  .membership-summary {
+    background-color: $grey3;
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    @include myFlex(1rem);
+
+    .membership-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      .membership-price {
+        @include myTitle16(500, left);
+        color: $grey10;
+      }
+
+      .membership-name {
+        @include myTitle14(400, left);
+        color: $grey7;
+      }
+    }
+
+    .membership-change-btn {
+      background: none;
+      border: none;
+      color: $grey10;
+      cursor: pointer;
+      @include myTitle14(400);
+    }
+  }
+
+  /* =========================
+  Agreement
+========================= */
+
+  .agreement-section {
+    .agreement-item {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+
+      input {
+        margin-top: 0.2rem;
+      }
+
+      .agreement-text {
+        @include myTitle14(400, left);
+        color: $grey10;
+      }
+    }
+  }
+
+  /* =========================
+  Submit Button
+========================= */
+
+  .payment-submit {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: $main1;
+    color: $grey10;
+    border: none;
+    cursor: pointer;
+    @include myTitle16(500);
+  }
+
+  /* =========================
+  Popup
+========================= */
+
+  .membership-popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    @include myFlex(0, center, center);
+    z-index: 10;
+
+    .membership-popup-content {
+      width: 90%;
+      max-width: 22rem;
+      background-color: $grey2;
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+    }
+  }
+
+  .popup-header {
+    @include myFlex(0.5rem);
+    margin-bottom: 1rem;
+
+    .popup-title {
+      @include myTitle16(500);
+      color: $grey10;
+    }
+
+    .popup-close-btn {
+      background: none;
+      border: none;
+      color: $grey10;
+      cursor: pointer;
+    }
+  }
+
+  .membership-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .membership-item {
+      background-color: $grey3;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      cursor: pointer;
+
+      input {
+        margin-right: 0.5rem;
+      }
+
+      .membership-name {
+        @include myTitle14(400, left);
+        color: $grey10;
+      }
+    }
+  }
+
+  .popup-confirm-btn {
+    width: 100%;
+    margin-top: 1.25rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    background-color: $main1;
+    border: none;
+    color: $grey10;
+    cursor: pointer;
+    @include myTitle16(500);
+  }
+
+
+  /* =========================
+  Responsive
+========================= */
+
+  @media (max-width: 64rem) {
+    .payment-container {
+      padding: 2rem 1.5rem;
+    }
+  }
+
+  @media (max-width: 24.375rem) {
+    .payment-container {
+      padding: 1.5rem 1rem;
+    }
+
+    .payment-method {
+      width: 7rem;
+      height: 4rem;
+    }
+  }
+
+
+
+
+
+}
