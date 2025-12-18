@@ -4,75 +4,99 @@ import "./scss/Top10.scss";
 import { Link } from "react-router-dom";
 
 const IMG_BASE = "https://image.tmdb.org/t/p/w500";
+const FALLBACK_POSTER = "/images/icon/no_poster.png";
 
-const TodayTop10 = () => {
-  const { netflixTop10, onFetchNetflixTop10 } = useNetflixStore();
+type Top10Item = {
+  id: number;
+  poster_path: string | null;
+  name?: string | null;
+  title?: string | null;
+
+  isNetflixOriginal?: boolean;
+  isNew3Months?: boolean;
+  isOld1Year?: boolean;
+};
+
+const TodayTop10: React.FC = () => {
+  const { netflixTop10, onFetchNetflixTop10 } = useNetflixStore() as {
+    netflixTop10: Top10Item[];
+    onFetchNetflixTop10: () => void;
+  };
 
   useEffect(() => {
     onFetchNetflixTop10();
-  }, []);
+  }, [onFetchNetflixTop10]);
 
-  // 가로 스크롤용 refs
   const scrollRef = useRef<HTMLUListElement>(null);
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const startScrollLeft = useRef(0);
 
-  // 휠 → 가로 스크롤 + 끝에서는 페이지 스크롤 허용
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
+  // ✅ 드래그 상태
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const startScrollLeftRef = useRef(0);
 
-    const onWheel = (e: WheelEvent) => {
-      const atLeftEnd = el.scrollLeft === 0;
-      const atRightEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
+  const getTitle = (item: Top10Item) =>
+    (item.name ?? item.title ?? "poster") as string;
 
-      // 양 끝에서 더 가려고 하면 → 페이지 스크롤 허용
-      if ((atLeftEnd && e.deltaY < 0) || (atRightEnd && e.deltaY > 0)) {
-        return;
-      }
-
-      // 그 외에는 가로 스크롤 강제
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        e.stopPropagation();
-        el.scrollLeft += e.deltaY;
-      }
-    };
-
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
-  }, []);
-
-  // 드래그 시작
-  const handleMouseDown = (e: React.MouseEvent<HTMLUListElement>) => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    e.preventDefault(); // 텍스트 선택 방지
-
-    isDragging.current = true;
-    startX.current = e.clientX;
-    startScrollLeft.current = el.scrollLeft;
-    el.classList.add("is-dragging");
+  const getBadgeType = (item: Top10Item): "netflix" | "new" | "old" | null => {
+    if (item.isNetflixOriginal) return "netflix";
+    if (item.isNew3Months) return "new";
+    if (item.isOld1Year) return "old";
+    return null;
   };
 
-  // 드래그 중
-  const handleMouseMove = (e: React.MouseEvent<HTMLUListElement>) => {
-    const el = scrollRef.current;
-    if (!el || !isDragging.current) return;
-
-    const dx = e.clientX - startX.current;
-    el.scrollLeft = startScrollLeft.current - dx;
-  };
-
-  // 드래그 종료
-  const stopDragging = () => {
+  // ✅ 마우스 드래그 핸들러
+  const onMouseDown: React.MouseEventHandler<HTMLUListElement> = (e) => {
     const el = scrollRef.current;
     if (!el) return;
 
-    isDragging.current = false;
-    el.classList.remove("is-dragging");
+    isDraggingRef.current = true;
+    el.classList.add("dragging");
+
+    startXRef.current = e.pageX;
+    startScrollLeftRef.current = el.scrollLeft;
+  };
+
+  const onMouseMove: React.MouseEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (!isDraggingRef.current) return;
+
+    e.preventDefault(); // ✅ 드래그 중 텍스트 선택 방지
+    const dx = e.pageX - startXRef.current;
+    el.scrollLeft = startScrollLeftRef.current - dx; // ✅ 드래그 방향에 맞게 이동
+  };
+
+  const endDrag = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    isDraggingRef.current = false;
+    el.classList.remove("dragging");
+  };
+
+  // ✅ 터치 드래그(모바일)도 같이 지원
+  const onTouchStart: React.TouchEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    isDraggingRef.current = true;
+    el.classList.add("dragging");
+
+    startXRef.current = e.touches[0].pageX;
+    startScrollLeftRef.current = el.scrollLeft;
+  };
+
+  const onTouchMove: React.TouchEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (!isDraggingRef.current) return;
+
+    const dx = e.touches[0].pageX - startXRef.current;
+    el.scrollLeft = startScrollLeftRef.current - dx;
+  };
+
+  const onTouchEnd: React.TouchEventHandler<HTMLUListElement> = () => {
+    endDrag();
   };
 
   return (
@@ -82,19 +106,68 @@ const TodayTop10 = () => {
       <ul
         className="top10List"
         ref={scrollRef}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={stopDragging}
-        onMouseLeave={stopDragging}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={endDrag}
+        onMouseLeave={endDrag}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
-        {netflixTop10.map((item, index) => (
-          <li key={item.id} className="top10Item">
-            <span className="rank">{index + 1}</span>
-            <Link to={`/tv/${item.id}`}>
-              <img src={`${IMG_BASE}${item.poster_path}`} alt={item.name} />
-            </Link>
-          </li>
-        ))}
+        {netflixTop10.map((item, index) => {
+          const badge = getBadgeType(item);
+          const posterSrc = item.poster_path
+            ? `${IMG_BASE}${item.poster_path}`
+            : FALLBACK_POSTER;
+
+          return (
+            <li key={item.id} className="top10Item">
+              <span className="rank">{index + 1}</span>
+
+              <div className="posterWrap">
+                <Link to={`/tv/${item.id}`}>
+                  {badge === "netflix" && (
+                    <img
+                      className="netflixBadge"
+                      src="/images/icon/오리지널_뱃지.png"
+                      alt="Netflix Original"
+                      draggable={false}
+                    />
+                  )}
+
+                  {badge === "new" && (
+                    <img
+                      className="newBadge"
+                      src="/images/icon/뉴_뱃지.png"
+                      alt="New (3 months)"
+                      draggable={false}
+                    />
+                  )}
+
+                  {badge === "old" && (
+                    <img
+                      className="oldBadge"
+                      src="/images/icon/곧 종료_뱃지.png"
+                      alt="Old (1 year+)"
+                      draggable={false}
+                    />
+                  )}
+
+                  <img
+                    className="poster"
+                    src={posterSrc}
+                    alt={getTitle(item)}
+                    draggable={false}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src =
+                        FALLBACK_POSTER;
+                    }}
+                  />
+                </Link>
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

@@ -2,10 +2,13 @@
 
 .detail-inner {
   display: flex;
-  max-width: 1441px;
-  height: 100%;
+  max-width: 1440px;
+  min-height: 800px;
+  max-height: 100%;
   margin: 0 auto;
   gap: 24px;
+  margin: 40px 0 40px 0;
+  // margin-bottom: 40px;
 
   .left-side {
     width: 83rem;
@@ -68,6 +71,16 @@
     }
   }
   .season-box {
+    .detail-tabs {
+      margin-bottom: 20px;
+      display: flex;
+      p {
+        padding: 12px 24px;
+      }
+      activeTab {
+        text-decoration: underline;
+      }
+    }
     .season-dropdown {
       .season-trigger {
         width: 97px;

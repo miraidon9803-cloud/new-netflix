@@ -65,14 +65,8 @@ const InfiniSubmenu: React.FC = () => {
     const oneSetWidth = getOneSetWidth();
     const left = el.scrollLeft;
 
-    // 왼쪽으로 너무 간 경우 → 세트 하나 앞으로 점프
-    if (left < 20) {
-      el.scrollLeft = left + oneSetWidth;
-    }
-    // 오른쪽으로 너무 간 경우 → 세트 하나 뒤로 점프
-    else if (left > oneSetWidth * 2 - 20) {
-      el.scrollLeft = left - oneSetWidth;
-    }
+    if (left < 20) el.scrollLeft = left + oneSetWidth;
+    else if (left > oneSetWidth * 2 - 20) el.scrollLeft = left - oneSetWidth;
   };
 
   // 드래그 시작
@@ -103,16 +97,29 @@ const InfiniSubmenu: React.FC = () => {
     el.classList.remove('is-dragging');
   };
 
-  // 마우스 휠 → 가로 스크롤
-  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+  // ✅ 마우스가 메뉴 위에 있을 때 휠 = 가로 스크롤 + 페이지 세로 스크롤 차단(양끝 제외)
+  useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
-    if (e.deltaY !== 0) {
-      e.preventDefault();
-      el.scrollLeft += e.deltaY;
-    }
-  };
+    const onWheel = (e: WheelEvent) => {
+      const atLeftEnd = el.scrollLeft <= 0;
+      const atRightEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
+
+      // ✅ 양 끝에서 더 가려고 하면 페이지 스크롤 허용
+      if ((atLeftEnd && e.deltaY < 0) || (atRightEnd && e.deltaY > 0)) return;
+
+      // ✅ 그 외엔 무조건 가로 스크롤로 소비(페이지 안 내려감)
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        e.stopPropagation();
+        el.scrollLeft += e.deltaY;
+      }
+    };
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, []);
 
   return (
     <div className="submenu-wrap">
@@ -123,10 +130,9 @@ const InfiniSubmenu: React.FC = () => {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUpLeave}
-        onMouseLeave={handleMouseUpLeave}
-        onWheel={handleWheel}>
+        onMouseLeave={handleMouseUpLeave}>
         {infiMenu.map((item, idx) => (
-          <button key={idx} className="submenu-item">
+          <button key={idx} className="submenu-item" type="button">
             {item}
           </button>
         ))}

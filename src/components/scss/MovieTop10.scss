@@ -1,4 +1,4 @@
-.top10Wrap {
+.movie10Wrap {
   position: relative;
   margin-top: 4rem;
 
@@ -11,14 +11,14 @@
     margin-bottom: 1.6rem;
   }
 
-  .top10List {
+  .movie10List {
     display: flex;
     gap: 8.8rem;
     overflow-x: auto;
     overflow-y: visible;
     padding: 0 0 0 8rem;
 
-    .top10Item {
+    .movie10Item {
       position: relative;
       display: flex;
       flex-direction: column;

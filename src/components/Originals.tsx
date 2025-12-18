@@ -1,8 +1,8 @@
-import { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import "./scss/Originals.scss";
 import { Link } from "react-router-dom";
 
-const originals = [
+const imgs = [
   { id: 119051, src: "/images/Original/웬즈데이.png" }, // 웬즈데이
   { id: 63174, src: "/images/Original/루시퍼.png" }, // 루시퍼
   { id: 223300, src: "/images/Original/버려진 자들.png" }, // 버려진 자들
@@ -24,43 +24,89 @@ const originals = [
   { id: 76669, src: "/images/Original/브리저튼.png" }, // 브리저튼
   { id: 286801, src: "/images/Original/괴물: 에드 게인 이야기.png" }, // 괴물: 에드 게인 이야기
 ];
-const Originals = () => {
+
+const Originals: React.FC = () => {
   const scrollRef = useRef<HTMLUListElement>(null);
 
-  useEffect(() => {
+  // ✅ 드래그 상태
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const startScrollLeftRef = useRef(0);
+
+  // ✅ 마우스 드래그
+  const onMouseDown: React.MouseEventHandler<HTMLUListElement> = (e) => {
     const el = scrollRef.current;
     if (!el) return;
 
-    const onWheel = (e: WheelEvent) => {
-      const atLeftEnd = el.scrollLeft === 0;
-      const atRightEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
+    isDraggingRef.current = true;
+    el.classList.add("dragging");
 
-      // 양 끝에서는 페이지 스크롤 허용
-      if ((atLeftEnd && e.deltaY < 0) || (atRightEnd && e.deltaY > 0)) {
-        return;
-      }
+    startXRef.current = e.pageX;
+    startScrollLeftRef.current = el.scrollLeft;
+  };
 
-      // 그 외에는 강제로 가로 스크롤
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        e.stopPropagation();
-        el.scrollLeft += e.deltaY;
-      }
-    };
+  const onMouseMove: React.MouseEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (!isDraggingRef.current) return;
 
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
-  }, []);
+    e.preventDefault();
+    const dx = e.pageX - startXRef.current;
+    el.scrollLeft = startScrollLeftRef.current - dx;
+  };
+
+  const endDrag = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    isDraggingRef.current = false;
+    el.classList.remove("dragging");
+  };
+
+  // ✅ 터치 드래그(모바일)
+  const onTouchStart: React.TouchEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    isDraggingRef.current = true;
+    el.classList.add("dragging");
+
+    startXRef.current = e.touches[0].pageX;
+    startScrollLeftRef.current = el.scrollLeft;
+  };
+
+  const onTouchMove: React.TouchEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (!isDraggingRef.current) return;
+
+    const dx = e.touches[0].pageX - startXRef.current;
+    el.scrollLeft = startScrollLeftRef.current - dx;
+  };
+
+  const onTouchEnd: React.TouchEventHandler<HTMLUListElement> = () => {
+    endDrag();
+  };
 
   return (
     <div className="OriginalWrap">
       <p>넷플릭스 오리지널</p>
 
-      <ul className="original" ref={scrollRef}>
-        {originals.map((src, i) => (
+      <ul
+        className="original"
+        ref={scrollRef}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={endDrag}
+        onMouseLeave={endDrag}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        {imgs.map((src, i) => (
           <li key={i}>
             <Link to={`/tv/${src.id}`}>
-              <img src={src.src} alt="" />
+              <img src={src.src} alt="" draggable={false} />
             </Link>
           </li>
         ))}

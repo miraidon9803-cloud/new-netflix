@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import "./scss/Nowplay.scss";
 import { Link } from "react-router-dom";
 
@@ -7,7 +7,6 @@ type PlayItem = {
   type: "tv" | "movie";
   src: string;
 };
-
 const play: PlayItem[] = [
   { id: 70593, type: "tv", src: "/images/nowplay/킹덤.png" },
   { id: 197067, type: "tv", src: "/images/nowplay/우영우.png" },
@@ -54,40 +53,89 @@ const play: PlayItem[] = [
   { id: 512195, type: "movie", src: "/images/nowplay/레드노티스.png" },
 ];
 
-const NowPlay = () => {
+const NowPlay: React.FC = () => {
   const scrollRef = useRef<HTMLUListElement>(null);
 
-  useEffect(() => {
+  // ✅ 드래그 상태
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const startScrollLeftRef = useRef(0);
+
+  // ✅ 마우스 드래그
+  const onMouseDown: React.MouseEventHandler<HTMLUListElement> = (e) => {
     const el = scrollRef.current;
     if (!el) return;
 
-    const onWheel = (e: WheelEvent) => {
-      const atLeftEnd = el.scrollLeft === 0;
-      const atRightEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
+    isDraggingRef.current = true;
+    el.classList.add("dragging");
 
-      if ((atLeftEnd && e.deltaY < 0) || (atRightEnd && e.deltaY > 0)) return;
+    startXRef.current = e.pageX;
+    startScrollLeftRef.current = el.scrollLeft;
+  };
 
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        e.stopPropagation();
-        el.scrollLeft += e.deltaY;
-      }
-    };
+  const onMouseMove: React.MouseEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (!isDraggingRef.current) return;
 
-    el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
-  }, []);
+    e.preventDefault();
+    const dx = e.pageX - startXRef.current;
+    el.scrollLeft = startScrollLeftRef.current - dx;
+  };
+
+  const endDrag = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    isDraggingRef.current = false;
+    el.classList.remove("dragging");
+  };
+
+  // ✅ 터치 드래그(모바일)
+  const onTouchStart: React.TouchEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    isDraggingRef.current = true;
+    el.classList.add("dragging");
+
+    startXRef.current = e.touches[0].pageX;
+    startScrollLeftRef.current = el.scrollLeft;
+  };
+
+  const onTouchMove: React.TouchEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (!isDraggingRef.current) return;
+
+    const dx = e.touches[0].pageX - startXRef.current;
+    el.scrollLeft = startScrollLeftRef.current - dx;
+  };
+
+  const onTouchEnd: React.TouchEventHandler<HTMLUListElement> = () => {
+    endDrag();
+  };
 
   return (
     <div className="playWrap">
       <p>지금 방영 중인 콘텐츠</p>
 
-      <ul className="Nowplay" ref={scrollRef}>
-        {play.map((item) => (
-          <li key={`${item.type}-${item.id}`}>
-            {/* ✅ 자동 분기 */}
-            <Link to={`/${item.type}/${item.id}`}>
-              <img src={item.src} alt="" />
+      <ul
+        className="Nowplay"
+        ref={scrollRef}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={endDrag}
+        onMouseLeave={endDrag}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        {play.map((src, i) => (
+          <li key={i}>
+            {/* 자동 분기 */}
+            <Link to={`/${src.type}/${src.id}`}>
+              <img src={src.src} alt="" draggable={false} />
             </Link>
           </li>
         ))}
