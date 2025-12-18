@@ -29,7 +29,7 @@ const Join: React.FC<JoinProps> = ({ onNext, onPrev }) => {
       return;
     }
 
-    // ✅ Join 단계에서는 Firebase 가입하지 말고 "임시 저장"만!
+    //  Join 단계에서는 Firebase 가입하지 말고 "임시 저장"만!
     setTempJoin({ email, password, phone });
 
     // 입력값 초기화(선택)
@@ -54,7 +54,7 @@ const Join: React.FC<JoinProps> = ({ onNext, onPrev }) => {
           <div className="signtitle-wrap">
             {onPrev && (
               <p className="prev-btn" onClick={onPrev}>
-                dd
+                뒤로가기버튼
               </p>
             )}
 

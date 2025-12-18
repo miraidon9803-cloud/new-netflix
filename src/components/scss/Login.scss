@@ -129,6 +129,11 @@
           -webkit-appearance: none;
           appearance: none;
           box-shadow: none;
+
+          p {
+            @include l.myTitle16();
+            color: #8a8a8a;
+          }
         }
 
         .kakao-btn {
@@ -145,6 +150,11 @@
           -webkit-appearance: none;
           appearance: none;
           box-shadow: none;
+
+          p {
+            @include l.myTitle16();
+            color: #8a8a8a;
+          }
         }
 
         .google-btn:hover,
