@@ -1,61 +1,135 @@
-import React, { useEffect, useRef } from "react";
-import { useNetflixStore } from "../store/NetflixStore";
-import "./scss/TrandingSeries.scss";
-import { Link } from "react-router-dom";
+import React, { useEffect, useRef } from 'react';
+import { useNetflixStore } from '../store/NetflixStore';
+import './scss/TrandingSeries.scss';
+import { Link } from 'react-router-dom';
 
-const IMG_BASE = "https://image.tmdb.org/t/p/w500";
+const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
+const FALLBACK_POSTER = '/images/icon/no_poster.png';
 
-const TrandingSeries = () => {
-  const { SeriesTop10, onFetchSeriesTop10 } = useNetflixStore();
+type SeriesItem = {
+  id: number;
+  poster_path: string | null;
+  name?: string | null;
+  title?: string | null;
+  isNetflixOriginal?: boolean;
+};
+
+const TrandingSeries: React.FC = () => {
+  const { SeriesTop10, onFetchSeriesTop10 } = useNetflixStore() as {
+    SeriesTop10: SeriesItem[];
+    onFetchSeriesTop10: () => void;
+  };
 
   const scrollRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
     onFetchSeriesTop10();
-  }, []);
+  }, [onFetchSeriesTop10]);
 
-  // 리스트 위 휠 = 가로 스크롤 / 페이지 세로 스크롤 막기
-  useEffect(() => {
+  // ✅ 드래그 상태
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const startScrollLeftRef = useRef(0);
+
+  const getTitle = (item: SeriesItem) => (item.name ?? item.title ?? 'series') as string;
+
+  // ✅ 마우스 드래그
+  const onMouseDown: React.MouseEventHandler<HTMLUListElement> = (e) => {
     const el = scrollRef.current;
     if (!el) return;
 
-    const onWheel = (e: WheelEvent) => {
-      const el = scrollRef.current;
-      if (!el) return;
+    isDraggingRef.current = true;
+    el.classList.add('dragging');
 
-      const atLeftEnd = el.scrollLeft === 0;
-      const atRightEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
+    startXRef.current = e.pageX;
+    startScrollLeftRef.current = el.scrollLeft;
+  };
 
-      // 스크롤이 양 끝일 때 → 기본 동작 허용 (페이지 스크롤)
-      if ((atLeftEnd && e.deltaY < 0) || (atRightEnd && e.deltaY > 0)) {
-        return; // preventDefault() 안함
-      }
+  const onMouseMove: React.MouseEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (!isDraggingRef.current) return;
 
-      // 그 외엔 가로 스크롤 처리
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        e.stopPropagation();
-        el.scrollLeft += e.deltaY;
-      }
-    };
+    e.preventDefault();
+    const dx = e.pageX - startXRef.current;
+    el.scrollLeft = startScrollLeftRef.current - dx;
+  };
 
-    el.addEventListener("wheel", onWheel, { passive: false });
+  const endDrag = () => {
+    const el = scrollRef.current;
+    if (!el) return;
 
-    return () => el.removeEventListener("wheel", onWheel);
-  }, []);
+    isDraggingRef.current = false;
+    el.classList.remove('dragging');
+  };
+
+  // ✅ 터치 드래그(모바일)
+  const onTouchStart: React.TouchEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    isDraggingRef.current = true;
+    el.classList.add('dragging');
+
+    startXRef.current = e.touches[0].pageX;
+    startScrollLeftRef.current = el.scrollLeft;
+  };
+
+  const onTouchMove: React.TouchEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (!isDraggingRef.current) return;
+
+    const dx = e.touches[0].pageX - startXRef.current;
+    el.scrollLeft = startScrollLeftRef.current - dx;
+  };
+
+  const onTouchEnd: React.TouchEventHandler<HTMLUListElement> = () => {
+    endDrag();
+  };
 
   return (
     <div className="seriesTopWrap">
       <p>급상승 시리즈</p>
 
-      <ul className="seriesTopList" ref={scrollRef}>
-        {SeriesTop10.map((movie, id) => (
-          <li key={movie.id} className="seriesItem">
-            <Link to={`/tv/${movie.id}`}>
-              <img src={`${IMG_BASE}${movie.poster_path}`} alt={movie.title} />
-            </Link>
-          </li>
-        ))}
+      <ul
+        className="seriesTopList"
+        ref={scrollRef}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={endDrag}
+        onMouseLeave={endDrag}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}>
+        {SeriesTop10.map((item) => {
+          const posterSrc = item.poster_path ? `${IMG_BASE}${item.poster_path}` : FALLBACK_POSTER;
+
+          return (
+            <li key={item.id} className="seriesItem">
+              <div className="posterWrap">
+                {item.isNetflixOriginal && (
+                  <img
+                    className="netflixBadge"
+                    src="/images/icon/오리지널_뱃지.png"
+                    alt="Netflix Original"
+                    draggable={false}
+                  />
+                )}
+
+                <img
+                  className="poster"
+                  src={posterSrc}
+                  alt={getTitle(item)}
+                  draggable={false}
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = FALLBACK_POSTER;
+                  }}
+                />
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

@@ -113,7 +113,7 @@ const MainBanner = () => {
           </div>
         ))}
       </div>
-      {/* ✅ 페이지네이션 도트 */}
+      {/*  페이지네이션 도트 */}
       <div className="banner-dots">
         {bannerSet.map((_, i) => (
           <button
@@ -135,11 +135,11 @@ const MainBanner = () => {
           <img src={MobileBan[realIndex]} alt="mobile banner" />
         </div>
         <div className="mobilebtn">
-          <button>
+          <button className="mplay">
             <img src="/images/icon/play.png" alt="play" />
             재생
           </button>
-          <button>
+          <button className="mwish">
             <img src="/images/icon/mobile_wish.png" alt="wish" />
           </button>
         </div>

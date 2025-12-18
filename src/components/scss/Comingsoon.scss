@@ -1,9 +1,36 @@
 .comingsoon {
-  margin-top: 4rem;
+  margin-top: 8rem;
   > p {
     font-size: 2.4rem;
     font-weight: 600;
     line-height: 140%;
     margin-bottom: 1.6rem;
+  }
+  .cominglist {
+    display: flex;
+    overflow-x: auto;
+    .comingimg {
+      margin-right: 2.4rem;
+    }
+    .comingimg:last-child {
+      margin-right: 0;
+    }
+  }
+  @media (max-width: 1440px) {
+    > p {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 430px) {
+    margin-top: 4rem;
+    > p {
+      font-size: 2rem;
+    }
+    .cominglist {
+      .comingimg {
+        flex: 0 0 50%;
+      }
+    }
   }
 }

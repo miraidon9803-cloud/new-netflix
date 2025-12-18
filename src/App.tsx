@@ -1,24 +1,25 @@
-import { Route, Routes, Navigate } from "react-router-dom";
-import Layout from "./pages/Layout";
-import FullLogin from "./pages/FullLogin";
-import ProfileSelect from "./pages/ProfileSelect";
-import Landing from "./pages/LandingPage";
-import Main from "./pages/Main";
-import MypageMain from "./pages/MypageMain";
-import NetDatail from "./pages/NetDetail";
-import MovieDetail from "./pages/MovieDetail";
-import StorageBox from "./pages/StorageBox";
+import { Route, Routes, Navigate } from 'react-router-dom';
+import Layout from './pages/Layout';
+import FullLogin from './pages/FullLogin';
+import ProfileSelect from './pages/ProfileSelect';
+import Landing from './pages/LandingPage';
+import Main from './pages/Main';
+import MypageMain from './pages/MypageMain';
+import NetDetail from './pages/NetDetail';
+import MovieDetail from './pages/MovieDetail';
+import StorageBox from './pages/StorageBox';
 
-import ProfileGate from "./components/ProfileGate";
-import AuthGate from "./components/AuthGate";
-import GuestOnly from "./components/GuestOnly";
+import ProfileGate from './components/ProfileGate';
+import AuthGate from './components/AuthGate';
+import GuestOnly from './components/GuestOnly';
+import Series from './pages/Series';
 
-import { useAuthStore } from "./store/authStore";
-import { useProfileStore } from "./store/Profile";
-import { useEffect } from "react";
-import Wishlist from "./components/Wishlist";
-import WishlistDetail from "./components/WishlistDetail";
-import Shorts from "./components/Shorts";
+import { useAuthStore } from './store/authStore';
+import { useProfileStore } from './store/Profile';
+import { useEffect } from 'react';
+import Wishlist from './components/Wishlist';
+import WishlistDetail from './components/WishlistDetail';
+import Shorts from './components/Shorts';
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -35,11 +36,7 @@ function App() {
    * 3) 로그인 O + 온보딩 O + 프로필 선택 X -> /mypage/profile
    * 4) 로그인 O + 온보딩 O + 프로필 선택 O -> /main
    */
-  const afterLoginPath = !onboardingDone
-    ? "/auth"
-    : activeProfileId
-    ? "/main"
-    : "/mypage/profile";
+  const afterLoginPath = !onboardingDone ? '/auth' : activeProfileId ? '/main' : '/mypage/profile';
 
   useEffect(() => {
     const unsub = initAuth();
@@ -50,10 +47,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         {/*  첫 진입 */}
-        <Route
-          index
-          element={<Navigate to={isLogin ? afterLoginPath : "/land"} replace />}
-        />
+        <Route index element={<Navigate to={isLogin ? afterLoginPath : '/land'} replace />} />
 
         {/*  land/auth: 로그인하면 afterLoginPath로 */}
         <Route element={<GuestOnly redirectTo={afterLoginPath} />}>
@@ -72,9 +66,10 @@ function App() {
           <Route element={<ProfileGate />}>
             <Route path="main" element={<Main />} />
             <Route path="mypage" element={<MypageMain />} />
-            <Route path="tv/:id" element={<NetDatail />} />
+            <Route path="tv/:id" element={<NetDetail />} />
             <Route path="movie/:id" element={<MovieDetail />} />
-            <Route path="storgebox" element={<StorageBox />} />
+            <Route path="StorageBox" element={<StorageBox />} />
+            <Route path="Series" element={<Series />} />
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="/wishlist/:folderId" element={<WishlistDetail />} />
             <Route path="/shorts" element={<Shorts />} />
@@ -82,10 +77,7 @@ function App() {
         </Route>
 
         {/*  없는 경로 */}
-        <Route
-          path="*"
-          element={<Navigate to={isLogin ? afterLoginPath : "/land"} replace />}
-        />
+        <Route path="*" element={<Navigate to={isLogin ? afterLoginPath : '/land'} replace />} />
       </Route>
     </Routes>
   );

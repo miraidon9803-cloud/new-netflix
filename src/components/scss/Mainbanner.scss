@@ -6,11 +6,12 @@
   height: 700px;
   margin: 0 auto;
   background-color: Color.$BG;
+  // border: 1px solid white;
 
   .banner-track {
     display: flex;
     height: 100%;
-    transition: transform 0.6s ease;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 
     &.no-transition {
       transition: none;
@@ -55,9 +56,13 @@
           left: 0;
         }
 
-        .play {
+        button {
           position: absolute;
-          bottom: 4.5%;
+          bottom: 10%;
+          border-radius: 0.4rem;
+        }
+
+        .play {
           left: 5.5%;
           width: 24rem;
           height: 4rem;
@@ -65,8 +70,6 @@
         }
 
         .wish {
-          position: absolute;
-          bottom: 4.5%;
           left: 23.5%;
           width: 24rem;
           height: 4rem;
@@ -105,65 +108,88 @@
   .banner-dots {
     position: absolute;
     left: 50%;
-    bottom: 24px;
+    bottom: 2.4rem;
     transform: translateX(-50%);
     display: flex;
-    gap: 8px;
+    gap: 0.8rem;
     z-index: 40;
 
     .dot {
-      width: 8px;
-      height: 8px;
+      width: 0.8rem;
+      height: 0.8rem;
       border-radius: 50%;
+      border: none;
       background: rgba(255, 255, 255, 0.4);
-      opacity: 0.7;
+      opacity: 0.9;
       transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
 
       &.active {
-        background: #fff;
+        background-color: Color.$main1;
         opacity: 1;
-        transform: scale(1.4);
+        transform: scale(1.2);
       }
     }
   }
+
   .mobile-wrap {
     display: none;
   }
 
   /* ===========================
-     🟦 태블릿 (max-width: 1440px)
-     =========================== */
+   🟦 태블릿 (max-width: 1440px)
+   =========================== */
   @media (max-width: 1440px) {
+    max-width: 100%;
     height: 600px;
 
     .banner-track {
       .banner-item {
-        .banner-layer .banMid {
-          width: 100%;
-          height: auto;
+        .banner-layer {
+          .banMid {
+            height: auto;
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+          }
         }
 
         .btns-text {
           .banTxt {
-            transform: scale(0.95);
-            bottom: 14%;
+            /* 🔽 기존 0.95 → 더 줄이기 */
+            transform: scale(0.85);
+            transform-origin: left bottom;
+
+            bottom: 15%; // 살짝 위로
+            max-width: 70%; // 화면 넘침 방지
           }
 
           .play,
           .wish {
-            width: 200px;
-            height: 36px;
+            width: 18rem;
+            height: 3.4rem;
           }
-
           .wish {
-            left: 300px;
+            left: 24%;
           }
         }
+      }
+
+      .banner-item:first-child .banMid,
+      .banner-item:nth-child(2) .banMid,
+      .banner-item:last-child .banMid {
+        max-height: 100%;
+        width: auto;
+      }
+
+      .banner-item:nth-child(3) .banMid,
+      .banner-item:nth-child(4) .banMid {
+        max-width: 100%;
+        height: auto;
       }
     }
 
     .banner-dots {
-      bottom: 20px;
+      bottom: 2rem;
     }
   }
 
@@ -173,42 +199,59 @@
   @media (max-width: 430px) {
     max-width: 100%;
     height: auto;
+    min-height: unset;
+
     .mobile-wrap {
       position: relative;
-      top: -154px;
+      // top: -154px;
       display: block;
+      // border: 1px solid green;
 
-      // position: relative;
-      border: 1px solid yellow;
       .mobileBG {
         width: 100%;
-
         margin: 0 auto;
-        border: 1px solid red;
+
         img {
           width: 100%;
         }
       }
+
       .mobileimg {
-        // display: none;
         position: absolute;
         left: 4.1%;
-        top: 154px;
+        top: 0%;
         width: 91.8%;
         aspect-ratio: 179/248;
-        border: solid green;
+        margin: 1.8rem 0;
+
         img {
           width: 100%;
         }
       }
+
       .mobilebtn {
+        // position: absolute;
+        left: 19.3%;
+        bottom: 8%;
+
         button {
-          width: 18rem;
-          height: 4rem;
-          margin-left: 1.2rem;
+          position: absolute;
+          width: 38%;
+          height: 5.5%;
+          left: 24%;
+          bottom: 9%;
+          border: none;
+          border-radius: 0.4rem;
+        }
+
+        button:last-child {
+          width: 4rem;
+          left: 66%;
+          background: rgba(255, 255, 255, 0.6);
         }
       }
     }
+
     .banner-track {
       display: none;
     }

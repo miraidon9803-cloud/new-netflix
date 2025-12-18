@@ -1,20 +1,80 @@
 .Stranger {
-  margin-top: 4rem;
   position: relative;
+  margin-top: 4rem;
+  width: 100%;
+  height: 100%;
+
   .poster {
+    position: relative;
+    overflow: hidden; //  커진 부분 잘리게
+
     > p {
       font-size: 2.4rem;
       font-weight: 600;
       line-height: 140%;
       margin-bottom: 1.6rem;
     }
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block; //  inline 여백/중앙정렬 느낌 차단
+    }
   }
+
   .button {
     button {
       position: absolute;
+      bottom: 22%;
+      left: 8.5%;
+      width: 16.6%;
+      height: 4rem;
+      border-radius: 0.4rem;
+    }
+  }
 
-      bottom: 6.2rem;
-      left: 12.3rem;
+  @media (max-width: 430px) {
+    .poster {
+      > p {
+        font-size: 2rem;
+      }
+
+      img {
+        width: 125%;
+        max-width: none;
+
+        /* ✅ “왼쪽에 딱 붙어서” 확대되게 강제 */
+        margin-left: 0;
+        margin-right: 0;
+        left: 0;
+
+        /*left가 먹게 하려면 position 필요 */
+        position: relative;
+
+        transform: none;
+        transform-origin: left top;
+        object-fit: cover;
+      }
+    }
+
+    .button {
+      button {
+        bottom: 5%;
+        width: 25%;
+        height: 3.6rem;
+      }
+
+      img {
+        width: 1.5rem;
+        height: 1.8rem;
+      }
+    }
+  }
+  @media (max-width: 1440px) {
+    .poster {
+      > p {
+        font-size: 2rem;
+      }
     }
   }
 }
