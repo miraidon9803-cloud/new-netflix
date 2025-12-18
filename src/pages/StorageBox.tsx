@@ -16,9 +16,6 @@ const StorageBox = () => {
     onFetchWatching(activeProfileId);
   }, [activeProfileId, onFetchWatching]);
 
-  if (!activeProfileId) return <p>프로필을 선택해주세요.</p>;
-  if (watching.length === 0) return <p>재생중인 컨텐츠가 없습니다</p>;
-
   const getThumb = (item: WatchingItem) =>
     item.still_path || item.backdrop_path || item.poster_path || null;
 
@@ -35,48 +32,61 @@ const StorageBox = () => {
     <div className="storage-inner">
       <h2>보관함</h2>
 
-      <ul className="list">
-        {watching.map((item) => {
-          const thumb = getThumb(item);
-          const to = buildTo(item);
-          const title = item.title || item.name || "제목 없음";
+      {!activeProfileId ? (
+        <div className="empty-state">
+          <p>프로필을 선택해주세요.</p>
+        </div>
+      ) : watching.length === 0 ? (
+        <div className="empty-state">
+          <p>재생중인 컨텐츠가 없습니다</p>
+        </div>
+      ) : (
+        <ul className="list">
+          {watching.map((item) => {
+            const thumb = getThumb(item);
+            const to = buildTo(item);
+            const title = item.title || item.name || "제목 없음";
 
-          return (
-            <li
-              key={`${item.mediaType}-${item.id}-${item.season_number ?? 0}-${
-                item.episode_number ?? 0
-              }`}
-            >
-              <Link to={to}>
-                {thumb ? (
-                  <img src={`${IMG}${thumb}`} alt={title} />
-                ) : (
-                  <div className="no-thumb">No Image</div>
-                )}
-              </Link>
+            return (
+              <li
+                key={`${item.mediaType}-${item.id}-${item.season_number ?? 0}-${
+                  item.episode_number ?? 0
+                }`}
+              >
+                <Link to={to}>
+                  {thumb ? (
+                    <img src={`${IMG}${thumb}`} alt={title} />
+                  ) : (
+                    <div className="no-thumb">No Image</div>
+                  )}
+                </Link>
 
-              <div className="storage-title">
-                <p>{title}</p>
+                <div className="storage-content">
+                  {item.mediaType === "tv" &&
+                    item.season_number != null &&
+                    item.episode_number != null && (
+                      <p className="ep">
+                        {title} 시즌{item.season_number} : {item.episode_number}
+                        화
+                      </p>
+                    )}
 
-                {item.mediaType === "tv" &&
-                  item.season_number != null &&
-                  item.episode_number != null && (
-                    <p className="ep">
-                      시즌 {item.season_number} · {item.episode_number}화
-                      {item.episode_name ? ` · ${item.episode_name}` : ""}
-                    </p>
+                  {item.mediaType === "movie" && (
+                    <p className="title">{title}</p>
                   )}
 
-                <p>
-                  <p onClick={() => onRemoveWatching(activeProfileId, item)}>
+                  <p
+                    className="del-btn"
+                    onClick={() => onRemoveWatching(activeProfileId, item)}
+                  >
                     삭제
                   </p>
-                </p>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 };

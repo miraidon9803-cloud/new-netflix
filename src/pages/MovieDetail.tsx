@@ -45,7 +45,6 @@ const MovieDetail = () => {
   const saveToWatching = async () => {
     if (!movieDetail) return;
 
-    // ✅ 썸네일은 poster/backdrop 중 하나만 있어도 OK (watchingStore 규칙에 맞춤)
     const hasThumb = !!(movieDetail.poster_path || movieDetail.backdrop_path);
     if (!hasThumb) return;
 
@@ -71,7 +70,7 @@ const MovieDetail = () => {
     await saveToWatching();
 
     setPlay(true);
-    // ✅ autoplay가 잘 안 먹는 브라우저/상황 대비: iframe 강제 리마운트
+
     setPlayerNonce(Date.now());
   };
 

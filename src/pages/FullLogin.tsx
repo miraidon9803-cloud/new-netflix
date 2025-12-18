@@ -13,7 +13,6 @@ const FullLogin: React.FC<StepProps> = () => {
   const isLogin = useAuthStore((s) => s.isLogin);
   const onboardingDone = useAuthStore((s) => s.onboardingDone);
 
-  // 🔹 step 상태
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
   useEffect(() => {

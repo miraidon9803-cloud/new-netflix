@@ -2,8 +2,10 @@
 
 .storage-inner {
   max-width: 1440px;
+  min-height: 700px;
+  // height: auto; //
   margin: 0 auto;
-
+  margin-bottom: 120px;
   h2 {
     @include l.myTitle32();
     color: l.$grey10;
@@ -41,23 +43,17 @@
         color: l.$grey10;
         @include l.myTitle16();
       }
-
-      p {
-        padding: 0 12px 12px;
-        margin: 0;
-
-        button {
-          width: 100%;
-          cursor: pointer;
-        }
-      }
     }
-    .storage-title {
-      // margin-top: 20px;
+    .storage-content {
       display: flex;
-      text-align: left;
-      justify-content: center;
+      justify-content: space-between;
+      @include l.myTitle16();
       align-items: center;
+      .del-btn {
+        text-decoration: underline;
+        color: l.$grey8;
+        cursor: pointer;
+      }
     }
   }
 }
