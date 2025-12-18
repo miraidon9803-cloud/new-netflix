@@ -42,6 +42,9 @@
             background-color: l.$main1;
           }
         }
+        .more-panel {
+          display: flex;
+        }
         .text-content {
           display: flex;
           gap: 12px;
