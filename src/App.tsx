@@ -7,7 +7,7 @@ import ProfileSelect from "./pages/ProfileSelect";
 import Landing from "./pages/LandingPage";
 import Main from "./pages/Main";
 import MypageMain from "./pages/MypageMain";
-import NetDetail from "./pages/NetDetail";
+
 import MovieDetail from "./pages/MovieDetail";
 import StorageBox from "./pages/StorageBox";
 import Series from "./pages/Series";
@@ -23,6 +23,9 @@ import GuestOnly from "./components/GuestOnly";
 
 import { useAuthStore } from "./store/authStore";
 import { useProfileStore } from "./store/Profile";
+import ExplorationPage from "./pages/ExplorationPage";
+import Exploration from "./pages/Exploration";
+import Tvdetail from "./pages/Tvdetail";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -67,7 +70,7 @@ function App() {
           <Route element={<ProfileGate />}>
             <Route path="main" element={<Main />} />
             <Route path="mypage" element={<MypageMain />} />
-            <Route path="tv/:id" element={<NetDetail />} />
+            <Route path="tv/:id" element={<Tvdetail />} />
             <Route path="movie/:id" element={<MovieDetail />} />
             <Route path="StorageBox" element={<StorageBox />} />
             <Route path="Series" element={<Series />} />
@@ -75,6 +78,8 @@ function App() {
             <Route path="wishlist/:folderId" element={<WishlistDetail />} />
             <Route path="shorts" element={<Shorts />} />
             <Route path="payment" element={<Payment />} />
+            <Route path="exploration" element={<Exploration />} />
+            <Route path="exploration/start" element={<ExplorationPage />} />
           </Route>
         </Route>
 

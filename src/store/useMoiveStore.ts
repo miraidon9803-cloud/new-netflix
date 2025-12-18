@@ -32,6 +32,11 @@ export type Credits = {
   crew: CreditCrew[];
 };
 
+export type Keyword = {
+  id: number;
+  name: string;
+};
+
 /* ================== STORE TYPE ================== */
 type MovieStore = {
   /* ================== LIST ================== */
@@ -55,6 +60,7 @@ type MovieStore = {
   /* ================== CREDITS ================== */
   movieCredits: Credits | null;
   tvCredits: Credits | null;
+  tvKeywords: Keyword[];
 
   /* ================== ACTION ================== */
   fetchPopularMovies: () => Promise<void>;
@@ -76,6 +82,7 @@ type MovieStore = {
   fetchMovieCredits: (id: string) => Promise<void>;
   fetchTvCredits: (id: string) => Promise<void>;
 
+  fetchTvKeywords: (id: string) => Promise<void>;
   clearDetail: () => void;
 };
 
@@ -92,6 +99,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
   videos: [],
   seasons: [],
   episodes: [],
+  tvKeywords: [],
 
   movieCredits: null,
   tvCredits: null,
@@ -276,6 +284,20 @@ export const useMovieStore = create<MovieStore>((set) => ({
       set({ tvCredits: data });
     } catch {
       set({ tvCredits: null });
+    }
+  },
+
+  fetchTvKeywords: async (id: string) => {
+    if (!API_KEY) return;
+
+    try {
+      const res = await axios.get(`${BASE_URL}/tv/${id}/keywords`, {
+        params: { api_key: API_KEY },
+      });
+
+      set({ tvKeywords: res.data?.results ?? [] });
+    } catch {
+      set({ tvKeywords: [] });
     }
   },
 
