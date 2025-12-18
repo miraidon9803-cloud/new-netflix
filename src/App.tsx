@@ -23,6 +23,8 @@ import GuestOnly from "./components/GuestOnly";
 
 import { useAuthStore } from "./store/authStore";
 import { useProfileStore } from "./store/Profile";
+import ExplorationPage from "./pages/ExplorationPage";
+import Exploration from "./pages/Exploration";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -75,6 +77,8 @@ function App() {
             <Route path="wishlist/:folderId" element={<WishlistDetail />} />
             <Route path="shorts" element={<Shorts />} />
             <Route path="payment" element={<Payment />} />
+            <Route path="exploration" element={<Exploration />} />
+            <Route path="exploration/start" element={<ExplorationPage />} />
           </Route>
         </Route>
 

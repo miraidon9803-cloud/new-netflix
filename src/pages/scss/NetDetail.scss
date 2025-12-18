@@ -7,7 +7,7 @@
     display: flex;
     max-width: 1440px;
     min-height: 800px;
-    max-height: 100%;
+    // max-height: 100%;
     gap: 24px;
     margin: 0 auto;
 
@@ -15,7 +15,8 @@
 
     .left-side {
       width: 83rem;
-      height: 76.7rem;
+      // height: 76.7rem;
+      height: auto;
       // display: flex;
       // flex-direction: column;
 
@@ -42,9 +43,7 @@
             background-color: l.$main1;
           }
         }
-        .more-panel {
-          display: flex;
-        }
+
         .text-content {
           display: flex;
           gap: 12px;
@@ -72,6 +71,28 @@
             padding: 8px 16px;
             border-radius: 4px;
             background-color: l.$grey2;
+          }
+        }
+        .more-panel {
+          width: 82.8rem;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+
+          .row {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+          }
+
+          .cast-list {
+            display: flex; // 🔥 핵심
+            gap: 12px;
+            flex-wrap: wrap; // 여러 명이면 줄바꿈
+          }
+
+          .cast-item {
+            width: 120px;
           }
         }
       }
@@ -123,6 +144,7 @@
         }
       }
       width: 58.8rem;
+
       .episode-list {
         margin-top: 24px;
         display: flex;
