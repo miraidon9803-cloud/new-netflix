@@ -70,7 +70,7 @@ export const MoreInfoPanel = ({
 
               <p className="cast-name">{cast.name}</p>
 
-              {cast.character && <p className="cast-role">{cast.character}</p>}
+              {/* {cast.character && <p className="cast-role">{cast.character}</p>} */}
             </li>
           ))}
         </ul>

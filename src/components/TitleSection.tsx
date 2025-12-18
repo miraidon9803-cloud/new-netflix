@@ -54,7 +54,7 @@ export const TitleSection = ({
           if (e.key === "Enter" || e.key === " ") toggleMoreOpen();
         }}
       >
-        정보 더보기 {moreOpen ? "∧" : "+"}
+        정보 더보기 {moreOpen ? "-" : "+"}
       </p>
     </div>
   );

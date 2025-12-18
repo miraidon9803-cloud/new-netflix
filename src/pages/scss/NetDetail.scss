@@ -73,27 +73,27 @@
             background-color: l.$grey2;
           }
         }
-        .more-panel {
-          width: 82.8rem;
+      }
+      .more-panel {
+        width: 82.8rem;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .row {
           display: flex;
-          flex-direction: column;
           gap: 16px;
+          align-items: flex-start;
+        }
 
-          .row {
-            display: flex;
-            gap: 16px;
-            align-items: flex-start;
-          }
+        .cast-list {
+          display: flex; // 🔥 핵심
+          gap: 12px;
+          flex-wrap: wrap; // 여러 명이면 줄바꿈
+        }
 
-          .cast-list {
-            display: flex; // 🔥 핵심
-            gap: 12px;
-            flex-wrap: wrap; // 여러 명이면 줄바꿈
-          }
-
-          .cast-item {
-            width: 120px;
-          }
+        .cast-item {
+          width: 120px;
         }
       }
     }

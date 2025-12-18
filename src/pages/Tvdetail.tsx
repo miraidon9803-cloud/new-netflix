@@ -3,15 +3,13 @@ import { useEffect, useMemo } from "react";
 import { useMovieStore } from "../store/useMoiveStore";
 import { useWatchingStore } from "../store/WatichingStore";
 import { useDetailUIStore } from "../store/useDetailUIStore";
-
-import "./scss/NetDetail.scss";
 import { VideoPlayer } from "../components/VideoPlayer";
 import { TitleSection } from "../components/TitleSection";
 import { MoreInfoPanel } from "../components/MoreInfoPanel";
 import { TabNavigation } from "../components/TabNavigation";
 import { SeasonSelector } from "../components/SeasonSelector";
 import { EpisodeList } from "./EpisodeList";
-
+import "./scss/NetDetail.scss";
 type Video = {
   id: string;
   key: string;
