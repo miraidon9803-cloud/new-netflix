@@ -1,8 +1,9 @@
 @use '../../App.scss' as *;
 
-header {
+.site-header {
   background: $BG;
   padding: 20px 0;
+
   .inner {
     display: flex;
     justify-content: space-between;
@@ -75,6 +76,9 @@ header {
       }
     }
   }
+<<<<<<< HEAD
+}
+=======
   @media (max-width: 1440px) {
     header {
       .inner {
@@ -89,3 +93,4 @@ header {
     }
   }
 }
+>>>>>>> 39d773257a9a25ab2c6dd210a363a9687e9d89c8
