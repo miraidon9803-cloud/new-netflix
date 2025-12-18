@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react';
-import { useNetflixStore } from '../store/NetflixStore';
-import './scss/Top10.scss';
+import React, { useEffect, useRef } from "react";
+import { useNetflixStore } from "../store/NetflixStore";
+import "./scss/Top10.scss";
+import { Link } from "react-router-dom";
 
-const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
-const FALLBACK_POSTER = '/images/icon/no_poster.png';
+const IMG_BASE = "https://image.tmdb.org/t/p/w500";
+const FALLBACK_POSTER = "/images/icon/no_poster.png";
 
 type MovieItem = {
   id: number;
@@ -30,7 +31,8 @@ const MovieTop10: React.FC = () => {
   const startXRef = useRef(0);
   const startScrollLeftRef = useRef(0);
 
-  const getTitle = (item: MovieItem) => (item.title ?? item.name ?? 'movie') as string;
+  const getTitle = (item: MovieItem) =>
+    (item.title ?? item.name ?? "movie") as string;
 
   // ✅ 마우스 드래그
   const onMouseDown: React.MouseEventHandler<HTMLUListElement> = (e) => {
@@ -38,7 +40,7 @@ const MovieTop10: React.FC = () => {
     if (!el) return;
 
     isDraggingRef.current = true;
-    el.classList.add('dragging');
+    el.classList.add("dragging");
 
     startXRef.current = e.pageX;
     startScrollLeftRef.current = el.scrollLeft;
@@ -59,7 +61,7 @@ const MovieTop10: React.FC = () => {
     if (!el) return;
 
     isDraggingRef.current = false;
-    el.classList.remove('dragging');
+    el.classList.remove("dragging");
   };
 
   // ✅ 터치 드래그(모바일)
@@ -68,7 +70,7 @@ const MovieTop10: React.FC = () => {
     if (!el) return;
 
     isDraggingRef.current = true;
-    el.classList.add('dragging');
+    el.classList.add("dragging");
 
     startXRef.current = e.touches[0].pageX;
     startScrollLeftRef.current = el.scrollLeft;
@@ -100,35 +102,41 @@ const MovieTop10: React.FC = () => {
         onMouseLeave={endDrag}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}>
+        onTouchEnd={onTouchEnd}
+      >
         {movieTop10.map((item, index) => {
-          const posterSrc = item.poster_path ? `${IMG_BASE}${item.poster_path}` : FALLBACK_POSTER;
+          const posterSrc = item.poster_path
+            ? `${IMG_BASE}${item.poster_path}`
+            : FALLBACK_POSTER;
 
           return (
             <li key={item.id} className="top10Item">
-              <span className="rank">{index + 1}</span>
+              <Link to={`/movie/${item.id}`}>
+                <span className="rank">{index + 1}</span>
 
-              <div className="posterWrap">
-                {item.isNetflixOriginal && (
+                <div className="posterWrap">
+                  {item.isNetflixOriginal && (
+                    <img
+                      className="netflixBadge"
+                      src="/images/icon/오리지널_뱃지.png"
+                      alt="Netflix Original"
+                      draggable={false}
+                    />
+                  )}
+
+                  {/* ✅ poster_path 없어도 렌더 + fallback */}
                   <img
-                    className="netflixBadge"
-                    src="/images/icon/오리지널_뱃지.png"
-                    alt="Netflix Original"
+                    className="poster"
+                    src={posterSrc}
+                    alt={getTitle(item)}
                     draggable={false}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src =
+                        FALLBACK_POSTER;
+                    }}
                   />
-                )}
-
-                {/* ✅ poster_path 없어도 렌더 + fallback */}
-                <img
-                  className="poster"
-                  src={posterSrc}
-                  alt={getTitle(item)}
-                  draggable={false}
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = FALLBACK_POSTER;
-                  }}
-                />
-              </div>
+                </div>
+              </Link>
             </li>
           );
         })}

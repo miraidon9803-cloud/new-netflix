@@ -1,15 +1,21 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { useNetflixStore } from '../store/NetflixStore';
-import './scss/SFNFantasy.scss';
+import React, { useEffect, useMemo, useRef } from "react";
+import { useNetflixStore } from "../store/NetflixStore";
+import "./scss/SFNFantasy.scss";
+import { Link } from "react-router-dom";
 
-const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
-const FALLBACK_POSTER = '/images/icon/no_poster.png';
+const IMG_BASE = "https://image.tmdb.org/t/p/w500";
+const FALLBACK_POSTER = "/images/icon/no_poster.png";
+
+type MediaType = "tv" | "movie";
 
 type SFItem = {
   id: number;
   poster_path: string | null;
   name?: string | null;
   title?: string | null;
+
+  // ✅ tv/movie 섞이면 이 값이 필요
+  media_type?: MediaType;
 
   isNetflixOriginal?: boolean;
   isNew3Months?: boolean;
@@ -48,12 +54,21 @@ const SFNFantasy: React.FC = () => {
   const startXRef = useRef(0);
   const startScrollLeftRef = useRef(0);
 
-  const getTitle = (item: SFItem) => (item.name ?? item.title ?? 'poster') as string;
+  const getTitle = (item: SFItem) =>
+    (item.name ?? item.title ?? "poster") as string;
 
-  const getBadgeType = (item: SFItem): 'netflix' | 'new' | 'old' | null => {
-    if (item.isNetflixOriginal) return 'netflix';
-    if (item.isNew3Months) return 'new';
-    if (item.isOld1Year) return 'old';
+  // ✅ type 결정: media_type 있으면 사용, 없으면 name/title로 추론
+  const getType = (item: SFItem): MediaType => {
+    if (item.media_type === "tv" || item.media_type === "movie")
+      return item.media_type;
+    if (item.name) return "tv";
+    return "movie";
+  };
+
+  const getBadgeType = (item: SFItem): "netflix" | "new" | "old" | null => {
+    if (item.isNetflixOriginal) return "netflix";
+    if (item.isNew3Months) return "new";
+    if (item.isOld1Year) return "old";
     return null;
   };
 
@@ -63,7 +78,7 @@ const SFNFantasy: React.FC = () => {
     if (!el) return;
 
     isDraggingRef.current = true;
-    el.classList.add('dragging');
+    el.classList.add("dragging");
 
     startXRef.current = e.pageX;
     startScrollLeftRef.current = el.scrollLeft;
@@ -83,7 +98,7 @@ const SFNFantasy: React.FC = () => {
     if (!el) return;
 
     isDraggingRef.current = false;
-    el.classList.remove('dragging');
+    el.classList.remove("dragging");
   };
 
   // ✅ 터치 드래그
@@ -92,7 +107,7 @@ const SFNFantasy: React.FC = () => {
     if (!el) return;
 
     isDraggingRef.current = true;
-    el.classList.add('dragging');
+    el.classList.add("dragging");
 
     startXRef.current = e.touches[0].pageX;
     startScrollLeftRef.current = el.scrollLeft;
@@ -123,51 +138,59 @@ const SFNFantasy: React.FC = () => {
         onMouseLeave={endDrag}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}>
+        onTouchEnd={onTouchEnd}
+      >
         {randomizedList.map((item) => {
+          const type = getType(item); // ✅ 여기서 type 생성
           const badge = getBadgeType(item);
-          const posterSrc = item.poster_path ? `${IMG_BASE}${item.poster_path}` : FALLBACK_POSTER;
+
+          const posterSrc = item.poster_path
+            ? `${IMG_BASE}${item.poster_path}`
+            : FALLBACK_POSTER;
 
           return (
-            <li key={item.id} className="sfItem">
-              <div className="posterWrap">
-                {badge === 'netflix' && (
-                  <img
-                    className="netflixBadge"
-                    src="/images/icon/오리지널_뱃지.png"
-                    alt="Netflix Original"
-                    draggable={false}
-                  />
-                )}
+            <li key={`${type}-${item.id}`} className="sfItem">
+              <Link to={`/${type}/${item.id}`}>
+                <div className="posterWrap">
+                  {badge === "netflix" && (
+                    <img
+                      className="netflixBadge"
+                      src="/images/icon/오리지널_뱃지.png"
+                      alt="Netflix Original"
+                      draggable={false}
+                    />
+                  )}
 
-                {badge === 'new' && (
-                  <img
-                    className="newBadge"
-                    src="/images/icon/뉴_뱃지.png"
-                    alt="New (3 months)"
-                    draggable={false}
-                  />
-                )}
+                  {badge === "new" && (
+                    <img
+                      className="newBadge"
+                      src="/images/icon/뉴_뱃지.png"
+                      alt="New (3 months)"
+                      draggable={false}
+                    />
+                  )}
 
-                {badge === 'old' && (
-                  <img
-                    className="oldBadge"
-                    src="/images/icon/곧 종료_뱃지.png"
-                    alt="Old (1 year+)"
-                    draggable={false}
-                  />
-                )}
+                  {badge === "old" && (
+                    <img
+                      className="oldBadge"
+                      src="/images/icon/곧 종료_뱃지.png"
+                      alt="Old (1 year+)"
+                      draggable={false}
+                    />
+                  )}
 
-                <img
-                  className="poster"
-                  src={posterSrc}
-                  alt={getTitle(item)}
-                  draggable={false}
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = FALLBACK_POSTER;
-                  }}
-                />
-              </div>
+                  <img
+                    className="poster"
+                    src={posterSrc}
+                    alt={getTitle(item)}
+                    draggable={false}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src =
+                        FALLBACK_POSTER;
+                    }}
+                  />
+                </div>
+              </Link>
             </li>
           );
         })}
