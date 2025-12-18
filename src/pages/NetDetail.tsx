@@ -22,26 +22,28 @@ const NetDetail = () => {
     episodes,
     tvRating,
     videos,
+    tvCredits, // ✅ TV credits
     fetchTvDetail,
     fetchTvRating,
     fetchSeasons,
     fetchEpisodes,
     fetchVideos,
+    fetchTvCredits, // ✅ TV credits fetch
   } = useMovieStore();
 
   const { onAddWatching } = useWatchingStore();
 
   const [activeSeason, setActiveSeason] = useState<number | null>(null);
   const [seasonOpen, setSeasonOpen] = useState(false);
-
   const [selectedVideoKey, setSelectedVideoKey] = useState<string | null>(null);
-
   const [play, setPlay] = useState(false);
   const [playerNonce, setPlayerNonce] = useState(0);
 
   const [activeTab, setActiveTab] = useState<
     "회차" | "비슷한콘텐츠" | "관련클립"
   >("회차");
+
+  const [moreOpen, setMoreOpen] = useState(false);
 
   const defaultSeasonNumber = useMemo(() => {
     const normal = seasons.find((s: any) => s.season_number > 0);
@@ -57,13 +59,37 @@ const NetDetail = () => {
     );
   }, [seasons, selectedSeasonNumber]);
 
+  // ✅ TV "제작"은 tvDetail.created_by가 더 정확한 경우가 많음
+  const creatorNames =
+    (tvDetail as any)?.created_by?.length > 0
+      ? (tvDetail as any).created_by.map((c: any) => c.name).join(", ")
+      : "정보 없음";
+
+  // ✅ 총괄/제작진(Executive Producer) 일부만
+  const execProducerNames =
+    tvCredits?.crew
+      ?.filter((c) => c.job === "Executive Producer")
+      ?.slice(0, 3)
+      ?.map((p) => p.name)
+      ?.join(", ") ?? "정보 없음";
+
+  const topCast = tvCredits?.cast?.slice(0, 8) ?? [];
+
   useEffect(() => {
     if (!tvId) return;
     fetchTvDetail(tvId);
     fetchTvRating(tvId);
     fetchSeasons(tvId);
     fetchVideos(tvId, "tv");
-  }, [tvId, fetchTvDetail, fetchTvRating, fetchSeasons, fetchVideos]);
+    fetchTvCredits(tvId); // ✅ 여기!
+  }, [
+    tvId,
+    fetchTvDetail,
+    fetchTvRating,
+    fetchSeasons,
+    fetchVideos,
+    fetchTvCredits,
+  ]);
 
   useEffect(() => {
     if (!tvId || !selectedSeasonNumber) return;
@@ -148,7 +174,6 @@ const NetDetail = () => {
   return (
     <div className="detail-page">
       <div className="detail-inner">
-        {/* ✅ 영상 없으면 이것만 보여주고 나머지 전부 렌더링 X */}
         {!iframeKey ? (
           <div className="no-video">
             <p>재생할 영상이 없습니다.</p>
@@ -195,7 +220,50 @@ const NetDetail = () => {
                   <p>공유</p>
                 </div>
 
-                <p>정보 더보기 +</p>
+                <p
+                  className={`more-btn ${moreOpen ? "open" : ""}`}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setMoreOpen((v) => !v)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ")
+                      setMoreOpen((v) => !v);
+                  }}
+                >
+                  정보 더보기 {moreOpen ? "−" : "+"}
+                </p>
+
+                {moreOpen && (
+                  <div className="more-panel">
+                    <div className="row">
+                      <span className="label">출연</span>
+
+                      <ul className="cast-list">
+                        {topCast.map((cast) => (
+                          <li key={cast.id} className="cast-item">
+                            <div className="cast-img">
+                              <img
+                                src={
+                                  cast.profile_path
+                                    ? `https://image.tmdb.org/t/p/w185${cast.profile_path}`
+                                    : "/images/icon/no_profile.png"
+                                }
+                                alt={cast.name}
+                                loading="lazy"
+                              />
+                            </div>
+
+                            <p className="cast-name">{cast.name}</p>
+
+                            {cast.character && (
+                              <p className="cast-role">{cast.character}</p>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -224,7 +292,7 @@ const NetDetail = () => {
                 </p>
               </div>
 
-              {/*  탭별 콘텐츠 */}
+              {/* 탭별 콘텐츠 */}
               {activeTab === "회차" ? (
                 <>
                   <ul className={`season-dropdown ${seasonOpen ? "open" : ""}`}>

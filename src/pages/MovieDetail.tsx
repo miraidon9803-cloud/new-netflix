@@ -1,8 +1,10 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { useMovieStore } from "../store/useMoiveStore";
-import { useWatchingStore } from "../store/WatichingStore";
 import "./scss/NetDetail.scss";
+
+const PROFILE_IMG = "https://image.tmdb.org/t/p/w185";
+const FALLBACK_PROFILE = "/images/icon/no_profile.png";
 
 const MovieDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -12,15 +14,22 @@ const MovieDetail = () => {
     movieDetail,
     movieRating,
     videos,
+    movieCredits,
     fetchMovieDetail,
     fetchMovieRating,
     fetchVideos,
+    fetchMovieCredits,
   } = useMovieStore();
 
-  const { onAddWatching } = useWatchingStore();
-
   const [play, setPlay] = useState(false);
-  const [playerNonce, setPlayerNonce] = useState(0);
+
+  // ✅ 탭 상태 (NetDetail 방식처럼)
+  const [activeTab, setActiveTab] = useState<
+    "정보" | "비슷한콘텐츠" | "관련클립"
+  >("정보");
+
+  // ✅ 정보 더보기 토글
+  const [moreOpen, setMoreOpen] = useState(false);
 
   /* ================== FETCH ================== */
   useEffect(() => {
@@ -28,7 +37,14 @@ const MovieDetail = () => {
     fetchMovieDetail(movieId);
     fetchMovieRating(movieId);
     fetchVideos(movieId, "movie");
-  }, [movieId, fetchMovieDetail, fetchMovieRating, fetchVideos]);
+    fetchMovieCredits(movieId); // ✅ 감독/출연진
+  }, [
+    movieId,
+    fetchMovieDetail,
+    fetchMovieRating,
+    fetchVideos,
+    fetchMovieCredits,
+  ]);
 
   if (!movieId) return <p>잘못된 접근입니다.</p>;
   if (!movieDetail) return <p>작품 불러오는 중..</p>;
@@ -36,56 +52,33 @@ const MovieDetail = () => {
   /* ================== TRAILER ================== */
   const trailer =
     videos.find(
-      (v) => v.site === "YouTube" && v.type === "Trailer" && v.official
+      (v: any) => v.site === "YouTube" && v.type === "Trailer" && v.official
     ) ??
-    videos.find((v) => v.site === "YouTube" && v.type === "Trailer") ??
-    videos.find((v) => v.site === "YouTube");
+    videos.find((v: any) => v.site === "YouTube" && v.type === "Trailer") ??
+    videos.find((v: any) => v.site === "YouTube");
 
-  /* ================== SAVE WATCHING ================== */
-  const saveToWatching = async () => {
-    if (!movieDetail) return;
+  /* ================== CREDITS ================== */
+  const directorNames =
+    movieCredits?.crew
+      ?.filter((c) => c.job === "Director")
+      ?.map((d) => d.name)
+      ?.slice(0, 3)
+      ?.join(", ") ?? "정보 없음";
 
-    const hasThumb = !!(movieDetail.poster_path || movieDetail.backdrop_path);
-    if (!hasThumb) return;
-
-    try {
-      await onAddWatching({
-        id: movieDetail.id,
-        mediaType: "movie",
-        title: movieDetail.title,
-
-        poster_path: movieDetail.poster_path,
-        backdrop_path: movieDetail.backdrop_path,
-
-        release_date: movieDetail.release_date,
-        runtime: movieDetail.runtime,
-      } as any);
-    } catch (e) {
-      console.error("watching 저장 실패:", e);
-    }
-  };
-
-  /* ================== PLAY ================== */
-  const onPlay = async () => {
-    await saveToWatching();
-
-    setPlay(true);
-
-    setPlayerNonce(Date.now());
-  };
+  const topCast = movieCredits?.cast?.slice(0, 10) ?? [];
 
   return (
     <div className="detail-page">
       <div className="detail-inner">
+        {/* 왼쪽 영역 */}
         <div className="left-side">
           <div className="media-box">
             {trailer ? (
               <iframe
-                key={`${trailer.key}-${playerNonce}`}
                 className="trailer-video"
                 src={`https://www.youtube.com/embed/${trailer.key}?autoplay=${
                   play ? 1 : 0
-                }&mute=1&playsinline=1&nonce=${playerNonce}`}
+                }&mute=1&playsinline=1`}
                 title="YouTube trailer"
                 allow="autoplay; encrypted-media"
                 allowFullScreen
@@ -98,7 +91,16 @@ const MovieDetail = () => {
           <div className="text-box">
             <div className="title-wrap">
               <h1>{movieDetail.title}</h1>
-              {trailer && <button onClick={onPlay}>재생</button>}
+              {trailer && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!play) setPlay(true);
+                  }}
+                >
+                  재생
+                </button>
+              )}
             </div>
 
             <div className="text-content">
@@ -119,8 +121,121 @@ const MovieDetail = () => {
               <p>공유</p>
             </div>
 
-            <p>정보 더보기 +</p>
+            {/* ✅ 정보 더보기 토글 */}
+            <p
+              className={`more-btn ${moreOpen ? "open" : ""}`}
+              role="button"
+              tabIndex={0}
+              onClick={() => setMoreOpen((v) => !v)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") setMoreOpen((v) => !v);
+              }}
+            >
+              정보 더보기 {moreOpen ? "−" : "+"}
+            </p>
+
+            {/* ✅ 감독/출연진 + 사진 */}
+            {moreOpen && (
+              <div className="more-panel">
+                <div className="row">
+                  <span className="label">감독</span>
+                  <span className="value">{directorNames}</span>
+                </div>
+
+                <div className="row" style={{ flexDirection: "column" }}>
+                  <span className="label">출연</span>
+
+                  {topCast.length === 0 ? (
+                    <span className="value">정보 없음</span>
+                  ) : (
+                    <ul className="cast-list">
+                      {topCast.map((cast) => (
+                        <li key={cast.id} className="cast-item">
+                          <div className="cast-img">
+                            <img
+                              src={
+                                cast.profile_path
+                                  ? `${PROFILE_IMG}${cast.profile_path}`
+                                  : FALLBACK_PROFILE
+                              }
+                              alt={cast.name}
+                              loading="lazy"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).src =
+                                  FALLBACK_PROFILE;
+                              }}
+                            />
+                          </div>
+
+                          <p className="cast-name">{cast.name}</p>
+                          {cast.character && (
+                            <p className="cast-role">{cast.character}</p>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
+        </div>
+
+        {/* 오른쪽 탭 영역 */}
+        <div className="season-box">
+          <div className="detail-tabs">
+            <p
+              role="button"
+              tabIndex={0}
+              className={activeTab === "정보" ? "active" : ""}
+              onClick={() => setActiveTab("정보")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") setActiveTab("정보");
+              }}
+            >
+              정보
+            </p>
+
+            <p
+              role="button"
+              tabIndex={0}
+              className={activeTab === "비슷한콘텐츠" ? "active" : ""}
+              onClick={() => setActiveTab("비슷한콘텐츠")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ")
+                  setActiveTab("비슷한콘텐츠");
+              }}
+            >
+              비슷한 콘텐츠
+            </p>
+
+            <p
+              role="button"
+              tabIndex={0}
+              className={activeTab === "관련클립" ? "active" : ""}
+              onClick={() => setActiveTab("관련클립")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ")
+                  setActiveTab("관련클립");
+              }}
+            >
+              관련클립
+            </p>
+          </div>
+
+          {activeTab === "정보" ? (
+            <div className="tab-panel">
+              <p>기본 정보를 확인하세요.</p>
+            </div>
+          ) : activeTab === "비슷한콘텐츠" ? (
+            <div className="tab-panel">
+              <p>비슷한 콘텐츠를 준비 중입니다.</p>
+            </div>
+          ) : (
+            <div className="tab-panel">
+              <p>관련 클립을 준비 중입니다.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

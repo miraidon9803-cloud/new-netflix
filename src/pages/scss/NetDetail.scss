@@ -1,168 +1,172 @@
 @use "../../App.scss" as l;
 
-.detail-inner {
-  display: flex;
-  max-width: 1440px;
-  min-height: 800px;
-  max-height: 100%;
-  margin: 0 auto;
-  gap: 24px;
+.detail-page {
   margin: 40px 0 40px 0;
-  // margin-bottom: 40px;
+  // margin: 0 auto;
+  .detail-inner {
+    display: flex;
+    max-width: 1440px;
+    min-height: 800px;
+    max-height: 100%;
+    gap: 24px;
+    margin: 0 auto;
 
-  .left-side {
-    width: 83rem;
-    height: 76.7rem;
-    // display: flex;
-    // flex-direction: column;
+    // margin-bottom: 40px;
 
-    iframe {
+    .left-side {
       width: 83rem;
-      height: 41rem;
-      border: none;
-    }
+      height: 76.7rem;
+      // display: flex;
+      // flex-direction: column;
 
-    .text-box {
-      .title-wrap {
-        h1 {
-          @include l.myTitle32();
-          color: l.$grey10;
+      iframe {
+        width: 83rem;
+        height: 41rem;
+        border: none;
+      }
+
+      .text-box {
+        .title-wrap {
+          h1 {
+            @include l.myTitle32();
+            color: l.$grey10;
+          }
+          display: flex;
+          justify-content: space-between;
+
+          button {
+            @include l.myTitle16();
+            color: l.$grey10;
+            width: 24rem;
+            height: 4rem;
+            background-color: l.$main1;
+          }
         }
-        display: flex;
-        justify-content: space-between;
-
-        button {
+        .text-content {
+          display: flex;
+          gap: 12px;
           @include l.myTitle16();
           color: l.$grey10;
-          width: 24rem;
-          height: 4rem;
-          background-color: l.$main1;
+          margin-bottom: 20px;
         }
-      }
-      .text-content {
-        display: flex;
-        gap: 12px;
-        @include l.myTitle16();
-        color: l.$grey10;
-        margin-bottom: 20px;
-      }
-      .text-fads {
-        @include l.myTitle16();
-        color: l.$grey10;
-        text-align: left;
-        margin-bottom: 40px;
-      }
-
-      .btn-wrap {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 40px;
-        p {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 14.8rem;
-          height: 8rem;
-          padding: 8px 16px;
-          border-radius: 4px;
-          background-color: l.$grey2;
-        }
-      }
-    }
-  }
-  .season-box {
-    .detail-tabs {
-      margin-bottom: 20px;
-      display: flex;
-      p {
-        padding: 12px 24px;
-      }
-      activeTab {
-        text-decoration: underline;
-      }
-    }
-    .season-dropdown {
-      .season-trigger {
-        width: 97px;
-        height: 40px;
-        // padding: 16px;
-        color: #fff;
-        background-color: l.$grey3;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        border-radius: 4px;
-      }
-      .season-item {
-        width: 97px;
-        padding: 16px;
-        color: #fff;
-        background-color: l.$grey3;
-        display: flex;
-        justify-content: left;
-        align-items: center;
-        // border-radius: 0 0 4px 4px;
-      }
-      .season-item:last-child {
-        border-radius: 0 0 4px 4px;
-      }
-      .chev {
-        display: flex;
-        align-items: center;
-      }
-
-      .chev.open {
-        transform: rotate(180deg);
-      }
-    }
-    width: 58.8rem;
-    .episode-list {
-      margin-top: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      li {
-        display: flex;
-        gap: 12px;
-      }
-      .episode-title {
-        h3 {
+        .text-fads {
           @include l.myTitle16();
           color: l.$grey10;
           text-align: left;
-          margin-bottom: 10px;
+          margin-bottom: 40px;
+        }
+
+        .btn-wrap {
+          display: flex;
+          gap: 12px;
+          margin-bottom: 40px;
+          p {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 14.8rem;
+            height: 8rem;
+            padding: 8px 16px;
+            border-radius: 4px;
+            background-color: l.$grey2;
+          }
         }
       }
-
-      .episode-content {
-        position: relative;
-        width: 220px;
-        flex: 0 0 220px;
-
-        img {
-          width: 100%;
-          display: block;
+    }
+    .season-box {
+      .detail-tabs {
+        margin-bottom: 20px;
+        display: flex;
+        p {
+          padding: 12px 24px;
         }
-
-        .episode-btn {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          z-index: 10;
-
+        activeTab {
+          text-decoration: underline;
+        }
+      }
+      .season-dropdown {
+        .season-trigger {
+          width: 97px;
+          height: 40px;
+          // padding: 16px;
+          color: #fff;
+          background-color: l.$grey3;
           display: flex;
           justify-content: center;
           align-items: center;
-
-          width: 48px;
-          height: 48px;
-          border-radius: 999px;
-          border: 0;
-          cursor: pointer;
-          background: rgba(0, 0, 0, 0.6);
+          gap: 10px;
+          border-radius: 4px;
+        }
+        .season-item {
+          width: 97px;
+          padding: 16px;
           color: #fff;
+          background-color: l.$grey3;
+          display: flex;
+          justify-content: left;
+          align-items: center;
+          // border-radius: 0 0 4px 4px;
+        }
+        .season-item:last-child {
+          border-radius: 0 0 4px 4px;
+        }
+        .chev {
+          display: flex;
+          align-items: center;
+        }
+
+        .chev.open {
+          transform: rotate(180deg);
+        }
+      }
+      width: 58.8rem;
+      .episode-list {
+        margin-top: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        li {
+          display: flex;
+          gap: 12px;
+        }
+        .episode-title {
+          h3 {
+            @include l.myTitle16();
+            color: l.$grey10;
+            text-align: left;
+            margin-bottom: 10px;
+          }
+        }
+
+        .episode-content {
+          position: relative;
+          width: 220px;
+          flex: 0 0 220px;
+
+          img {
+            width: 100%;
+            display: block;
+          }
+
+          .episode-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            width: 48px;
+            height: 48px;
+            border-radius: 999px;
+            border: 0;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+          }
         }
       }
     }

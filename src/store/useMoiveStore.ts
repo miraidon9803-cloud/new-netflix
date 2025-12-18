@@ -12,6 +12,27 @@ import axios from "axios";
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const BASE_URL = "https://api.themoviedb.org/3";
 
+/* ================== CREDITS TYPES ================== */
+export type CreditCast = {
+  id: number;
+  name: string;
+  character?: string;
+  profile_path?: string | null;
+};
+
+export type CreditCrew = {
+  id: number;
+  name: string;
+  job?: string;
+  department?: string;
+};
+
+export type Credits = {
+  cast: CreditCast[];
+  crew: CreditCrew[];
+};
+
+/* ================== STORE TYPE ================== */
 type MovieStore = {
   /* ================== LIST ================== */
   movies: Movie[];
@@ -31,6 +52,10 @@ type MovieStore = {
   seasons: Season[];
   episodes: Episode[];
 
+  /* ================== CREDITS ================== */
+  movieCredits: Credits | null;
+  tvCredits: Credits | null;
+
   /* ================== ACTION ================== */
   fetchPopularMovies: () => Promise<void>;
   fetchMovieDetail: (id: string) => Promise<void>;
@@ -38,7 +63,7 @@ type MovieStore = {
   fetchMovieRating: (id: string) => Promise<void>;
   fetchTvRating: (id: string) => Promise<void>;
 
-  // ✅ 변경: return Video[] + (선택) seasonNumber 지원
+  // return Video[] + (선택) seasonNumber 지원
   fetchVideos: (
     id: string,
     type: "movie" | "tv",
@@ -47,6 +72,10 @@ type MovieStore = {
 
   fetchSeasons: (tvId: string) => Promise<void>;
   fetchEpisodes: (tvId: string, season: number) => Promise<void>;
+
+  fetchMovieCredits: (id: string) => Promise<void>;
+  fetchTvCredits: (id: string) => Promise<void>;
+
   clearDetail: () => void;
 };
 
@@ -64,6 +93,9 @@ export const useMovieStore = create<MovieStore>((set) => ({
   seasons: [],
   episodes: [],
 
+  movieCredits: null,
+  tvCredits: null,
+
   /* ================== MOVIE LIST ================== */
   fetchPopularMovies: async () => {
     if (!API_KEY) return;
@@ -74,7 +106,8 @@ export const useMovieStore = create<MovieStore>((set) => ({
     const data = await res.json();
 
     const enriched = await Promise.all(
-      data.results.map(async (movie: Movie) => {
+      (data.results ?? []).map(async (movie: Movie) => {
+        // 연령(Release Dates)
         const ageRes = await fetch(
           `${BASE_URL}/movie/${movie.id}/release_dates?api_key=${API_KEY}`
         );
@@ -83,6 +116,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
         const kr = ageData.results?.find((r: any) => r.iso_3166_1 === "KR")
           ?.release_dates?.[0]?.certification;
 
+        // 로고(Images)
         const logoRes = await fetch(
           `${BASE_URL}/movie/${movie.id}/images?api_key=${API_KEY}`
         );
@@ -184,7 +218,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
     const koList = (koRes.data?.results ?? []) as Video[];
     if (koList.length > 0) {
       set({ videos: koList });
-      return koList; // ✅ 중요
+      return koList;
     }
 
     // 2) en fallback
@@ -194,7 +228,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
 
     const enList = (enRes.data?.results ?? []) as Video[];
     set({ videos: enList });
-    return enList; // ✅ 중요
+    return enList;
   },
 
   /* ================== TV ONLY ================== */
@@ -218,6 +252,33 @@ export const useMovieStore = create<MovieStore>((set) => ({
     set({ episodes: data.episodes ?? [] });
   },
 
+  /* ================== CREDITS ================== */
+  fetchMovieCredits: async (id: string) => {
+    if (!API_KEY) return;
+    try {
+      const res = await fetch(
+        `${BASE_URL}/movie/${id}/credits?api_key=${API_KEY}&language=ko-KR`
+      );
+      const data = await res.json();
+      set({ movieCredits: data });
+    } catch {
+      set({ movieCredits: null });
+    }
+  },
+
+  fetchTvCredits: async (id: string) => {
+    if (!API_KEY) return;
+    try {
+      const res = await fetch(
+        `${BASE_URL}/tv/${id}/credits?api_key=${API_KEY}&language=ko-KR`
+      );
+      const data = await res.json();
+      set({ tvCredits: data });
+    } catch {
+      set({ tvCredits: null });
+    }
+  },
+
   /* ================== CLEAN ================== */
   clearDetail: () =>
     set({
@@ -228,5 +289,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
       videos: [],
       movieRating: null,
       tvRating: null,
+      movieCredits: null,
+      tvCredits: null,
     }),
 }));
