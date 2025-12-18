@@ -76,21 +76,18 @@
       }
     }
   }
-<<<<<<< HEAD
 }
-=======
-  @media (max-width: 1440px) {
-    header {
-      .inner {
-        .header-left {
-          .main-menu {
-            .main-text {
-              @include myTitle20();
-            }
+
+@media (max-width: 1440px) {
+  header {
+    .inner {
+      .header-left {
+        .main-menu {
+          .main-text {
+            @include myTitle20();
           }
         }
       }
     }
   }
 }
->>>>>>> 39d773257a9a25ab2c6dd210a363a9687e9d89c8
