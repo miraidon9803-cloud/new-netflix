@@ -1,8 +1,9 @@
 @use '../../App.scss' as *;
 
-header {
+.site-header {
   background: $BG;
   padding: 20px 0;
+
   .inner {
     display: flex;
     justify-content: space-between;
