@@ -226,11 +226,7 @@ const Alarm = () => {
               const isAlarmOn = alarmSet.has(alarmKey);
 
               return (
-                <p
-                  key={alarmKey}
-                  className="alram-card"
-                  onClick={() => goDetail(item)}
-                >
+                <p key={alarmKey} className="alram-card">
                   <div className="alram-poster">
                     {item.posterPath ? (
                       <img
@@ -243,10 +239,10 @@ const Alarm = () => {
                   </div>
 
                   <div className="alram-info">
-                    <p className="alram-title">
+                    <p className="alram-subtitle">
                       {item.title}
                       <span className="alram-release">
-                        {" · "}
+                        {" : "}
                         {formatKoreanReleaseText(
                           item.mediaType,
                           item.releaseDate
@@ -257,19 +253,7 @@ const Alarm = () => {
                     <p className="alram-overview">{item.overview}</p>
 
                     <div className="alram-actions">
-                      <button
-                        type="button"
-                        className="alram-btn alram-btn--play"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          goPlay(item);
-                        }}
-                      >
-                        ▶ 재생
-                      </button>
-
-                      <button
-                        type="button"
+                      <p
                         className={`alram-btn alram-btn--alarm ${
                           isAlarmOn ? "on" : ""
                         }`}
@@ -278,8 +262,17 @@ const Alarm = () => {
                           toggleAlarm(item.mediaType, item.id);
                         }}
                       >
-                        {isAlarmOn ? "🔔 알람됨" : "🔔 알람받기"}
-                      </button>
+                        {isAlarmOn ? "알람완료" : "알람받기"}
+                      </p>
+                      <p
+                        className="alram-btn alram-btn--play"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          goPlay(item);
+                        }}
+                      >
+                        ▶ 예고편 보러가기
+                      </p>
                     </div>
                   </div>
                 </p>

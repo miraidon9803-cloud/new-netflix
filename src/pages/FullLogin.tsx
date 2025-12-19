@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Login from "../components/Login";
 import Join from "../components/Join";
 import Membership from "../components/Membership";
-import { useAuthStore } from "../store/authStore";
+import Payment from "../components/Payment";
+import Complete from "../components/Complete";
 
 interface StepProps {
   onNext?: () => void;
@@ -10,16 +11,7 @@ interface StepProps {
 }
 
 const FullLogin: React.FC<StepProps> = () => {
-  const isLogin = useAuthStore((s) => s.isLogin);
-  const onboardingDone = useAuthStore((s) => s.onboardingDone);
-
-  const [step, setStep] = useState<1 | 2 | 3>(1);
-
-  useEffect(() => {
-    if (isLogin && !onboardingDone && step !== 3) {
-      setStep(3);
-    }
-  }, [isLogin, onboardingDone, step]);
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
   return (
     <div>
@@ -29,7 +21,15 @@ const FullLogin: React.FC<StepProps> = () => {
         <Join onNext={() => setStep(3)} onPrev={() => setStep(1)} />
       )}
 
-      {step === 3 && <Membership onPrev={() => setStep(2)} />}
+      {step === 3 && (
+        <Membership onPrev={() => setStep(2)} onNext={() => setStep(4)} />
+      )}
+
+      {step === 4 && (
+        <Payment onPrev={() => setStep(3)} onNext={() => setStep(5)} />
+      )}
+
+      {step === 5 && <Complete onPrev={() => setStep(4)} />}
     </div>
   );
 };

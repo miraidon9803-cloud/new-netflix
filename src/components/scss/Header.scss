@@ -1,16 +1,27 @@
-@use "../../App.scss" as *;
+@use '../../App.scss' as *;
 
 .site-header {
-  background: $BG;
-  padding: 20px 0;
+  background: rgba(23, 23, 24, 0.6);
+  backdrop-filter: blur(15px);
 
-  .inner {
+  // padding: 20px 0;
+  position: fixed;
+  z-index: 2000;
+  width: 100%;
+  height: 7rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .header-inner {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1464px;
+    width: 1464px;
+
     padding: 0 12px;
     margin: 0 auto;
+    position: fixed;
 
     .header-left,
     .header-right {

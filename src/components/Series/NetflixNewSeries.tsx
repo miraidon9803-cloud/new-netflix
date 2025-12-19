@@ -1,11 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { fetchRecentTVSeries2025, type TVItem } from '../../api/tmdbSeries';
 import './scss/Series.scss';
 
 const IMG = 'https://image.tmdb.org/t/p/w342';
+const FALLBACK_POSTER = '/images/icon/no_poster.png';
 
 const NetflixNewSeries: React.FC = () => {
   const [list, setList] = useState<TVItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
   const scrollRef = useRef<HTMLUListElement>(null);
 
   // ✅ 드래그 상태
@@ -14,22 +19,32 @@ const NetflixNewSeries: React.FC = () => {
   const startScrollLeftRef = useRef(0);
 
   useEffect(() => {
-    console.log('[RecentTV] fetch start');
+    let mounted = true;
 
-    fetchRecentTVSeries2025({ page: 1 })
-      .then((data) => {
-        console.log('[RecentTV] results array:', data.results);
-        console.log('[RecentTV] results count:', data.results?.length ?? 0);
-        console.log('[RecentTV] first item:', data.results?.[0]);
+    (async () => {
+      try {
+        setLoading(true);
+        setError('');
 
-        setList(data.results ?? []);
-      })
-      .catch((err) => console.error('[RecentTV] error:', err));
+        const data = await fetchRecentTVSeries2025({ page: 1 });
+
+        if (!mounted) return;
+
+        // ✅ 포스터 없는 건 제외 (화면 퀄리티 유지)
+        const filtered = (data.results ?? []).filter((tv) => tv.poster_path);
+        setList(filtered);
+      } catch (e: any) {
+        if (!mounted) return;
+        setError(e?.message ?? '최근 공개 TV 시리즈 로딩 실패');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
-
-  useEffect(() => {
-    console.log('[RecentTV] state list:', list);
-  }, [list]);
 
   // ✅ 마우스 드래그
   const onMouseDown: React.MouseEventHandler<HTMLUListElement> = (e) => {
@@ -88,27 +103,38 @@ const NetflixNewSeries: React.FC = () => {
     <section className="series-section">
       <h2 className="series-title">최근 공개 TV 시리즈</h2>
 
-      <ul
-        className="series-row"
-        ref={scrollRef}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={endDrag}
-        onMouseLeave={endDrag}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}>
-        {list.map((tv) => (
-          <li className="series-card" key={tv.id}>
-            <img
-              className="series-poster"
-              src={`${IMG}${tv.poster_path}`}
-              alt={tv.name}
-              draggable={false}
-            />
-          </li>
-        ))}
-      </ul>
+      {loading && <p className="state">로딩중...</p>}
+      {error && <p className="state error">에러: {error}</p>}
+
+      {!loading && !error && (
+        <ul
+          className="series-row"
+          ref={scrollRef}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={endDrag}
+          onMouseLeave={endDrag}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}>
+          {list.map((tv) => (
+            <li className="series-card" key={tv.id}>
+              {/* ✅ TV 상세로 이동 */}
+              <Link to={`/tv/${tv.id}`}>
+                <img
+                  className="series-poster"
+                  src={tv.poster_path ? `${IMG}${tv.poster_path}` : FALLBACK_POSTER}
+                  alt={tv.name}
+                  draggable={false}
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = FALLBACK_POSTER;
+                  }}
+                />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 };

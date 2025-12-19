@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import './scss/MobileNav.scss';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import "./scss/MobileNav.scss";
 
 const MobileNav: React.FC = () => {
   const { pathname } = useLocation();
@@ -8,58 +8,66 @@ const MobileNav: React.FC = () => {
   return (
     <div className="mobilenav">
       <div className="nav">
-        <Link to="/" className={pathname === '/' ? 'active' : ''}>
+        <Link to="/" className={pathname === "/" ? "active" : ""}>
           <img
             src={
-              pathname === '/'
-                ? '/images/icon/모바일바로가기-active.png'
-                : '/images/icon/모바일바로가기.png'
+              pathname === "/"
+                ? "/images/icon/모바일바로가기-active.png"
+                : "/images/icon/모바일바로가기.png"
             }
             alt="바로가기"
           />
           <p>바로가기</p>
         </Link>
 
-        <Link to="/shorts" className={pathname === '/shorts' ? 'active' : ''}>
+        <Link to="/shorts" className={pathname === "/shorts" ? "active" : ""}>
           <img
             src={
-              pathname === '/shorts'
-                ? '/images/icon/모바일쇼츠-active.png'
-                : '/images/icon/모바일쇼츠.png'
+              pathname === "/shorts"
+                ? "/images/icon/모바일쇼츠-active.png"
+                : "/images/icon/모바일쇼츠.png"
             }
             alt="쇼츠"
           />
           <p>쇼츠</p>
         </Link>
 
-        <Link to="/" className={pathname === '/' ? 'active' : ''}>
+        <Link to="/" className={pathname === "/" ? "active" : ""}>
           <img
             src={
-              pathname === '/' ? '/images/icon/모바일홈-active.png' : '/images/icon/모바일홈.png'
+              pathname === "/"
+                ? "/images/icon/모바일홈-active.png"
+                : "/images/icon/모바일홈.png"
             }
             alt="홈"
           />
           <p>홈</p>
         </Link>
 
-        <Link to="/wishlist" className={pathname === '/wishlist' ? 'active' : ''}>
+        <Link
+          to="/wishlist"
+          className={pathname === "/wishlist" ? "active" : ""}
+        >
           <img
             src={
-              pathname === '/wishlist'
-                ? '/images/icon/모바일좋아요-active.png'
-                : '/images/icon/모바일좋아요.png'
+              pathname === "/wishlist"
+                ? "/images/icon/모바일좋아요-active.png"
+                : "/images/icon/모바일좋아요.png"
             }
             alt="찜"
           />
           <p>좋아요</p>
         </Link>
 
-        <Link to="/library" className={pathname === '/library' ? 'active' : ''}>
+        <Link
+          to="/storagebox"
+          className={pathname === "/library" ? "active" : ""}
+        >
           <img
             src={
-              pathname === '/library'
-                ? '/images/icon/모바일보관함-active.png'
-                : '/images/icon/모바일보관함.png'
+              pathname === "/library"
+                ? "/images/icon/모바일보관함-active.png"
+                : "/images/icon/모바일보관함.png"
             }
             alt="보관함"
           />

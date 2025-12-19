@@ -77,19 +77,20 @@ export interface JoinData {
 interface AuthState {
   user: AppUser | null;
 
-  /** ✅ onAuthStateChanged 1번이라도 타면 true */
+  /**  onAuthStateChanged 1번이라도 타면 true */
   authReady: boolean;
 
-  /** ✅ UI 로딩 */
+  /**  UI 로딩 */
   loading: boolean;
 
   /** 편의 상태 */
   isLogin: boolean;
 
-  /** ✅ 멤버십까지 완료(온보딩 완료) */
+  /**  멤버십까지 완료(온보딩 완료) */
   onboardingDone: boolean;
+  tempMembership: MembershipInfo | null;
 
-  /** ✅ Join 단계에서 임시 저장(비밀번호 포함 → persist 금지) */
+  /**  Join 단계에서 임시 저장(비밀번호 포함 → persist 금지) */
   tempJoin: JoinData | null;
   setTempJoin: (data: JoinData) => void;
   clearTempJoin: () => void;
@@ -98,7 +99,7 @@ interface AuthState {
 
   /**
    * ✅ (호환용) 기존 Join이 onMember를 호출해도 "회원생성" 안 되도록 변경
-   * - 이제 회원생성은 Membership에서 finalizeJoinWithMembership로만 합니다.
+   * - 이제 회원생성은 Membership에서 finalizeJoinWithComplete로만 합니다.
    */
   onMember: (data: JoinData) => Promise<void>;
 
@@ -110,13 +111,16 @@ interface AuthState {
 
   onLogout: () => Promise<void>;
 
-  /** ✅ Membership에서 최종 회원가입 + 멤버십 저장 + 로그인 완료 */
-  finalizeJoinWithMembership: (membership: MembershipInfo) => Promise<void>;
+  /** ✅ Complete에서 최종 회원가입 + 멤버십 저장 + 로그인 완료 */
+  finalizeJoinWithComplete: (membership: MembershipInfo) => Promise<void>;
 
   /** 기존 로그인 유저의 멤버십 저장/변경 */
   saveMembership: (membership: MembershipInfo) => Promise<void>;
   cancelMembership: () => Promise<void>;
   updateProfile: (data: { phone: string }) => Promise<void>;
+
+  setTempMembership: (m: MembershipInfo) => void;
+  clearTempMembership: () => void;
 }
 
 const googleProvider = new GoogleAuthProvider();
@@ -142,6 +146,11 @@ export const useAuthStore = create<AuthState>()(
       loading: true,
       isLogin: false,
       onboardingDone: false,
+
+      tempJoin: null,
+      tempMembership: null,
+      setTempMembership: (m) => set({ tempMembership: m }),
+      clearTempMembership: () => set({ tempMembership: null }),
 
       tempJoin: null,
       setTempJoin: (data) => set({ tempJoin: data }),
@@ -220,7 +229,7 @@ export const useAuthStore = create<AuthState>()(
        * - Firestore users 문서 생성 (membership 포함)
        * - 로그인/온보딩 완료 처리
        */
-      finalizeJoinWithMembership: async (membership) => {
+      finalizeJoinWithComplete: async (membership) => {
         const temp = get().tempJoin;
         if (!temp)
           throw new Error("회원가입 정보가 없습니다. 다시 진행해주세요.");
@@ -228,7 +237,7 @@ export const useAuthStore = create<AuthState>()(
         set({ loading: true });
 
         try {
-          // 1) 여기서 실제 회원 생성 (이 시점이 '회원가입 완료')
+          // 1) 회원 생성 (이 순간 Firebase가 자동 로그인 시킴)
           const cred = await createUserWithEmailAndPassword(
             auth,
             temp.email,
@@ -245,24 +254,27 @@ export const useAuthStore = create<AuthState>()(
             phone: temp.phone,
             provider: "password",
             createdAt: serverTimestamp(),
-            membership, // ✅ 멤버십까지 포함해서 저장
+            membership,
           };
 
           await setDoc(userRef, newUser, { merge: true });
 
-          // 3) 전역 상태 업데이트 (온보딩 완료)
+          // ✅ 3) "로그인 상태로 두지 않기" → 즉시 로그아웃
+          await signOut(auth);
+
+          // ✅ 4) 전역 상태도 로그아웃 상태로 정리
           set({
-            user: newUser,
-            isLogin: true,
-            onboardingDone: true,
+            user: null,
+            isLogin: false,
+            onboardingDone: false, // 로그인 안 했으니 여기서는 false로 둠
             authReady: true,
             loading: false,
-            tempJoin: null, // ✅ 비밀번호 포함 데이터 즉시 제거
+            tempJoin: null, // 비밀번호 포함 데이터 즉시 제거
           });
 
-          await useProfileStore.getState().loadProfiles();
+          useProfileStore.getState().resetProfiles();
         } catch (err) {
-          console.error("finalizeJoinWithMembership 실패:", err);
+          console.error("finalizeJoinWithComplete 실패:", err);
           set({ loading: false });
           throw err;
         }
@@ -421,7 +433,7 @@ export const useAuthStore = create<AuthState>()(
 
       /**
        * ✅ 기존 로그인 유저가 멤버십 선택/변경할 때 사용
-       * (신규 회원가입 플로우는 finalizeJoinWithMembership를 사용)
+       * (신규 회원가입 플로우는 finalizeJoinWithComplete를 사용)
        */
       saveMembership: async (membership) => {
         const currentUser = auth.currentUser;

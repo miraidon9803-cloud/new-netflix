@@ -8,18 +8,50 @@ import "./scss/Payment.scss";
 
 import { useNavigate, Link } from "react-router-dom";
 
-const Payment = () => {
+interface PaymentProps {
+  onPrev?: () => void;
+  onNext?: () => void;
+}
+
+type PayMethod = "naver" | "kakao" | "samsung" | "toss" | "card";
+
+const Payment: React.FC<PaymentProps> = ({ onPrev, onNext }) => {
   const navigate = useNavigate();
+
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selected, setSelected] = useState("naver");
-  const handleSelect = (value) => {
-    setSelected((prev) => (prev === value ? "" : value));
+
+  const [selected, setSelected] = useState<PayMethod>("naver");
+  const handleSelect = (value: PayMethod) => {
+    setSelected((prev) => (prev === value ? ("naver" as PayMethod) : value));
   };
-  const [selectedMembership, setSelectedMembership] = useState<string | null>(
-    "ad-standard"
-  );
-  const handleMembershipSelect = (value: string) => {
-    setSelectedMembership((prev) => (prev === value ? null : value));
+
+  const [selectedMembership, setSelectedMembership] = useState<
+    "ad-standard" | "standard" | "premium"
+  >("ad-standard");
+
+  const handleMembershipSelect = (
+    value: "ad-standard" | "standard" | "premium"
+  ) => {
+    setSelectedMembership(value);
+  };
+
+  // ✅ 약관 동의 상태 (버튼 활성화용)
+  const [agree1, setAgree1] = useState(false);
+  const [agree2, setAgree2] = useState(false);
+
+  const canSubmit = agree1 && agree2;
+
+  const handlePrev = () => {
+    if (onPrev) onPrev();
+    else navigate(-1);
+  };
+
+  const handleSubmit = () => {
+    if (!canSubmit) return;
+
+    // ✅ 여기서는 결제 저장/로그인 처리 X
+    // ✅ 다음 단계(Complete)로만 이동
+    onNext?.();
   };
 
   return (
@@ -35,7 +67,7 @@ const Payment = () => {
             <button
               type="button"
               className="pay-back-btn"
-              onClick={() => navigate(-1)}
+              onClick={handlePrev}
               aria-label="뒤로가기"
             >
               <img src="/images/payment/back-icon.png" alt="뒤로가기" />
@@ -60,9 +92,7 @@ const Payment = () => {
                 grabCursor
                 modules={[FreeMode]}
                 freeMode
-                mousewheel={{
-                  releaseOnEdges: false, // 끝에서도 페이지로 안 넘김
-                }}
+                mousewheel={{ releaseOnEdges: false }}
                 speed={400}
                 className="payment-swiper"
               >
@@ -146,6 +176,7 @@ const Payment = () => {
 
               <div className="membership-summary">
                 <div className="membership-info">
+                  {/* ✅ 일단 UI만: 실제 값은 store(tempMembership)에서 가져오게 바꾸면 더 정확함 */}
                   <span className="membership-price">매월 7,000원</span>
                   <span className="membership-name">광고형 스탠다드</span>
                 </div>
@@ -164,18 +195,26 @@ const Payment = () => {
             <div className="payment-agreement">
               <h2 className="pay-section-title">약관 동의</h2>
 
-              {/* 약관 1 */}
               <label className="agreement-item">
-                <input type="checkbox" className="agreement-checkbox" />
+                <input
+                  type="checkbox"
+                  className="agreement-checkbox"
+                  checked={agree1}
+                  onChange={(e) => setAgree1(e.target.checked)}
+                />
                 <span className="custom-checkbox"></span>
                 <span className="agreement-text">
                   [필수] Netflix 이용약관 및 개인정보 처리방침에 동의합니다.
                 </span>
               </label>
 
-              {/* 약관 2 */}
               <label className="agreement-item">
-                <input type="checkbox" className="agreement-checkbox" />
+                <input
+                  type="checkbox"
+                  className="agreement-checkbox"
+                  checked={agree2}
+                  onChange={(e) => setAgree2(e.target.checked)}
+                />
                 <span className="custom-checkbox"></span>
                 <span className="agreement-text">
                   [필수] 본인의 개인 정보를 제3자에 제공하는 데에 동의합니다.
@@ -185,7 +224,13 @@ const Payment = () => {
           </section>
 
           {/* 버튼 */}
-          <button className="payment-submit">멤버십 시작</button>
+          <button
+            className="payment-submit"
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+          >
+            멤버십 시작
+          </button>
         </section>
 
         {/* 멤버십 변경 팝업 */}
@@ -197,7 +242,6 @@ const Payment = () => {
             aria-labelledby="membership-popup-title"
           >
             <div className="membership-popup-content">
-              {/* 헤더 */}
               <header className="popup-header">
                 <h3 className="popup-title" id="membership-popup-title">
                   멤버십 변경
@@ -212,7 +256,6 @@ const Payment = () => {
                 </button>
               </header>
 
-              {/* 나의 멤버십 */}
               <div className="popup-section">
                 <h4 className="popup-section-title">나의 멤버십</h4>
 
@@ -251,7 +294,6 @@ const Payment = () => {
                   </li>
                 </ul>
 
-                {/* 멤버십 자세히 보기 */}
                 <div className="popup-link-area">
                   <Link to="/member" className="membership-detail-link">
                     멤버십 자세히 보기
@@ -259,8 +301,11 @@ const Payment = () => {
                 </div>
               </div>
 
-              {/* 하단 버튼 */}
-              <button type="button" className="popup-confirm-btn">
+              <button
+                type="button"
+                className="popup-confirm-btn"
+                onClick={() => setIsPopupOpen(false)}
+              >
                 선택
               </button>
             </div>

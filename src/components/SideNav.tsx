@@ -12,9 +12,13 @@ const SideNav = () => {
       {/* ⬇️ 기존에 있던 div 그대로 유지 */}
       <div></div>
 
-      <Link to="/">
+      <Link to="/exploration">
         <img
-          src={pathname === '/' ? '/images/icon/바로가기-active.png' : '/images/icon/바로가기.png'}
+          src={
+            pathname === '/exploration'
+              ? '/images/icon/바로가기-active.png'
+              : '/images/icon/바로가기.png'
+          }
           alt=""
         />
       </Link>
@@ -27,7 +31,10 @@ const SideNav = () => {
       </Link>
 
       <Link to="/">
-        <img src={pathname === '/' ? '/images/icon/홈-active.png' : '/images/icon/홈.png'} alt="" />
+        <img
+          src={pathname === '/main' ? '/images/icon/홈-active.png' : '/images/icon/홈.png'}
+          alt=""
+        />
       </Link>
 
       <Link to="/wishlist">
@@ -41,10 +48,12 @@ const SideNav = () => {
         />
       </Link>
 
-      <Link to="/library">
+      <Link to="/StorageBox">
         <img
           src={
-            pathname === '/library' ? '/images/icon/보관함-active.png' : '/images/icon/보관함.png'
+            pathname === '/StorageBox'
+              ? '/images/icon/보관함-active.png'
+              : '/images/icon/보관함.png'
           }
           alt=""
         />

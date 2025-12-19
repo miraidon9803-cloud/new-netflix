@@ -6,9 +6,12 @@ import { useNavigate } from "react-router-dom";
 
 interface MembershipProps {
   onPrev?: () => void;
+
+  /**  FullLogin(step) 방식이면 이걸 넘겨서 setStep(4)로 이동시키는 게 제일 깔끔 */
+  onNext?: () => void;
 }
 
-const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
+const Membership: React.FC<MembershipProps> = ({ onPrev, onNext }) => {
   const MEMBERS = {
     adStandard: {
       type: "adStandard" as const,
@@ -22,13 +25,15 @@ const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
   const navigate = useNavigate();
   const [selected, setSelected] = useState<MembershipType>("adStandard");
 
-  // ✅ 신규 가입 플로우 여부 판단: tempJoin 있으면 "멤버십에서 회원가입 완료"해야 함
+  /**  신규 가입 여부: Join에서 tempJoin 저장해둔 경우 */
   const tempJoin = useAuthStore((s) => s.tempJoin);
-  const finalizeJoinWithMembership = useAuthStore(
-    (s) => s.finalizeJoinWithMembership
-  );
 
-  // ✅ 기존 로그인 유저 요금제 변경은 그대로 saveMembership
+  /**  신규 가입 플로우에서는 멤버십 선택값만 임시 저장해두고,
+   *  실제 회원가입(createUser...) + Firestore 저장은 Complete에서 실행
+   */
+  const setTempMembership = useAuthStore((s) => s.setTempMembership);
+
+  /**  기존 로그인 유저는 멤버십만 저장/변경 */
   const saveMembership = useAuthStore((s) => s.saveMembership);
 
   const handleNext = async () => {
@@ -36,18 +41,20 @@ const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
       const plan = MEMBERS[selected];
 
       if (tempJoin) {
-        // ✅ 신규 가입: 여기서 회원가입 + 멤버십 저장 + 로그인 완료
-        await finalizeJoinWithMembership(plan);
-      } else {
-        // ✅ 기존 로그인: 멤버십만 저장/변경
-        await saveMembership(plan);
+        //  신규 가입: 여기서 finalize(회원가입) 절대 실행하지 않음
+        setTempMembership(plan);
+
+        //  다음 단계로 이동 (Payment -> Complete)
+        if (onNext) onNext();
+        else navigate("/auth"); // fallback (step 방식이면 보통 onNext 사용)
+        return;
       }
 
-      // ✅ 멤버십 완료 후: 프로필 선택으로 보내는 게 흐름이 가장 자연스러움
-      navigate("/mypage/profile", { replace: true });
+      //  기존 로그인: 멤버십만 저장/변경
+      await saveMembership(plan);
     } catch (e) {
       console.error(e);
-      alert("멤버십 저장/가입 완료 실패");
+      alert("멤버십 저장 실패");
     }
   };
 
@@ -56,8 +63,9 @@ const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
       <div className="membership-wrap">
         <div className="signtitle-wrap">
           <h2 className="title">원하는 멤버십을 선택하세요</h2>
+
           {onPrev && (
-            <p className="prev-btn" onClick={onPrev}>
+            <p className="prev-btn" onClick={onPrev} role="button" tabIndex={0}>
               dd
             </p>
           )}
@@ -79,6 +87,8 @@ const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
             <div
               className={`card ${selected === "adStandard" ? "active" : ""}`}
               onClick={() => setSelected("adStandard")}
+              role="button"
+              tabIndex={0}
             >
               <h3
                 className={`card-title ${
@@ -102,6 +112,8 @@ const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
             <div
               className={`card ${selected === "standard" ? "active" : ""}`}
               onClick={() => setSelected("standard")}
+              role="button"
+              tabIndex={0}
             >
               <h3
                 className={`card-title ${
@@ -125,6 +137,8 @@ const Membership: React.FC<MembershipProps> = ({ onPrev }) => {
             <div
               className={`card ${selected === "premium" ? "active" : ""}`}
               onClick={() => setSelected("premium")}
+              role="button"
+              tabIndex={0}
             >
               <h3
                 className={`card-title ${
