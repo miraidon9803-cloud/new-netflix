@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import "./scss/Header.scss";
-import SearchModal from "./SearchModal";
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import './scss/Header.scss';
+import SearchModal from './SearchModal';
 
 interface MenuItem {
   id: number;
@@ -10,15 +10,15 @@ interface MenuItem {
 }
 
 const mainMenu: MenuItem[] = [
-  { id: 1, title: "시리즈", path: "/series" },
-  { id: 2, title: "영화", path: "/movies" },
-  { id: 3, title: "오리지널", path: "/original" },
+  { id: 1, title: '시리즈', path: '/series' },
+  { id: 2, title: '영화', path: '/Movie' },
+  { id: 3, title: '오리지널', path: '/original' },
 ];
 
 const Header = () => {
   const location = useLocation();
-  const isLand = location.pathname === "/land";
-  const isAuth = location.pathname === "/auth";
+  const isLand = location.pathname === '/land';
+  const isAuth = location.pathname === '/auth';
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -63,8 +63,7 @@ const Header = () => {
                     className="search-btn"
                     onClick={handleSearchOpen}
                     aria-label="검색"
-                    type="button"
-                  >
+                    type="button">
                     <img src="/images/search-btn.png" alt="search" />
                   </button>
                 </li>
