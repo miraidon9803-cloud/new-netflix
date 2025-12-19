@@ -7,7 +7,7 @@ import ProfileSelect from "./pages/ProfileSelect";
 import Landing from "./pages/LandingPage";
 import Main from "./pages/Main";
 import MypageMain from "./pages/MypageMain";
-import NetDetail from "./pages/NetDetail";
+
 import MovieDetail from "./pages/MovieDetail";
 import StorageBox from "./pages/StorageBox";
 import Series from "./pages/Series";
@@ -68,7 +68,7 @@ function App() {
           <Route element={<ProfileGate />}>
             <Route path="main" element={<Main />} />
             <Route path="mypage" element={<MypageMain />} />
-            <Route path="tv/:id" element={<NetDetail />} />
+            <Route path="tv/:id" element={<Tvdetail />} />
             <Route path="movie/:id" element={<MovieDetail />} />
             <Route path="StorageBox" element={<StorageBox />} />
             <Route path="Series" element={<Series />} />

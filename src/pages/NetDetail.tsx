@@ -23,12 +23,14 @@ const NetDetail = () => {
     tvRating,
     videos,
     tvCredits, // ✅ TV credits
+    tvKeywords,
     fetchTvDetail,
     fetchTvRating,
     fetchSeasons,
     fetchEpisodes,
     fetchVideos,
-    fetchTvCredits, // ✅ TV credits fetch
+    fetchTvCredits,
+    fetchTvKeywords, // ✅ TV credits fetch
   } = useMovieStore();
 
   const { onAddWatching } = useWatchingStore();
@@ -59,19 +61,11 @@ const NetDetail = () => {
     );
   }, [seasons, selectedSeasonNumber]);
 
-  // ✅ TV "제작"은 tvDetail.created_by가 더 정확한 경우가 많음
-  const creatorNames =
-    (tvDetail as any)?.created_by?.length > 0
-      ? (tvDetail as any).created_by.map((c: any) => c.name).join(", ")
-      : "정보 없음";
-
-  // ✅ 총괄/제작진(Executive Producer) 일부만
-  const execProducerNames =
-    tvCredits?.crew
-      ?.filter((c) => c.job === "Executive Producer")
-      ?.slice(0, 3)
-      ?.map((p) => p.name)
-      ?.join(", ") ?? "정보 없음";
+  const creator = tvDetail?.created_by?.[0];
+  const creatorName = creator?.name ?? "정보 없음";
+  const creatorImg = creator?.profile_path
+    ? `https://image.tmdb.org/t/p/w185${creator.profile_path}`
+    : "/images/icon/no_profile.png";
 
   const topCast = tvCredits?.cast?.slice(0, 8) ?? [];
 
@@ -81,7 +75,7 @@ const NetDetail = () => {
     fetchTvRating(tvId);
     fetchSeasons(tvId);
     fetchVideos(tvId, "tv");
-    fetchTvCredits(tvId); // ✅ 여기!
+    fetchTvCredits(tvId);
   }, [
     tvId,
     fetchTvDetail,
@@ -95,6 +89,12 @@ const NetDetail = () => {
     if (!tvId || !selectedSeasonNumber) return;
     fetchEpisodes(tvId, selectedSeasonNumber);
   }, [tvId, selectedSeasonNumber, fetchEpisodes]);
+  const keywords = tvKeywords ?? [];
+
+  useEffect(() => {
+    if (!tvId) return;
+    fetchTvKeywords(tvId);
+  }, [tvId, fetchTvKeywords]);
 
   if (!tvId) return <p>잘못된 접근입니다.</p>;
   if (!tvDetail) return <p>작품 불러오는 중..</p>;
@@ -170,7 +170,7 @@ const NetDetail = () => {
       setPlayerNonce(Date.now());
     }
   };
-
+  const genres = tvDetail?.genres ?? [];
   return (
     <div className="detail-page">
       <div className="detail-inner">
@@ -222,7 +222,6 @@ const NetDetail = () => {
 
                 <p
                   className={`more-btn ${moreOpen ? "open" : ""}`}
-                  role="button"
                   tabIndex={0}
                   onClick={() => setMoreOpen((v) => !v)}
                   onKeyDown={(e) => {
@@ -235,6 +234,11 @@ const NetDetail = () => {
 
                 {moreOpen && (
                   <div className="more-panel">
+                    <div className="creator-box">
+                      <img src={creatorImg} alt={creatorName} />
+                      <p>감독 {creatorName}</p>
+                    </div>
+
                     <div className="row">
                       <span className="label">출연</span>
 
@@ -261,6 +265,21 @@ const NetDetail = () => {
                           </li>
                         ))}
                       </ul>
+                    </div>
+                    <div className="genre-list">
+                      {genres.map((g: any) => (
+                        <span key={g.id} className="genre-tag">
+                          {g.name}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="keyword-list">
+                      {keywords.slice(0, 6).map((k: any) => (
+                        <span key={k.id} className="keyword-tag">
+                          #{k.name}
+                        </span>
+                      ))}
                     </div>
                   </div>
                 )}

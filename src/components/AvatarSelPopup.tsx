@@ -16,7 +16,6 @@ const AvatarSelPopup: React.FC<AvatarPickerPopupProps> = ({
 }) => {
   if (!open) return null;
 
-  /** 🔹 name 기준으로 그룹핑 */
   const groupedProfiles = profile.reduce<Record<string, typeof profile>>(
     (acc, item) => {
       if (!acc[item.name]) acc[item.name] = [];
