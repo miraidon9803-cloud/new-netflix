@@ -13,8 +13,8 @@
   position: relative;
 
   // 전역 Footer 숨김
-  & ~ footer,
-  & + footer {
+  &~footer,
+  &+footer {
     display: none !important;
   }
 
@@ -84,6 +84,20 @@
   .shorts-header {
     @include myFlex(10px, space-between, center);
     margin-bottom: 26px;
+
+    .header-left {
+      @include myFlex(16px, flex-start, center);
+    }
+
+    .shorts-back-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
     .shorts-title {
       @include myTitle24(600, left);
@@ -424,7 +438,7 @@
     width: 100%;
     max-width: 1570px;
     margin: 0 auto;
-    // padding-left: 130px;
+    padding-left: 130px;
     box-sizing: border-box;
   }
 }
@@ -459,6 +473,7 @@
 
 @media (max-width: 1440px) {
   .shorts-page {
+
     // 사이드 네비게이션 숨김
     .shorts-sidenav {
       display: none;
@@ -643,12 +658,14 @@
 
 // 반응형 - 430px 이하
 @media (max-width: 430px) {
+
   // 전역 Header 숨김 (shorts-page가 있을 때)
   body:has(.shorts-page) header {
     display: none;
   }
 
   .shorts-page {
+
     // 모바일 전용 헤더 표시
     .shorts-mobile-header {
       display: flex;
@@ -662,6 +679,21 @@
       padding: 0 16px;
       background-color: $BG;
       z-index: 100;
+
+      .mobile-header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .shorts-back-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        display: flex;
+        align-items: center;
+      }
     }
 
     // 메인 콘텐츠 조정

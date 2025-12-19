@@ -38,8 +38,8 @@ const createInitialFolders = (): FolderData[] => {
   return [
     { id: 1, name: '이번 주말용', contents: uniqueContents.slice(0, 8) },      // 8개
     { id: 2, name: '정주행 미드', contents: uniqueContents.slice(8, 20) },     // 12개
-    { id: 3, name: '코난 극장판', contents: uniqueContents.slice(20, 26) },    // 6개
-    { id: 4, name: '심심할 때 보기', contents: uniqueContents.slice(26, 41) }, // 15개
+    { id: 3, name: '심심할 때 보기', contents: uniqueContents.slice(20, 35) }, // 15개
+    { id: 4, name: '코난 극장판', contents: uniqueContents.slice(35, 41) },    // 6개
     { id: 5, name: '그레이 아나토미', contents: uniqueContents.slice(41, 51) }, // 10개
   ];
 };
@@ -419,6 +419,12 @@ const WishlistDetail: React.FC = () => {
               </div>
             </div>
           ))}
+          {/* 플레이스홀더: 마지막 행을 3의 배수로 맞추기 */}
+          {sortedContents.length % 3 !== 0 && 
+            Array.from({ length: 3 - (sortedContents.length % 3) }).map((_, index) => (
+              <div className="wishlist-detail-card placeholder" key={`placeholder-${index}`} />
+            ))
+          }
         </div>
 
         {/* 콘텐츠가 없을 때 */}

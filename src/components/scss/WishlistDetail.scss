@@ -120,6 +120,12 @@
     display: flex;
     flex-direction: column;
     cursor: pointer;
+
+    // 플레이스홀더 카드 (빈 공간 채우기)
+    &.placeholder {
+      visibility: hidden;
+      pointer-events: none;
+    }
   }
 
   // 콘텐츠 이미지 래퍼
@@ -390,7 +396,7 @@
       max-width: 100%;
     }
 
-    // 그리드 5열, gap 24px
+    // 그리드 5열
     .wishlist-detail-grid {
       grid-template-columns: repeat(5, 1fr);
       gap: 24px;
@@ -425,10 +431,43 @@
 }
 
 // ================================================
+// 반응형: 1024px 이하
+// ================================================
+
+@media (max-width: 1024px) {
+  .wishlist-detail-page {
+    // 그리드 4열
+    .wishlist-detail-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+  }
+}
+
+// ================================================
+// 반응형: 768px 이하
+// ================================================
+
+@media (max-width: 768px) {
+  .wishlist-detail-page {
+    // 그리드 3열
+    .wishlist-detail-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+  }
+}
+
+// ================================================
 // 반응형: 430px 이하
 // ================================================
 
 @media (max-width: 430px) {
+  // 전역 Header 숨김 (wishlist-detail-page가 있을 때)
+  body:has(.wishlist-detail-page) header {
+    display: none;
+  }
+
   .wishlist-detail-page {
     // 메인 콘텐츠 조정
     .wishlist-detail-content {
@@ -451,7 +490,7 @@
 
     // 그리드 3열, gap 16px
     .wishlist-detail-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 16px;
     }
 

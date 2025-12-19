@@ -419,7 +419,7 @@
       max-width: 100%;
     }
 
-    // 그리드 4열 유지
+    // 그리드 4열
     .wishlist-grid {
       grid-template-columns: repeat(4, 1fr);
       gap: 20px;
@@ -461,6 +461,20 @@
       backdrop-filter: blur(15px);
       z-index: 100;
       padding-bottom: 30px;
+    }
+  }
+}
+
+// ================================================
+// 반응형: 768px 이하
+// ================================================
+
+@media (max-width: 768px) {
+  .wishlist-page {
+    // 그리드 3열
+    .wishlist-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
     }
   }
 }
