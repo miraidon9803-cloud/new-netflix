@@ -1,32 +1,37 @@
-import { Route, Routes, Navigate } from "react-router-dom";
-import { useEffect } from "react";
+import { Route, Routes, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
-import Layout from "./pages/Layout";
-import FullLogin from "./pages/FullLogin";
-import ProfileSelect from "./pages/ProfileSelect";
-import Landing from "./pages/LandingPage";
-import Main from "./pages/Main";
-import MypageMain from "./pages/MypageMain";
+import Layout from './pages/Layout';
+import FullLogin from './pages/FullLogin';
+import ProfileSelect from './pages/ProfileSelect';
+import Landing from './pages/LandingPage';
+import Main from './pages/Main';
+import MypageMain from './pages/MypageMain';
+import MovieDetail from './pages/MovieDetail';
+import StorageBox from './pages/StorageBox';
+import Series from './pages/Series';
+import SeriesFilterResult from './pages/SeriesFilterResult';
+import Movie from './pages/Movie';
+import Original from './pages/Original';
+import MovieFilterResult from './pages/MovieFilterResult';
 
-import MovieDetail from "./pages/MovieDetail";
-import StorageBox from "./pages/StorageBox";
-import Series from "./pages/Series";
+import Payment from './components/Payment';
+import Wishlist from './components/Wishlist';
+import WishlistDetail from './components/WishlistDetail';
+import Shorts from './components/Shorts';
 
-import Payment from "./components/Payment";
-import Wishlist from "./components/Wishlist";
-import WishlistDetail from "./components/WishlistDetail";
-import Shorts from "./components/Shorts";
+import ProfileGate from './components/ProfileGate';
+import AuthGate from './components/AuthGate';
+import GuestOnly from './components/GuestOnly';
 
-import ProfileGate from "./components/ProfileGate";
-import AuthGate from "./components/AuthGate";
-import GuestOnly from "./components/GuestOnly";
-
-import { useAuthStore } from "./store/authStore";
-import { useProfileStore } from "./store/Profile";
-import ExplorationPage from "./pages/ExplorationPage";
-import Exploration from "./pages/Exploration";
-import Tvdetail from "./pages/Tvdetail";
-import Alarm from "./pages/Alarm";
+import { useAuthStore } from './store/authStore';
+import { useProfileStore } from './store/Profile';
+import OriginalFilterResult from './pages/OriginalFilterResult';
+import TotalResult from './pages/TotalResult';
+import ExplorationPage from './pages/ExplorationPage';
+import Exploration from './pages/Exploration';
+import Tvdetail from './pages/Tvdetail';
+import Alarm from './pages/Alarm';
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -34,11 +39,7 @@ function App() {
   const onboardingDone = useAuthStore((s) => s.onboardingDone);
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
 
-  const afterLoginPath = !onboardingDone
-    ? "/auth"
-    : activeProfileId
-    ? "/main"
-    : "/mypage/profile";
+  const afterLoginPath = !onboardingDone ? '/auth' : activeProfileId ? '/main' : '/mypage/profile';
 
   useEffect(() => {
     const unsub = initAuth();
@@ -49,10 +50,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         {/* 첫 진입 */}
-        <Route
-          index
-          element={<Navigate to={isLogin ? afterLoginPath : "/land"} replace />}
-        />
+        <Route index element={<Navigate to={isLogin ? afterLoginPath : '/land'} replace />} />
 
         {/* land / auth */}
         <Route element={<GuestOnly redirectTo={afterLoginPath} />}>
@@ -73,8 +71,15 @@ function App() {
             <Route path="mypage" element={<MypageMain />} />
             <Route path="tv/:id" element={<Tvdetail />} />
             <Route path="movie/:id" element={<MovieDetail />} />
+            <Route path="total-filter" element={<TotalResult />} />
             <Route path="storagebox" element={<StorageBox />} />
             <Route path="series" element={<Series />} />
+            <Route path="series/filter" element={<SeriesFilterResult />} />
+            <Route path="Movie" element={<Movie />} />
+            <Route path="movie/filter" element={<MovieFilterResult />} />
+            <Route path="Original" element={<Original />} />
+            <Route path="original/filter" element={<OriginalFilterResult />} />
+
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="wishlist/:folderId" element={<WishlistDetail />} />
             <Route path="shorts" element={<Shorts />} />
@@ -86,10 +91,7 @@ function App() {
         </Route>
 
         {/* 없는 경로 */}
-        <Route
-          path="*"
-          element={<Navigate to={isLogin ? afterLoginPath : "/land"} replace />}
-        />
+        <Route path="*" element={<Navigate to={isLogin ? afterLoginPath : '/land'} replace />} />
       </Route>
     </Routes>
   );
