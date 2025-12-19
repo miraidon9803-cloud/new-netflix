@@ -26,6 +26,7 @@ import { useProfileStore } from "./store/Profile";
 import ExplorationPage from "./pages/ExplorationPage";
 import Exploration from "./pages/Exploration";
 import Tvdetail from "./pages/Tvdetail";
+import Alarm from "./pages/Alarm";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -80,6 +81,7 @@ function App() {
             <Route path="payment" element={<Payment />} />
             <Route path="exploration" element={<Exploration />} />
             <Route path="exploration/start" element={<ExplorationPage />} />
+            <Route path="bell" element={<Alarm />} />
           </Route>
         </Route>
 
