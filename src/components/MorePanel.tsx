@@ -10,6 +10,7 @@ const MorePanel = ({ creator, cast, genres, keywords }: Props) => {
   return (
     <div className="more-panel">
       <div className="creator-box">
+        <p>크리에이터 {creator?.name ?? "정보 없음"}</p>
         <img
           src={
             creator?.profile_path
@@ -17,7 +18,6 @@ const MorePanel = ({ creator, cast, genres, keywords }: Props) => {
               : "/images/icon/no_profile.png"
           }
         />
-        <p>감독 {creator?.name ?? "정보 없음"}</p>
       </div>
 
       <ul className="cast-list">
