@@ -5,7 +5,7 @@ export const fetch2025Movies = async () => {
   const res = await fetch(
     `${BASE_URL}/discover/movie` +
       `?api_key=${API_KEY}` +
-      `&release_date.gte=2025-01-01` +
+      `&release_date.gte=2020-01-01` +
       `&release_date.lte=2025-12-31` +
       `&language=ko-KR` +
       `&sort_by=popularity.desc`
@@ -25,7 +25,7 @@ export const fetch2025Tv = async () => {
   const res = await fetch(
     `${BASE_URL}/discover/tv` +
       `?api_key=${API_KEY}` +
-      `&first_air_date.gte=2025-01-01` +
+      `&first_air_date.gte=2020-01-01` +
       `&first_air_date.lte=2025-12-31` +
       `&language=ko-KR` +
       `&sort_by=popularity.desc`
