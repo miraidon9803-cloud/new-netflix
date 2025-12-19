@@ -1,8 +1,42 @@
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 import "./scss/Complete.scss";
 
-const Complete = () => {
+interface CompleteProps {
+  onPrev?: () => void;
+}
+
+const Complete: React.FC<CompleteProps> = ({ onPrev }) => {
   const navigate = useNavigate();
+
+  const tempMembership = useAuthStore((s) => s.tempMembership);
+
+  // ✅ authStore에 정의한 함수명과 동일하게 맞추세요
+  // - 지금 authStore 코드 기준: finalizeJoinWithComplete
+  const finalizeJoinWithComplete = useAuthStore(
+    (s) => s.finalizeJoinWithComplete
+  );
+
+  const loading = useAuthStore((s) => s.loading);
+
+  const handleGoLogin = async () => {
+    try {
+      if (!tempMembership) return alert("멤버십을 선택해주세요.");
+
+      // ✅ 여기서 회원가입 + 멤버십 저장 후 즉시 signOut(스토어에서 처리)
+      await finalizeJoinWithComplete(tempMembership);
+
+      navigate("/auth", { replace: true });
+    } catch (e) {
+      console.error(e);
+      alert("가입 완료 처리 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handlePrev = () => {
+    if (onPrev) onPrev();
+    else navigate(-1);
+  };
 
   return (
     <div className="complete-wrapper">
@@ -18,8 +52,9 @@ const Complete = () => {
               <button
                 type="button"
                 className="complete-back-btn"
-                onClick={() => navigate(-1)}
+                onClick={handlePrev}
                 aria-label="뒤로가기"
+                disabled={loading}
               >
                 <img src="/images/payment/back-icon.png" alt="뒤로가기 버튼" />
               </button>
@@ -27,7 +62,6 @@ const Complete = () => {
               <h1 className="complete-title">멤버십 가입 완료</h1>
             </div>
 
-            {/* 설명 */}
             <p className="complete-desc">
               <span>가입이 완료되었습니다. </span>
               <span>무제한 콘텐츠를 자유롭게 이용하세요.</span>
@@ -46,9 +80,10 @@ const Complete = () => {
           <button
             type="button"
             className="complete-btn"
-            onClick={() => navigate("/login")}
+            onClick={handleGoLogin}
+            disabled={loading}
           >
-            로그인하러 가기
+            {loading ? "처리 중..." : "로그인하러 가기"}
           </button>
         </section>
       </div>

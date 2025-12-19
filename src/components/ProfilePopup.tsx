@@ -34,7 +34,8 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
 }) => {
   const profiles = useProfileStore((s) => s.profiles);
   const createProfile = useProfileStore((s) => s.createProfile);
-  const updateProfile = useProfileStore((s) => s.updateProfile); // ✅ 스토어에 추가 필요
+  const updateProfile = useProfileStore((s) => s.updateProfile);
+  const deleteProfile = useProfileStore((s) => s.deleteProfile);
 
   const isEdit = mode === "edit";
 
@@ -97,6 +98,23 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
+  const handleDelete = async () => {
+    if (!isEdit || !profileId) return;
+
+    const ok = window.confirm("이 프로필을 삭제할까요?");
+    if (!ok) return;
+
+    try {
+      setSubmitting(true);
+      await deleteProfile(profileId);
+      handleClose();
+    } catch (e: any) {
+      console.error(e);
+      setErrorMsg(e?.message ?? "프로필 삭제에 실패했습니다.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const validateForm = () => {
     const trimmed = name.trim();
@@ -349,14 +367,31 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
             </div>
 
             <div className="btn-wrap">
-              <button
-                className="btn del"
-                onClick={handleClose}
-                disabled={submitting}
-                type="button"
-              >
-                취소
-              </button>
+              {/*  create 모드: 취소만 */}
+              {!isEdit && (
+                <button
+                  className="btn del"
+                  onClick={handleClose}
+                  disabled={submitting}
+                  type="button"
+                >
+                  취소
+                </button>
+              )}
+
+              {/*  edit 모드: 삭제 버튼만(원하시면 취소도 같이 가능) */}
+              {isEdit && (
+                <button
+                  className="btn del"
+                  onClick={handleDelete}
+                  disabled={submitting}
+                  type="button"
+                >
+                  삭제
+                </button>
+              )}
+
+              {/* 저장/변경 버튼은 둘 다 공통 */}
               <button
                 className="btn create"
                 onClick={handleSubmit}
@@ -375,8 +410,6 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
           onSelect={setSelectedAvatarKey}
           onClose={() => setAvatarPopupOpen(false)}
         />
-
-        {errorMsg && <p className="error">{errorMsg}</p>}
       </div>
     </div>
   );

@@ -73,8 +73,8 @@ function App() {
             <Route path="mypage" element={<MypageMain />} />
             <Route path="tv/:id" element={<Tvdetail />} />
             <Route path="movie/:id" element={<MovieDetail />} />
-            <Route path="StorageBox" element={<StorageBox />} />
-            <Route path="Series" element={<Series />} />
+            <Route path="storagebox" element={<StorageBox />} />
+            <Route path="series" element={<Series />} />
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="wishlist/:folderId" element={<WishlistDetail />} />
             <Route path="shorts" element={<Shorts />} />

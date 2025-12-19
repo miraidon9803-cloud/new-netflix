@@ -30,7 +30,7 @@ const Header = () => {
   return (
     <>
       <header className="site-header">
-        <div className="inner">
+        <div className="header-inner">
           <div className="header-left">
             <h1 className="logo">
               <Link to="/">
