@@ -1,39 +1,54 @@
 @use "../../App.scss" as l;
+
 .inner-mypageMain {
   margin-top: 40px;
-  display: flex;
-  justify-content: center;
   margin-bottom: 120px;
-  // height: 800px;
-  .mypageMain-wrap {
-    .title {
-      h1 {
-        @include l.myTitle24();
-        color: l.$grey10;
-        text-align: left;
-        margin-bottom: 18px;
-      }
+
+  .mypageMain-title {
+    max-width: 1464px;
+    margin: 0 auto;
+    padding-left: 12px;
+    margin-bottom: 48px;
+
+    h1 {
+      @include l.myTitle24();
+      color: l.$grey10;
+      text-align: left;
     }
+  }
+
+
+  .mypageMain-wrap {
+    display: flex;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+
     .main-content {
-      width: 95.2rem;
-      height: 55rem;
-      // background-color: red;
       display: flex;
-      justify-content: center;
       gap: 24px;
+      align-items: flex-start;
 
       .content-left {
         width: 222px;
-        height: 340px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-
         gap: 12px;
+        align-items: flex-start;
+
+        >div {
+          margin-top: -30px;
+        }
+
+        img {
+          display: block;
+        }
+
         .nickname {
           @include l.myTitle24();
           text-align: left;
         }
+
         .profile-change {
           @include l.myTitle16();
           color: l.$grey7;
@@ -44,11 +59,24 @@
           border-radius: 4px;
           background: none;
           border: 1px solid l.$grey7;
+
         }
+
         .profile-change:hover {
           background-color: l.$grey3;
+          border-color: l.$grey10;
         }
+
+        .content-out:hover {
+          color: l.$grey10;
+        }
+
+        li:hover {
+          background-color: l.$grey3;
+        }
+
       }
+
 
       .content-right {
         .title-wrap {
@@ -61,17 +89,21 @@
           height: 7.8rem;
           margin-bottom: 80px;
         }
+
         width: 70.9rem;
-        // background-color: aquamarine;
+
+
         .content-title {
           @include l.myTitle20();
           text-align: left;
           margin-bottom: 80px;
         }
+
         .membership-grade {
           @include l.myTitle16();
           text-align: left;
         }
+
         .content-out {
           display: flex;
           justify-content: center;
@@ -80,15 +112,30 @@
           color: l.$grey7;
           cursor: pointer;
         }
+
         .content-out:hover {
           color: l.$grey10;
         }
+
         .profile-section {
           display: flex;
           width: 100%;
           flex-direction: column;
           align-items: flex-start;
           gap: 12px;
+
+          .item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+          }
+
+          .item-arrow {
+            width: 16px;
+            height: 16px;
+            opacity: 0.8;
+            flex-shrink: 0;
+          }
 
           li {
             @include l.myTitle20();
@@ -98,13 +145,20 @@
             background-color: l.$grey2;
             width: 100%;
             border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
           }
+
           li:hover {
             background-color: l.$grey3;
           }
+
+
         }
       }
     }
+
     .logout-btn {
       @include l.myTitle16();
       color: l.$grey7;

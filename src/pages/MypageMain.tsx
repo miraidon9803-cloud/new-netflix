@@ -44,11 +44,11 @@ const MypageMain = () => {
 
   return (
     <div className="inner-mypageMain">
-      <div className="mypageMain-wrap">
-        <div className="title">
-          <h1>나의 넷플릭스</h1>
-        </div>
+      <div className="mypageMain-title">
+        <h1>나의 넷플릭스</h1>
+      </div>
 
+      <div className="mypageMain-wrap">
         <div className="main-content">
           <div className="content-left">
             <div>
@@ -79,11 +79,56 @@ const MypageMain = () => {
 
             <ul className="profile-section">
               <li onClick={() => setOpenProfilePopup(true)}>
-                현재 프로필 관리
+                <span className="item-left">
+                  <img src="/icons/profile.svg" alt="" />
+                  <span>현재 프로필 관리</span>
+                </span>
+
+                <img
+                  className="item-arrow"
+                  src="/icons/arrow-right.svg"
+                  alt=""
+                />
               </li>
-              <li onClick={() => setShowAccount((v) => !v)}>계정</li>
-              <li onClick={() => setShowApp((v) => !v)}>앱 설정</li>
-              <li>고객센터</li>
+
+              <li onClick={() => setShowAccount((v) => !v)}>
+                <span className="item-left">
+                  <img src="/icons/account.svg" alt="" />
+                  <span>계정</span>
+                </span>
+
+                <img
+                  className="item-arrow"
+                  src="/icons/arrow-right.svg"
+                  alt=""
+                />
+              </li>
+
+              <li onClick={() => setShowApp((v) => !v)}>
+                <span className="item-left">
+                  <img src="/icons/settings.svg" alt="" />
+                  <span>앱 설정</span>
+                </span>
+
+                <img
+                  className="item-arrow"
+                  src="/icons/arrow-right.svg"
+                  alt=""
+                />
+              </li>
+
+              <li>
+                <span className="item-left">
+                  <img src="/icons/help.svg" alt="" />
+                  <span>고객센터</span>
+                </span>
+
+                <img
+                  className="item-arrow"
+                  src="/icons/arrow-right.svg"
+                  alt=""
+                />
+              </li>
             </ul>
 
             <AvatarSelPopup
