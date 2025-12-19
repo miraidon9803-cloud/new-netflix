@@ -1,10 +1,9 @@
-@use '../../App.scss' as *;
+@use "../../App.scss" as *;
 
 .payment-wrapper {
   font-family: "SUIT", sans-serif;
   padding: 0;
   font-size: 0.875;
-
 
   .payment-page {
     min-height: 100vh;
@@ -27,13 +26,11 @@
     max-width: 119.6rem;
     margin: 0 auto;
     padding: 5rem;
-    background: rgba(44, 44, 44, 0.50);
+    background: rgba(44, 44, 44, 0.5);
     border-radius: 1.6rem;
     backdrop-filter: blur(15px);
-    border: 1px solid #8A8A8A;
+    border: 1px solid #8a8a8a;
   }
-
-
 
   /* header */
   .payment-header {
@@ -70,10 +67,6 @@
     margin-bottom: 2.4rem;
   }
 
-
-
-
-
   /* payment-content */
   .payment-content {
     display: flex;
@@ -97,8 +90,6 @@
     max-width: 100%;
   }
 
-
-
   /* payment-methods */
   .payment-methods {
     margin-bottom: 2.5rem;
@@ -110,7 +101,6 @@
       @include myTitle16(100, left);
       color: $grey10;
       margin-bottom: 1.2rem;
-
     }
   }
 
@@ -130,19 +120,19 @@
     justify-content: center;
     border-radius: 8px;
     border: 1px solid #d2d2d2;
-    background: rgba(202, 202, 202, 0.30);
+    background: rgba(202, 202, 202, 0.3);
   }
 
   .payment-method:hover {
     border-radius: 8px;
-    border: 1px solid #D2D2D2;
-    background: rgba(191, 191, 191, 0.80);
+    border: 1px solid #d2d2d2;
+    background: rgba(191, 191, 191, 0.8);
   }
 
   .payment-method.active {
     border-radius: 8px;
-    border: 1px solid #D2D2D2;
-    background: #D2D2D2;
+    border: 1px solid #d2d2d2;
+    background: #d2d2d2;
   }
 
   .payment-swiper {
@@ -161,10 +151,6 @@
       width: auto;
     }
   }
-
-
-
-
 
   /* membership */
   .pay-section-title {
@@ -186,7 +172,6 @@
       display: flex;
       flex-direction: column;
       gap: 0.25rem;
-
 
       .membership-price {
         @include myTitle16(400, left);
@@ -210,11 +195,6 @@
       text-underline-offset: 3px;
     }
   }
-
-
-
-
-
 
   /* agreement */
   .payment-agreement {
@@ -247,7 +227,7 @@
       }
 
       /* 체크됐을 때 배경 */
-      .agreement-checkbox:checked+.custom-checkbox {
+      .agreement-checkbox:checked + .custom-checkbox {
         background-color: $grey10;
         border-color: $grey8;
       }
@@ -257,7 +237,7 @@
         color: $grey10;
       }
 
-      .agreement-checkbox:checked+.custom-checkbox::after {
+      .agreement-checkbox:checked + .custom-checkbox::after {
         content: "";
         position: absolute;
         top: 3px;
@@ -270,10 +250,6 @@
       }
     }
   }
-
-
-
-
 
   /* Submit Button */
   .payment-submit {
@@ -290,10 +266,6 @@
     cursor: pointer;
     @include myTitle16(300);
   }
-
-
-
-
 
   // /* Popup */
 
@@ -359,7 +331,6 @@
     gap: 8px;
   }
 
-
   .membership-item {
     display: flex;
     align-items: center;
@@ -370,12 +341,10 @@
     cursor: pointer;
     position: relative;
 
-
     .membership-name {
       font-size: 16px;
       color: $grey10;
     }
-
 
     &::after {
       content: "✓";
@@ -393,14 +362,10 @@
     }
   }
 
-
-
-
   /* 멤버십 자세히 보기 */
   .popup-link-area {
     margin-top: 12px;
     text-align: right;
-
 
     .membership-detail-link {
       font-size: 13px;
@@ -422,24 +387,17 @@
     cursor: pointer;
   }
 
-
-
-
-
-
   @media (max-width: 1440px) {
     & {
       padding: 0 16px;
     }
   }
 
-
   @media (max-width: 1000px) {
     .payment-container {
       padding: 3rem 2rem;
     }
   }
-
 
   @media (max-width: 430px) {
     & {
@@ -485,7 +443,6 @@
     .payment-agreement .agreement-item .agreement-text {
       font-size: 14px;
     }
-
   }
 
   @media (max-width: 24.375rem) {

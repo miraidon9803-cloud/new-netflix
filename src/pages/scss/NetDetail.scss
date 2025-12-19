@@ -1,7 +1,9 @@
 @use "../../App.scss" as l;
 
 .detail-page {
-  margin: 40px 0 40px 0;
+  // margin: 40px 0 40px 0;
+  padding-top: 110px;
+
   // margin: 0 auto;
   .detail-inner {
     display: flex;
