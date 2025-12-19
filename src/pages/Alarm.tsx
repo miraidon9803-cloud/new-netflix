@@ -16,6 +16,7 @@ interface AlarmItem {
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY as string;
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
+const LS_KEY = "alarm_watchlist_v1";
 
 const formatDate = (d: Date) => {
   const y = d.getFullYear();
@@ -42,15 +43,40 @@ const formatKoreanReleaseText = (
     : `${month}월 ${day}일 공개예정`;
 };
 
+const readAlarmSet = (): Set<string> => {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw) as string[];
+    return new Set(arr);
+  } catch {
+    return new Set();
+  }
+};
+
+const writeAlarmSet = (set: Set<string>) => {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify(Array.from(set)));
+  } catch {
+    // ignore
+  }
+};
+
+const keyOf = (mediaType: MediaType, id: number) => `${mediaType}-${id}`;
+
 const Alarm = () => {
   const navigate = useNavigate();
 
   const [items, setItems] = useState<AlarmItem[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // ✅ 탭: all / movie / tv
   const [tab, setTab] = useState<TabType>("all");
 
-  //  TV 공개예정 범위: 오늘 ~ 30일 후
+  // ✅ 알람 토글 상태(로컬 저장)
+  const [alarmSet, setAlarmSet] = useState<Set<string>>(() => readAlarmSet());
+
+  // ✅ TV 공개예정 범위: 오늘 ~ 60일 후
   const { from, to } = useMemo(() => {
     const today = new Date();
     const end = new Date();
@@ -107,14 +133,12 @@ const Alarm = () => {
 
     const load = async () => {
       setLoading(true);
-
       try {
         const [movies, tv] = await Promise.all([
           fetchUpcomingMovies(),
           fetchUpcomingTv(),
         ]);
 
-        //  합치고 날짜 기준 정렬(빠른 순)
         const merged = [...movies, ...tv].sort((a, b) => {
           const ad = a.releaseDate
             ? new Date(a.releaseDate).getTime()
@@ -137,17 +161,35 @@ const Alarm = () => {
     load();
   }, [from, to]);
 
-  //  탭에 따라 필터링
   const filteredItems = useMemo(() => {
     if (tab === "all") return items;
     return items.filter((i) => i.mediaType === tab);
   }, [items, tab]);
 
+  const toggleAlarm = (mediaType: MediaType, id: number) => {
+    const k = keyOf(mediaType, id);
+    setAlarmSet((prev) => {
+      const next = new Set(prev);
+      if (next.has(k)) next.delete(k);
+      else next.add(k);
+      writeAlarmSet(next);
+      return next;
+    });
+  };
+
+  const goDetail = (item: AlarmItem) => {
+    navigate(`/${item.mediaType}/${item.id}`);
+  };
+
+  const goPlay = (item: AlarmItem) => {
+    // 상세에서 play=1 쿼리를 감지해서 트레일러 자동재생 같은 UX 만들 수 있어요
+    navigate(`/${item.mediaType}/${item.id}?play=1`);
+  };
+
   return (
     <div className="alram-inner">
       <div className="alram-wrap">
-        <p className="alram-title">알림</p>
-        {/*  탭 메뉴 */}
+        {/* 탭 메뉴 */}
         <div className="alram-tabs">
           <p
             className={`alram-tab ${tab === "all" ? "active" : ""}`}
@@ -179,39 +221,70 @@ const Alarm = () => {
           )}
 
           {!loading &&
-            filteredItems.map((item) => (
-              <div
-                key={`${item.mediaType}-${item.id}`}
-                className="alram-card"
-                onClick={() => navigate(`/${item.mediaType}/${item.id}`)}
-              >
-                <div className="alram-poster">
-                  {item.posterPath ? (
-                    <img
-                      src={`${IMAGE_BASE_URL}${item.posterPath}`}
-                      alt={item.title}
-                    />
-                  ) : (
-                    <div className="alram-no-image">이미지 없음</div>
-                  )}
-                </div>
+            filteredItems.map((item) => {
+              const alarmKey = keyOf(item.mediaType, item.id);
+              const isAlarmOn = alarmSet.has(alarmKey);
 
-                <div className="alram-info">
-                  <p className="alram-subtitle">
-                    {item.title}
-                    <span className="alram-release">
-                      {" · "}
-                      {formatKoreanReleaseText(
-                        item.mediaType,
-                        item.releaseDate
-                      )}
-                    </span>
-                  </p>
+              return (
+                <p
+                  key={alarmKey}
+                  className="alram-card"
+                  onClick={() => goDetail(item)}
+                >
+                  <div className="alram-poster">
+                    {item.posterPath ? (
+                      <img
+                        src={`${IMAGE_BASE_URL}${item.posterPath}`}
+                        alt={item.title}
+                      />
+                    ) : (
+                      <div className="alram-no-image">이미지 없음</div>
+                    )}
+                  </div>
 
-                  <p className="alram-overview">{item.overview}</p>
-                </div>
-              </div>
-            ))}
+                  <div className="alram-info">
+                    <p className="alram-title">
+                      {item.title}
+                      <span className="alram-release">
+                        {" · "}
+                        {formatKoreanReleaseText(
+                          item.mediaType,
+                          item.releaseDate
+                        )}
+                      </span>
+                    </p>
+
+                    <p className="alram-overview">{item.overview}</p>
+
+                    <div className="alram-actions">
+                      <button
+                        type="button"
+                        className="alram-btn alram-btn--play"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          goPlay(item);
+                        }}
+                      >
+                        ▶ 재생
+                      </button>
+
+                      <button
+                        type="button"
+                        className={`alram-btn alram-btn--alarm ${
+                          isAlarmOn ? "on" : ""
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleAlarm(item.mediaType, item.id);
+                        }}
+                      >
+                        {isAlarmOn ? "🔔 알람됨" : "🔔 알람받기"}
+                      </button>
+                    </div>
+                  </div>
+                </p>
+              );
+            })}
         </div>
       </div>
     </div>
