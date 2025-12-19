@@ -76,14 +76,15 @@
       }
     }
   }
-  @media (max-width: 1440px) {
-    header {
-      .inner {
-        .header-left {
-          .main-menu {
-            .main-text {
-              @include myTitle20();
-            }
+}
+
+@media (max-width: 1440px) {
+  header {
+    .inner {
+      .header-left {
+        .main-menu {
+          .main-text {
+            @include myTitle20();
           }
         }
       }
