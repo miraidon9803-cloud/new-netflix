@@ -54,11 +54,12 @@ const Join: React.FC<JoinProps> = ({ onNext, onPrev }) => {
           <div className="signtitle-wrap">
             {onPrev && (
               <p className="prev-btn" onClick={onPrev}>
-                뒤로가기버튼
+                <img src="/images/ArrowLeft.png" alt="Back" />
               </p>
             )}
 
             <h3>SIGN</h3>
+            <img src="/images/space.png" alt="Back" />
           </div>
 
           <form onSubmit={handleJoin}>

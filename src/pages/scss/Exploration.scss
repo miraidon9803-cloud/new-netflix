@@ -32,11 +32,14 @@
   margin-top: 4rem;
 }
 
-.Exp-btn {
+
+.Exp-btn{
   max-width: 24rem;
+    width: 100%;
   background: $grey10;
-  padding: 1.6rem 8px;
+  padding: 0.8rem;
     margin-top: 4rem;
+    border-radius: 0.4rem;
 
   display: flex;
   justify-content: center;

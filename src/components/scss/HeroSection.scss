@@ -1,20 +1,27 @@
 @use "../../App.scss" as *;
 
+.hero-section{
+overflow-x: visible;
+}
+
 .hero_bg {
-  width: 100%;
-  height: 100vh;
-  background-image: url("../images/landing_banner.png");
-  background-position: center center;
+  width: 1920px;
+  height: 1363px;
+  margin: 0 auto;
+
+  position: relative; // ⬅️ 내부 absolute 요소 기준
+  background-image: url("/images/land_banner.png");
   background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
-  max-width: none;
-  position: relative;
+
 
   .hero_copy {
     position: absolute;
-    top: 370px;
-    left: 240px;
+    top: 36rem;
+    left: 26rem;
     @include myTitle32($fw: 600, $ta: left);
+    color: $grey10;
 
     .hero_copy2 {
       padding: 0 90px;
@@ -35,12 +42,14 @@
     color: $grey10;
 
     position: absolute;
-    bottom: 240px;
-    left: 600px;
+    bottom: 48rem;
+    left: 84rem;
   }
 }
 
 .hero_banner {
+  // 아래로 내리기
+  top: -10rem; 
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -48,6 +57,10 @@
   background: #2E2E2E;
   padding: 1.6rem 3.2rem;
   border-radius: 8px;
+
+  position: relative;
+  z-index: 1;
+  margin: -100px auto 0;
 
   .hero_banner-left {
     display: flex;
