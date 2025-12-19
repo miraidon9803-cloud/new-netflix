@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useNetflixStore } from '../store/NetflixStore';
-import type { MediaItem } from '../types/netflix';
 import './scss/SearchModal.scss';
 
 // TMDB API 설정
@@ -21,6 +21,7 @@ interface SearchResultItem {
 }
 
 const SearchModal: React.FC<SearchModalProps> = ({ onClose }) => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
@@ -352,6 +353,12 @@ const SearchModal: React.FC<SearchModalProps> = ({ onClose }) => {
     saveRecentSearches([]);
   };
 
+  // 콘텐츠 클릭 시 상세페이지로 이동
+  const handleContentClick = (mediaType: 'movie' | 'tv', id: number) => {
+    onClose(); // 모달 닫기
+    navigate(`/${mediaType}/${id}`);
+  };
+
   // 인기 콘텐츠 상위 6개 (netflixTop10에서 가져오기)
   const popularContent = netflixTop10.slice(0, 6);
 
@@ -454,7 +461,12 @@ const SearchModal: React.FC<SearchModalProps> = ({ onClose }) => {
               </div>
               <div className="results-grid">
                 {searchResults.map((content) => (
-                  <div key={`${content.media_type}-${content.id}`} className="results-card">
+                  <div 
+                    key={`${content.media_type}-${content.id}`} 
+                    className="results-card"
+                    onClick={() => handleContentClick(content.media_type, content.id)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <div className="results-image-wrapper">
                       {content.poster_path ? (
                         <img
@@ -490,7 +502,12 @@ const SearchModal: React.FC<SearchModalProps> = ({ onClose }) => {
               </div>
               <div className="content-grid">
                 {popularContent.map((content, index) => (
-                  <div key={content.id} className="content-card">
+                  <div 
+                    key={content.id} 
+                    className="content-card"
+                    onClick={() => handleContentClick(content.media_type || 'tv', content.id)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <div className={`card-rank ${index === 0 ? 'rank-first' : ''}`}>
                       {index + 1}
                     </div>
