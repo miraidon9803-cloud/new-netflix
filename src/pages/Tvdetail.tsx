@@ -10,6 +10,7 @@ import { TabNavigation } from "../components/TabNavigation";
 import { SeasonSelector } from "../components/SeasonSelector";
 import { EpisodeList } from "./EpisodeList";
 import "./scss/NetDetail.scss";
+import { genre } from "../data/genre";
 type Video = {
   id: string;
   key: string;
@@ -82,6 +83,7 @@ const Tvdetail = () => {
     () => tvCredits?.cast?.slice(0, 8) ?? [],
     [tvCredits]
   );
+  const filltergenres = genre;
   const genres = useMemo(() => tvDetail?.genres ?? [], [tvDetail]);
   const keywords = useMemo(() => tvKeywords ?? [], [tvKeywords]);
 
@@ -234,7 +236,7 @@ const Tvdetail = () => {
             </>
           ) : activeTab === "비슷한콘텐츠" ? (
             <div className="tab-panel">
-              <p>비슷한 콘텐츠를 준비 중입니다.</p>
+              <div></div>
             </div>
           ) : (
             <div className="tab-panel">
