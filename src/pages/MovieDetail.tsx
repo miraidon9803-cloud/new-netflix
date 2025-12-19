@@ -9,11 +9,12 @@ import { useProfileStore } from "../store/Profile";
 
 const PROFILE_IMG = "https://image.tmdb.org/t/p/w185";
 const FALLBACK_PROFILE = "/images/icon/no_profile.png";
+import { useRef } from "react";
 
 const MovieDetail = () => {
   const { id } = useParams<{ id: string }>();
   const movieId = useMemo(() => (id ? String(id) : ""), [id]);
-
+  const mediaBoxRef = useRef<HTMLDivElement>(null);
   const {
     movieDetail,
     movieRating,
@@ -36,26 +37,38 @@ const MovieDetail = () => {
   const { onAddWatching } = useWatchingStore();
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
   const handlePlay = async () => {
-    if (!movieDetail) return;
+    if (!movieDetail || !trailer) return;
 
+    // ✅ 1) 보관함 저장 먼저
     try {
-      // ✅ 보관함이 "프로필별"로 저장되는 구조라면 activeProfileId를 꼭 넣어주세요
-      // (store 타입에 맞게 키 이름은 조정)
       await onAddWatching({
-        profileId: activeProfileId, // store에서 안 쓰면 제거하셔도 됩니다
+        profileId: activeProfileId, // store에서 안 쓰면 삭제하셔도 됩니다
         mediaType: "movie",
         id: movieDetail.id,
-        name: movieDetail.title, // movie는 title → name으로 맞춰주기
+        name: movieDetail.title,
         poster_path: movieDetail.poster_path,
         backdrop_path: movieDetail.backdrop_path,
         release_date: movieDetail.release_date,
         runtime: movieDetail.runtime,
       } as any);
-
-      setPlay(true);
     } catch (e) {
       console.error("보관함 저장 실패:", e);
-      setPlay(true); // 저장 실패해도 재생은 되게
+      // 저장 실패해도 재생은 되게
+    }
+
+    // ✅ 2) 재생
+    setPlay(true);
+
+    // ✅ 3) 풀스크린 (사용자 클릭 안에서만 가능)
+    const el = mediaBoxRef.current;
+    if (!el) return;
+
+    try {
+      if (!document.fullscreenElement) {
+        await el.requestFullscreen();
+      }
+    } catch (e) {
+      console.warn("Fullscreen 실패:", e);
     }
   };
 
@@ -104,7 +117,7 @@ const MovieDetail = () => {
     <div className="detail-page">
       <div className="detail-inner">
         <div className="left-side">
-          <div className="media-box">
+          <div className="media-box" ref={mediaBoxRef}>
             {trailer ? (
               <iframe
                 className="trailer-video"
@@ -112,7 +125,7 @@ const MovieDetail = () => {
                   play ? 1 : 0
                 }&mute=1&playsinline=1`}
                 title="YouTube trailer"
-                allow="autoplay; encrypted-media"
+                allow="autoplay; encrypted-media; fullscreen"
                 allowFullScreen
               />
             ) : (
