@@ -115,34 +115,19 @@
     max-width: 95.2rem;
   }
 
-  /* =========================
-   Optional "알림받기" button style (추가하실 때 사용)
-   TSX에서 버튼 넣으면 그대로 예쁘게 나옵니다.
-========================= */
   .alram-actions {
     margin-top: 18px;
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
   }
 
-  .alram-bell-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-
-    height: 40px;
-    padding: 0 14px;
-
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.06);
-
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 14px;
-    font-weight: 700;
-
+  .alram-btn {
+    @include l.myTitle20();
+    display: flex;
+    gap: 12px;
+    padding: 8px 16px;
     cursor: pointer;
-    transition: 0.18s ease;
+    background: l.$grey2;
   }
 }
