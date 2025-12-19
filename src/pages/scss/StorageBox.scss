@@ -2,10 +2,11 @@
 
 .storage-inner {
   max-width: 1440px;
-  min-height: 700px;
+  height: 900px;
   // height: auto; //
   margin: 0 auto;
-  margin-bottom: 120px;
+  padding-top: 110px;
+
   h2 {
     @include l.myTitle32();
     color: l.$grey10;

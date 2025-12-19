@@ -1,6 +1,7 @@
 @use "../../App.scss" as l;
 
 .inner-mypageMain {
+  padding-top: 110px;
   margin-top: 40px;
   margin-bottom: 120px;
 
@@ -16,7 +17,6 @@
       text-align: left;
     }
   }
-
 
   .mypageMain-wrap {
     display: flex;
@@ -36,7 +36,7 @@
         gap: 12px;
         align-items: flex-start;
 
-        >div {
+        > div {
           margin-top: -30px;
         }
 
@@ -53,18 +53,33 @@
           @include l.myTitle16();
           color: l.$grey7;
           text-align: center;
-          width: 100%;
+          width: 22.2rem;
           height: 3.2rem;
-          padding: 4px 8px;
+          padding: 4px 12px;
           border-radius: 4px;
           background: none;
           border: 1px solid l.$grey7;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+        }
 
+        .profile-change img {
+          width: 16px;
+          height: 16px;
+          display: block;
+        }
+
+        .profile-change span {
+          line-height: 1;
         }
 
         .profile-change:hover {
           background-color: l.$grey3;
-          border-color: l.$grey10;
+          border-color: l.$grey7;
         }
 
         .content-out:hover {
@@ -74,9 +89,7 @@
         li:hover {
           background-color: l.$grey3;
         }
-
       }
-
 
       .content-right {
         .title-wrap {
@@ -92,15 +105,17 @@
 
         width: 70.9rem;
 
-
         .content-title {
-          @include l.myTitle20();
+          @include l.myTitle20(300);
           text-align: left;
           margin-bottom: 80px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
         }
 
         .membership-grade {
-          @include l.myTitle16();
+          @include l.myTitle16(200);
           text-align: left;
         }
 
@@ -121,20 +136,36 @@
           display: flex;
           width: 100%;
           flex-direction: column;
-          align-items: flex-start;
+          // align-items: flex-start;
           gap: 12px;
 
           .item-left {
             display: flex;
             align-items: center;
             gap: 12px;
+
+            img {
+              width: 24px;
+              height: 24px;
+              flex-shrink: 0;
+            }
+
+            span {
+              @include l.myTitle20();
+              color: l.$grey10;
+            }
           }
 
           .item-arrow {
-            width: 16px;
-            height: 16px;
-            opacity: 0.8;
+            width: 24px;
+            height: 24px;
             flex-shrink: 0;
+            opacity: 0.7;
+            // transition: opacity 0.2s ease;
+
+            li:hover .item-arrow {
+              opacity: 1;
+            }
           }
 
           li {
@@ -148,19 +179,19 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
           }
 
           li:hover {
             background-color: l.$grey3;
           }
-
-
         }
       }
     }
 
     .logout-btn {
-      @include l.myTitle16();
+      @include l.myTitle16(300);
       color: l.$grey7;
       width: 100%;
       margin-top: 24px;

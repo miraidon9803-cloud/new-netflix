@@ -1,33 +1,33 @@
-import React, { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './scss/InfiniSubmenu.scss';
+import React, { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import "./scss/InfiniSubmenu.scss";
 
-// ✔ 메뉴 배열 (네가 준 장르로 교체)
+//  메뉴 배열 (네가 준 장르로 교체)
 const subMenus = [
-  '액션',
-  '모험',
-  '애니메이션',
-  '코미디',
-  '범죄',
-  '다큐멘터리',
-  '드라마',
-  '가족',
-  '판타지',
-  '역사',
-  '공포',
-  '음악',
-  '미스터리',
-  '로맨스',
-  'SF',
-  '스릴러',
-  '전쟁',
-  '서부극',
-  'TV 영화',
+  "액션",
+  "모험",
+  "애니메이션",
+  "코미디",
+  "범죄",
+  "다큐멘터리",
+  "드라마",
+  "가족",
+  "판타지",
+  "역사",
+  "공포",
+  "음악",
+  "미스터리",
+  "로맨스",
+  "SF",
+  "스릴러",
+  "전쟁",
+  "서부극",
+  "TV 영화",
 ] as const;
 
 type MenuLabel = (typeof subMenus)[number];
 
-// ✅ TMDB Movie 장르 ID
+//  TMDB Movie 장르 ID
 const MOVIE_GENRE_ID: Record<MenuLabel, number> = {
   액션: 28,
   모험: 12,
@@ -47,10 +47,10 @@ const MOVIE_GENRE_ID: Record<MenuLabel, number> = {
   스릴러: 53,
   전쟁: 10752,
   서부극: 37,
-  'TV 영화': 10770,
+  "TV 영화": 10770,
 };
 
-// ✅ TMDB TV 장르 ID
+// TMDB TV 장르 ID
 // TV는 액션/모험이 Action & Adventure(10759)로 묶임
 // SF/판타지는 Sci-Fi & Fantasy(10765)로 묶임
 const TV_GENRE_ID: Record<MenuLabel, number> = {
@@ -72,7 +72,7 @@ const TV_GENRE_ID: Record<MenuLabel, number> = {
   스릴러: 9648,
   전쟁: 10768, // War & Politics
   서부극: 37,
-  'TV 영화': 10770,
+  "TV 영화": 10770,
 };
 
 const InfiniSubmenu: React.FC = () => {
@@ -134,7 +134,7 @@ const InfiniSubmenu: React.FC = () => {
     isDragging.current = true;
     startX.current = e.clientX;
     startScrollLeft.current = el.scrollLeft;
-    el.classList.add('is-dragging');
+    el.classList.add("is-dragging");
   };
 
   // 드래그 중
@@ -152,7 +152,7 @@ const InfiniSubmenu: React.FC = () => {
     if (!el) return;
 
     isDragging.current = false;
-    el.classList.remove('is-dragging');
+    el.classList.remove("is-dragging");
   };
 
   // 휠 가로 스크롤 + 페이지 세로 스크롤 차단(양끝 제외)
@@ -175,17 +175,19 @@ const InfiniSubmenu: React.FC = () => {
       }
     };
 
-    el.addEventListener('wheel', onWheel, { passive: false });
-    return () => el.removeEventListener('wheel', onWheel);
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
-  // ✅ 클릭 시 TotalFilter로 이동
+  //  클릭 시 TotalFilter로 이동
   const onClickGenre = (label: MenuLabel) => {
     const genreMovie = MOVIE_GENRE_ID[label];
     const genreTv = TV_GENRE_ID[label];
 
     navigate(
-      `/total-filter?label=${encodeURIComponent(label)}&genreMovie=${genreMovie}&genreTv=${genreTv}`
+      `/total-filter?label=${encodeURIComponent(
+        label
+      )}&genreMovie=${genreMovie}&genreTv=${genreTv}`
     );
   };
 
@@ -198,13 +200,15 @@ const InfiniSubmenu: React.FC = () => {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUpLeave}
-        onMouseLeave={handleMouseUpLeave}>
+        onMouseLeave={handleMouseUpLeave}
+      >
         {infiMenu.map((item, idx) => (
           <button
             key={idx}
             className="submenu-item"
             type="button"
-            onClick={() => onClickGenre(item)}>
+            onClick={() => onClickGenre(item)}
+          >
             {item}
           </button>
         ))}

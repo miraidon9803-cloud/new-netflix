@@ -9,7 +9,7 @@ export default function GuestOnly({ redirectTo }: Props) {
   const onboardingDone = useAuthStore((s) => s.onboardingDone);
   const location = useLocation();
 
-  // ✅ "완전한 로그인(온보딩 완료)"인 경우에만 막기
+  //  "완전한 로그인(온보딩 완료)"인 경우에만 막기
   // (온보딩 중이면 /auth 접근 허용해야 멤버십 step 진행 가능)
   if (isLogin && onboardingDone) {
     if (location.pathname !== redirectTo) {

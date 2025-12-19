@@ -57,7 +57,10 @@ const MypageMain = () => {
             <p className="nickname">{activeProfile.title}</p>
 
             <Link to="profile">
-              <p className="profile-change">프로필변경</p>
+              <p className="profile-change">
+                <img src="/images/MypageMain-Exchange.png" alt="프로필변경" />
+                <span>프로필변경</span>
+              </p>
             </Link>
           </div>
 
@@ -80,52 +83,55 @@ const MypageMain = () => {
             <ul className="profile-section">
               <li onClick={() => setOpenProfilePopup(true)}>
                 <span className="item-left">
-                  <img src="/icons/profile.svg" alt="" />
+                  <img
+                    src="/images/MypageMain-profile.png"
+                    alt="현재 프로필 관리"
+                  />
                   <span>현재 프로필 관리</span>
                 </span>
 
                 <img
                   className="item-arrow"
-                  src="/icons/arrow-right.svg"
+                  src="/images/MypageMain-Arrow.png"
                   alt=""
                 />
               </li>
 
               <li onClick={() => setShowAccount((v) => !v)}>
                 <span className="item-left">
-                  <img src="/icons/account.svg" alt="" />
+                  <img src="/images/MypageMain-user.png" alt="계정" />
                   <span>계정</span>
                 </span>
 
                 <img
                   className="item-arrow"
-                  src="/icons/arrow-right.svg"
+                  src="/images/MypageMain-Arrow.png"
                   alt=""
                 />
               </li>
 
               <li onClick={() => setShowApp((v) => !v)}>
                 <span className="item-left">
-                  <img src="/icons/settings.svg" alt="" />
+                  <img src="/images/MypageMain-settings.png" alt="앱 설정" />
                   <span>앱 설정</span>
                 </span>
 
                 <img
                   className="item-arrow"
-                  src="/icons/arrow-right.svg"
+                  src="/images/MypageMain-Arrow.png"
                   alt=""
                 />
               </li>
 
               <li>
                 <span className="item-left">
-                  <img src="/icons/help.svg" alt="" />
+                  <img src="/images/MypageMain-service.png" alt="고객센터" />
                   <span>고객센터</span>
                 </span>
 
                 <img
                   className="item-arrow"
-                  src="/icons/arrow-right.svg"
+                  src="/images/MypageMain-Arrow.png"
                   alt=""
                 />
               </li>
