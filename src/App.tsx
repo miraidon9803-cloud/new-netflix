@@ -23,6 +23,7 @@ import GuestOnly from "./components/GuestOnly";
 
 import { useAuthStore } from "./store/authStore";
 import { useProfileStore } from "./store/Profile";
+import Complete from "./components/Complete";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -75,6 +76,7 @@ function App() {
             <Route path="wishlist/:folderId" element={<WishlistDetail />} />
             <Route path="shorts" element={<Shorts />} />
             <Route path="payment" element={<Payment />} />
+            <Route path="complete" element={<Complete />} />
           </Route>
         </Route>
 
