@@ -60,6 +60,7 @@ export interface TvDetail {
   backdrop_path: string;
   first_air_date: string;
   seasons: Season[];
+  genres: string;
 }
 export interface TvListItem {
   id: number;

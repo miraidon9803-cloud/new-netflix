@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useMemo } from "react";
 import { useMovieStore } from "../store/useMoiveStore";
 import { useWatchingStore } from "../store/WatichingStore";
@@ -10,7 +10,7 @@ import { TabNavigation } from "../components/TabNavigation";
 import { SeasonSelector } from "../components/SeasonSelector";
 import { EpisodeList } from "./EpisodeList";
 import "./scss/NetDetail.scss";
-import { genre } from "../data/genre";
+
 type Video = {
   id: string;
   key: string;
@@ -32,6 +32,7 @@ const Tvdetail = () => {
     videos,
     tvCredits,
     tvKeywords,
+    tvSimilar,
     fetchTvDetail,
     fetchTvRating,
     fetchSeasons,
@@ -39,6 +40,7 @@ const Tvdetail = () => {
     fetchVideos,
     fetchTvCredits,
     fetchTvKeywords,
+    fetchTvSimilar,
   } = useMovieStore();
 
   const { onAddWatching } = useWatchingStore();
@@ -83,7 +85,7 @@ const Tvdetail = () => {
     () => tvCredits?.cast?.slice(0, 8) ?? [],
     [tvCredits]
   );
-  const filltergenres = genre;
+
   const genres = useMemo(() => tvDetail?.genres ?? [], [tvDetail]);
   const keywords = useMemo(() => tvKeywords ?? [], [tvKeywords]);
 
@@ -110,6 +112,13 @@ const Tvdetail = () => {
     if (!tvId || !selectedSeasonNumber) return;
     fetchEpisodes(tvId, selectedSeasonNumber);
   }, [tvId, selectedSeasonNumber, fetchEpisodes]);
+
+  useEffect(() => {
+    if (!tvId) return;
+    if (activeTab !== "비슷한콘텐츠") return;
+    if (tvSimilar.length > 0) return; // 이미 있으면 재요청 방지
+    fetchTvSimilar(tvId);
+  }, [tvId, activeTab, tvSimilar.length, fetchTvSimilar]);
 
   // Video logic
   const defaultTrailer: Video | undefined = useMemo(() => {
@@ -236,7 +245,42 @@ const Tvdetail = () => {
             </>
           ) : activeTab === "비슷한콘텐츠" ? (
             <div className="tab-panel">
-              <div></div>
+              {tvSimilar.length === 0 ? (
+                <p>비슷한 콘텐츠가 없습니다.</p>
+              ) : (
+                <ul className="similar-list">
+                  {tvSimilar.slice(0, 7).map((item: any) => {
+                    const thumbnail = item.backdrop_path
+                      ? `https://image.tmdb.org/t/p/w780${item.backdrop_path}`
+                      : null;
+
+                    return (
+                      <li key={item.id} className="similar-item">
+                        <Link to={`/tv/${item.id}`} className="similar-link">
+                          {/* 썸네일 */}
+                          <div className="thumb">
+                            {thumbnail ? (
+                              <img src={thumbnail} alt={item.name} />
+                            ) : (
+                              <div className="no-thumb">NO IMAGE</div>
+                            )}
+                          </div>
+
+                          {/* 텍스트 영역 */}
+                          <div className="info">
+                            <h4 className="title">{item.name}</h4>
+                            <p className="overview">
+                              {item.overview
+                                ? item.overview
+                                : "작품 설명이 제공되지 않습니다."}
+                            </p>
+                          </div>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
           ) : (
             <div className="tab-panel">

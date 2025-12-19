@@ -61,6 +61,7 @@ type MovieStore = {
   movieCredits: Credits | null;
   tvCredits: Credits | null;
   tvKeywords: Keyword[];
+  tvSimilar: Movie[];
 
   /* ================== ACTION ================== */
   fetchPopularMovies: () => Promise<void>;
@@ -84,6 +85,7 @@ type MovieStore = {
 
   fetchTvKeywords: (id: string) => Promise<void>;
   clearDetail: () => void;
+  fetchTvSimilar: (id: string) => Promise<void>;
 };
 
 export const useMovieStore = create<MovieStore>((set) => ({
@@ -100,6 +102,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
   seasons: [],
   episodes: [],
   tvKeywords: [],
+  tvSimilar: [],
 
   movieCredits: null,
   tvCredits: null,
@@ -313,5 +316,19 @@ export const useMovieStore = create<MovieStore>((set) => ({
       tvRating: null,
       movieCredits: null,
       tvCredits: null,
+      tvSimilar: [],
     }),
+  fetchTvSimilar: async (id: string) => {
+    if (!API_KEY) return;
+
+    try {
+      const res = await fetch(
+        `${BASE_URL}/tv/${id}/similar?api_key=${API_KEY}&language=ko-KR&page=1`
+      );
+      const data = await res.json();
+      set({ tvSimilar: data.results ?? [] });
+    } catch {
+      set({ tvSimilar: [] });
+    }
+  },
 }));
