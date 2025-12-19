@@ -137,20 +137,18 @@
 
       .similar-link {
         display: flex;
-        gap: 16px;
+        gap: 24px;
         padding: 12px;
-        color: #fff;
+        color: l.$grey10;
       }
 
       .thumb {
-        width: 280px;
+        width: 220px;
         flex-shrink: 0;
-
         img {
-          width: 100%;
+          width: 220px;
           aspect-ratio: 16 / 9;
           object-fit: cover;
-          border-radius: 8px;
         }
       }
 

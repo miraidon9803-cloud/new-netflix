@@ -33,6 +33,7 @@ const Tvdetail = () => {
     tvCredits,
     tvKeywords,
     tvSimilar,
+    tvSimilarId,
     fetchTvDetail,
     fetchTvRating,
     fetchSeasons,
@@ -55,7 +56,12 @@ const Tvdetail = () => {
     setPlay,
     refreshPlayer,
     resetPlayer,
+    setActiveTab,
   } = useDetailUIStore();
+
+  useEffect(() => {
+    setActiveTab("회차");
+  }, [tvId, setActiveTab]);
 
   // Season logic
   const defaultSeasonNumber = useMemo(() => {
@@ -116,9 +122,11 @@ const Tvdetail = () => {
   useEffect(() => {
     if (!tvId) return;
     if (activeTab !== "비슷한콘텐츠") return;
-    if (tvSimilar.length > 0) return; // 이미 있으면 재요청 방지
-    fetchTvSimilar(tvId);
-  }, [tvId, activeTab, tvSimilar.length, fetchTvSimilar]);
+
+    if (tvSimilarId !== tvId) {
+      fetchTvSimilar(tvId);
+    }
+  }, [tvId, activeTab, tvSimilarId, fetchTvSimilar]);
 
   // Video logic
   const defaultTrailer: Video | undefined = useMemo(() => {

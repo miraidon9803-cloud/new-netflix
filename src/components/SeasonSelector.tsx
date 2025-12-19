@@ -34,7 +34,11 @@ export const SeasonSelector = ({
           if (e.key === "Enter" || e.key === " ") toggleSeasonOpen();
         }}
       >
-        <span>{activeSeasonObj?.name ?? "시즌 선택"}</span>
+        <span>
+          {activeSeasonObj
+            ? `시즌 ${activeSeasonObj.season_number}`
+            : "시즌 선택"}
+        </span>
         <p className={`chev ${seasonOpen ? "open" : ""}`}>
           <img src="/images/profile-arrow.png" alt="" />
         </p>
@@ -60,7 +64,7 @@ export const SeasonSelector = ({
             }
           }}
         >
-          {s.name}
+          시즌 {s.season_number}
         </li>
       ))}
     </ul>

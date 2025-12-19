@@ -103,6 +103,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
   episodes: [],
   tvKeywords: [],
   tvSimilar: [],
+  tvSimilarId: null,
 
   movieCredits: null,
   tvCredits: null,
@@ -326,7 +327,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
         `${BASE_URL}/tv/${id}/similar?api_key=${API_KEY}&language=ko-KR&page=1`
       );
       const data = await res.json();
-      set({ tvSimilar: data.results ?? [] });
+      set({ tvSimilar: data.results ?? [], tvSimilarId: id });
     } catch {
       set({ tvSimilar: [] });
     }
