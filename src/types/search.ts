@@ -55,3 +55,17 @@ export interface EditFolderPopupProps {
   onEdit: (id: number, name: string) => void;
   onDelete: (id: number) => void;
 }
+// 상세페이지에서 위시리스트에 추가할 콘텐츠 타입
+export interface WishlistContent {
+  id: number;
+  title: string;
+  poster_path: string | null;
+  media_type: 'movie' | 'tv';
+}
+
+// WishlistDetail의 폴더 데이터 (현재와 동일)
+export interface WishlistFolderData {
+  id: number;
+  name: string;
+  contents: WishlistContent[];
+}

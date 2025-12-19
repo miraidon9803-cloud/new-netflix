@@ -203,6 +203,9 @@ const Tvdetail = () => {
             selectedSeasonNumber={selectedSeasonNumber}
             overview={tvDetail.overview}
             onPlayDefault={onPlayDefault}
+            contentId={tvDetail.id}
+            posterPath={tvDetail.poster_path}
+            mediaType="tv"
           />
 
           <MoreInfoPanel
