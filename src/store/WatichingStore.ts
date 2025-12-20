@@ -15,6 +15,7 @@ export type MediaType = "tv" | "movie";
 export interface WatchingItem {
   id: number; // tvId or movieId
   mediaType: MediaType;
+  vote_average: string;
 
   // display title
   title?: string; // movie
@@ -42,7 +43,7 @@ interface WatchingState {
 
   onAddWatching: (item: WatchingItem) => Promise<void>;
 
-  // ✅ 삭제는 item 그대로 받는 방식이 TV(시즌/화)에서 안전
+  // 삭제는 item 그대로 받는 방식이 TV(시즌/화)에서 안전
   onRemoveWatching: (profileId: string, item: WatchingItem) => Promise<void>;
 
   onResetWatching: () => void;
@@ -61,7 +62,7 @@ const getActiveProfileIdOrThrow = () => {
   return pid;
 };
 
-// ✅ TV는 시즌/화까지 포함해서 문서 ID를 만들어야 "보던 영상" 단위로 저장됨
+//  TV는 시즌/화까지 포함해서 문서 ID를 만들어야 "보던 영상" 단위로 저장됨
 const makeDocId = (item: WatchingItem) => {
   if (item.mediaType === "tv") {
     const s = item.season_number ?? 0;

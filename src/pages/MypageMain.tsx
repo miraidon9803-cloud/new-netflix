@@ -84,7 +84,7 @@ const MypageMain = () => {
               <li onClick={() => setOpenProfilePopup(true)}>
                 <span className="item-left">
                   <img
-                    src="/images/MypageMain-profile.png"
+                    src="/images/icon/MypageMain-profile.png"
                     alt="현재 프로필 관리"
                   />
                   <span>현재 프로필 관리</span>
@@ -92,46 +92,52 @@ const MypageMain = () => {
 
                 <img
                   className="item-arrow"
-                  src="/images/MypageMain-Arrow.png"
+                  src="/images/icon/MypageMain-Arrow.png"
                   alt=""
                 />
               </li>
 
               <li onClick={() => setShowAccount((v) => !v)}>
                 <span className="item-left">
-                  <img src="/images/MypageMain-user.png" alt="계정" />
+                  <img src="/images/icon/MypageMain-user.png" alt="계정" />
                   <span>계정</span>
                 </span>
 
                 <img
                   className="item-arrow"
-                  src="/images/MypageMain-Arrow.png"
+                  src="/images/icon/MypageMain-Arrow.png"
                   alt=""
                 />
               </li>
 
               <li onClick={() => setShowApp((v) => !v)}>
                 <span className="item-left">
-                  <img src="/images/MypageMain-settings.png" alt="앱 설정" />
+                  <img
+                    src="/images/icon/MypageMain-settings.png"
+                    alt="앱 설정"
+                  />
                   <span>앱 설정</span>
                 </span>
 
                 <img
                   className="item-arrow"
-                  src="/images/MypageMain-Arrow.png"
+                  src="/images/icon/MypageMain-Arrow.png"
                   alt=""
                 />
               </li>
 
               <li>
                 <span className="item-left">
-                  <img src="/images/MypageMain-service.png" alt="고객센터" />
+                  <img
+                    src="/images/icon/MypageMain-service.png"
+                    alt="고객센터"
+                  />
                   <span>고객센터</span>
                 </span>
 
                 <img
                   className="item-arrow"
-                  src="/images/MypageMain-Arrow.png"
+                  src="/images/icon/MypageMain-Arrow.png"
                   alt=""
                 />
               </li>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useWatchingStore } from "../store/WatichingStore";
 import { useLikeStore } from "../store/LikeStore";
@@ -13,55 +13,40 @@ import SideNav from "../components/SideNav";
 const IMG = "https://image.tmdb.org/t/p/w500";
 
 type TabType = "보관함" | "좋아요" | "다운로드";
+type SortType = "최신순" | "제목순" | "평점순";
+type ItemType = WatchingItem | LikeItem | DownloadItem;
 
 const StorageBox = () => {
   const { watching, onFetchWatching, onRemoveWatching } = useWatchingStore();
   const { likes, onFetchLikes, onRemoveLike } = useLikeStore();
   const { downloads, onFetchDownloads, onRemoveDownload } = useDownloadStore();
+
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
+
   const [activeTab, setActiveTab] = useState<TabType>("보관함");
+  const [sortType, setSortType] = useState<SortType>("최신순");
+  const [filterOpen, setFilterOpen] = useState(false);
+  const SORT_OPTIONS: SortType[] = ["최신순", "제목순", "평점순"];
 
-  // 디버깅: 데이터 확인
+  /* ---------------- 데이터 로드 ---------------- */
   useEffect(() => {
-    console.log("=== StorageBox 상태 ===");
-    console.log("activeProfileId:", activeProfileId);
-    console.log("watching 개수:", watching.length);
-    console.log("likes 개수:", likes.length);
-    console.log("downloads 개수:", downloads.length);
-    console.log("activeTab:", activeTab);
-  }, [activeProfileId, watching, likes, downloads, activeTab]);
+    if (!activeProfileId) return;
 
-  useEffect(() => {
-    if (!activeProfileId) {
-      console.warn("⚠️ 프로필이 선택되지 않았습니다.");
-      return;
-    }
+    Promise.all([
+      onFetchWatching(activeProfileId),
+      onFetchLikes(activeProfileId),
+      onFetchDownloads(activeProfileId),
+    ]);
+  }, [activeProfileId]);
 
-    console.log("📥 데이터 불러오는 중...");
-
-    const fetchData = async () => {
-      try {
-        await Promise.all([
-          onFetchWatching(activeProfileId),
-          onFetchLikes(activeProfileId),
-          onFetchDownloads(activeProfileId),
-        ]);
-        console.log("✅ 데이터 불러오기 완료!");
-      } catch (e) {
-        console.error("❌ 데이터 불러오기 실패:", e);
-      }
-    };
-
-    fetchData();
-  }, [activeProfileId, onFetchWatching, onFetchLikes, onFetchDownloads]);
-
-  const getThumb = (item: WatchingItem | LikeItem | DownloadItem) =>
+  /* ---------------- 유틸 ---------------- */
+  const getThumb = (item: ItemType) =>
     (item as WatchingItem).still_path ||
     item.backdrop_path ||
     item.poster_path ||
     null;
 
-  const buildTo = (item: WatchingItem | LikeItem | DownloadItem) => {
+  const buildTo = (item: ItemType) => {
     if (item.mediaType === "tv") {
       const season = (item as WatchingItem).season_number ?? "";
       const episode = (item as WatchingItem).episode_number ?? "";
@@ -73,103 +58,131 @@ const StorageBox = () => {
     return `/movie/${item.id}`;
   };
 
+  /* ---------------- 정렬 ---------------- */
+  const sortItems = useCallback(
+    <T extends ItemType>(items: T[]) => {
+      switch (sortType) {
+        case "제목순":
+          return [...items].sort((a, b) => {
+            const at = a.title || a.name || "";
+            const bt = b.title || b.name || "";
+            return at.localeCompare(bt, "ko");
+          });
+
+        case "평점순":
+          return [...items].sort(
+            (a: any, b: any) => (b.vote_average ?? 0) - (a.vote_average ?? 0)
+          );
+
+        default:
+          return [...items].sort(
+            (a: any, b: any) => (b.createdAt ?? 0) - (a.createdAt ?? 0)
+          );
+      }
+    },
+    [sortType]
+  );
+
+  const sortedWatching = useMemo(
+    () => sortItems(watching),
+    [watching, sortItems]
+  );
+  const sortedLikes = useMemo(() => sortItems(likes), [likes, sortItems]);
+  const sortedDownloads = useMemo(
+    () => sortItems(downloads),
+    [downloads, sortItems]
+  );
+  /* ---------------- 필터 ---------------- */
+  const renderFilter = () => (
+    <div className="storage-filter-wrap">
+      {/* 필터 버튼 */}
+      <p className="filter-btn" onClick={() => setFilterOpen((prev) => !prev)}>
+        <span className="label">{sortType}</span>
+        <span className="icon">⇅</span>
+      </p>
+
+      {/* 드롭다운 : 선택된 값 제외 */}
+      {filterOpen && (
+        <ul className="storage-filter">
+          {SORT_OPTIONS.filter((type) => type !== sortType).map((type) => (
+            <li
+              key={type}
+              onClick={() => {
+                setSortType(type);
+                setFilterOpen(false);
+              }}
+            >
+              {type}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+
+  /* ---------------- 렌더 ---------------- */
   return (
     <div className="storage-inner">
       <div className="wishlist-sidenav">
         <SideNav />
       </div>
 
-      <h2>내 리스트</h2>
+      <h2>보관함</h2>
 
-      {/* 디버깅 정보 */}
-      <div
-        style={{
-          background: "#333",
-          padding: "10px",
-          marginBottom: "10px",
-          borderRadius: "5px",
-          fontSize: "12px",
-          color: "#fff",
-        }}
-      >
-        <p>🔍 디버그 정보:</p>
-        <p>프로필 ID: {activeProfileId || "없음"}</p>
-        <p>보관함: {watching.length}개</p>
-        <p>좋아요: {likes.length}개</p>
-        <p>다운로드: {downloads.length}개</p>
-      </div>
-
-      {/* 탭 네비게이션 */}
+      {/* 탭 */}
       <div className="storage-tabs">
-        <button
-          className={activeTab === "보관함" ? "active" : ""}
-          onClick={() => setActiveTab("보관함")}
-        >
-          보관함 ({watching.length})
-        </button>
-        <button
-          className={activeTab === "좋아요" ? "active" : ""}
-          onClick={() => setActiveTab("좋아요")}
-        >
-          좋아요 ({likes.length})
-        </button>
-        <button
-          className={activeTab === "다운로드" ? "active" : ""}
-          onClick={() => setActiveTab("다운로드")}
-        >
-          다운로드 ({downloads.length})
-        </button>
+        {(["보관함", "좋아요", "다운로드"] as TabType[]).map((tab) => (
+          <p
+            key={tab}
+            className={activeTab === tab ? "active" : ""}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab} (
+            {tab === "보관함"
+              ? watching.length
+              : tab === "좋아요"
+              ? likes.length
+              : downloads.length}
+            )
+          </p>
+        ))}
       </div>
 
-      {/* 탭 컨텐츠 */}
       {!activeProfileId ? (
         <div className="empty-state">
           <p>프로필을 선택해주세요.</p>
         </div>
       ) : (
         <>
-          {/* 보관함 탭 */}
+          {/* ================= 보관함 ================= */}
           {activeTab === "보관함" && (
             <>
-              {watching.length === 0 ? (
+              <div className="storage-toolbar">
+                <p className="count">총:{watching.length}개</p>
+                {renderFilter()}
+              </div>
+
+              {sortedWatching.length === 0 ? (
                 <div className="empty-state">
                   <p>재생중인 컨텐츠가 없습니다</p>
                 </div>
               ) : (
                 <ul className="list">
-                  {watching.map((item) => {
-                    const thumb = getThumb(item);
-                    const to = buildTo(item);
+                  {sortedWatching.map((item) => {
                     const title = item.title || item.name || "제목 없음";
-
                     return (
-                      <li
-                        key={`${item.mediaType}-${item.id}-${
-                          item.season_number ?? 0
-                        }-${item.episode_number ?? 0}`}
-                      >
-                        <Link to={to}>
-                          {thumb ? (
-                            <img src={`${IMG}${thumb}`} alt={title} />
-                          ) : (
-                            <div className="no-thumb">No Image</div>
-                          )}
+                      <li key={`${item.mediaType}-${item.id}`}>
+                        <Link to={buildTo(item)}>
+                          <img src={`${IMG}${getThumb(item)}`} alt={title} />
                         </Link>
 
                         <div className="storage-content">
-                          {item.mediaType === "tv" &&
-                            item.season_number != null &&
-                            item.episode_number != null && (
-                              <p className="ep">
-                                {title} 시즌{item.season_number} :{" "}
-                                {item.episode_number}화
-                              </p>
-                            )}
-
-                          {item.mediaType === "movie" && (
-                            <p className="title">{title}</p>
+                          <p className="title">{title}</p>
+                          {item.vote_average && (
+                            <p className="rating">
+                              ⭐ {item.vote_average.toFixed(1)}
+                            </p>
                           )}
-
                           <p
                             className="del-btn"
                             onClick={() =>
@@ -187,137 +200,57 @@ const StorageBox = () => {
             </>
           )}
 
-          {/* 좋아요 탭 */}
+          {/* ================= 좋아요 ================= */}
           {activeTab === "좋아요" && (
             <>
-              {likes.length === 0 ? (
-                <div className="empty-state">
-                  <p>좋아요한 콘텐츠가 없습니다</p>
-                  <p
-                    style={{
-                      fontSize: "14px",
-                      marginTop: "10px",
-                      color: "#808080",
-                    }}
-                  >
-                    Detail 페이지에서 👍 따봉 버튼을 눌러보세요!
-                  </p>
-                </div>
-              ) : (
-                <ul className="list">
-                  {likes.map((item) => {
-                    const thumb = getThumb(item);
-                    const to = buildTo(item);
-                    const title = item.title || item.name || "제목 없음";
+              <div className="storage-toolbar">
+                <p className="count">총:{likes.length}개</p>
+                {renderFilter()}
+              </div>
 
-                    return (
-                      <li key={`${item.mediaType}-${item.id}`}>
-                        <Link to={to}>
-                          {thumb ? (
-                            <img src={`${IMG}${thumb}`} alt={title} />
-                          ) : (
-                            <div className="no-thumb">No Image</div>
-                          )}
-                        </Link>
-
-                        <div className="storage-content">
-                          <p className="title">{title}</p>
-                          {item.vote_average && (
-                            <p className="rating">
-                              ⭐ {item.vote_average.toFixed(1)}
-                            </p>
-                          )}
-
-                          <p
-                            className="del-btn"
-                            onClick={() =>
-                              onRemoveLike(
-                                activeProfileId,
-                                item.id,
-                                item.mediaType
-                              )
-                            }
-                          >
-                            삭제
-                          </p>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
+              <ul className="list-good">
+                {sortedLikes.map((item) => (
+                  <li key={item.id}>
+                    <Link to={buildTo(item)}>
+                      <img src={`${IMG}${item.poster_path}`} />
+                    </Link>
+                    <p
+                      className="del-btn"
+                      onClick={() =>
+                        onRemoveLike(activeProfileId, item.id, item.mediaType)
+                      }
+                    >
+                      삭제
+                    </p>
+                  </li>
+                ))}
+              </ul>
             </>
           )}
 
-          {/* 다운로드 탭 */}
+          {/* ================= 다운로드 ================= */}
           {activeTab === "다운로드" && (
             <>
-              {downloads.length === 0 ? (
-                <div className="empty-state">
-                  <p>다운로드한 콘텐츠가 없습니다</p>
-                  <p
-                    style={{
-                      fontSize: "14px",
-                      marginTop: "10px",
-                      color: "#808080",
-                    }}
-                  >
-                    Detail 페이지에서 📥 다운로드 버튼을 눌러보세요!
-                  </p>
-                </div>
-              ) : (
-                <ul className="list">
-                  {downloads.map((item) => {
-                    const thumb = getThumb(item);
-                    const to = buildTo(item);
-                    const title = item.title || item.name || "제목 없음";
+              <div className="storage-toolbar">
+                <p className="count">총:{downloads.length}개</p>
+                {renderFilter()}
+              </div>
 
-                    return (
-                      <li
-                        key={`${item.mediaType}-${item.id}-${
-                          item.season_number ?? 0
-                        }-${item.episode_number ?? 0}`}
-                      >
-                        <Link to={to}>
-                          {thumb ? (
-                            <img src={`${IMG}${thumb}`} alt={title} />
-                          ) : (
-                            <div className="no-thumb">No Image</div>
-                          )}
-                        </Link>
-
-                        <div className="storage-content">
-                          {item.mediaType === "tv" &&
-                            item.season_number != null &&
-                            item.episode_number != null && (
-                              <p className="ep">
-                                {title} 시즌{item.season_number} :{" "}
-                                {item.episode_number}화
-                              </p>
-                            )}
-
-                          {item.mediaType === "movie" && (
-                            <p className="title">{title}</p>
-                          )}
-
-                          {item.runtime && (
-                            <p className="runtime">{item.runtime}분</p>
-                          )}
-
-                          <p
-                            className="del-btn"
-                            onClick={() =>
-                              onRemoveDownload(activeProfileId, item)
-                            }
-                          >
-                            삭제
-                          </p>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
+              <ul className="list-good">
+                {sortedDownloads.map((item) => (
+                  <li key={item.id}>
+                    <Link to={buildTo(item)}>
+                      <img src={`${IMG}${item.poster_path}`} />
+                    </Link>
+                    <p
+                      className="del-btn"
+                      onClick={() => onRemoveDownload(activeProfileId, item)}
+                    >
+                      삭제
+                    </p>
+                  </li>
+                ))}
+              </ul>
             </>
           )}
         </>

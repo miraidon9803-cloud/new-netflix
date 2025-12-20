@@ -7,6 +7,25 @@
   margin: 0 auto;
   padding-top: 110px;
 
+  .storage-tabs {
+    display: flex;
+
+    margin-bottom: 20px;
+    p {
+      padding: 12px 24px;
+      cursor: pointer;
+      &.active {
+        border-bottom: 2px solid #fff;
+      }
+    }
+  }
+
+  .count {
+    @include l.myTitle16();
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
   h2 {
     @include l.myTitle32();
     color: l.$grey10;
@@ -56,5 +75,71 @@
         cursor: pointer;
       }
     }
+  }
+}
+
+.list-good {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 24px;
+  img {
+    width: 220px;
+    height: 320px;
+  }
+}
+
+.storage-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 14px 0;
+}
+
+.storage-filter-wrap {
+  position: relative;
+  img {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* 버튼 */
+.filter-btn {
+  @include l.myTitle16();
+  border: none;
+  color: l.$grey10;
+  padding: 8px 16px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  :hover {
+    background-color: l.$grey3;
+  }
+  :active {
+    background: l.$grey3;
+  }
+}
+
+/* 드롭다운 */
+.storage-filter {
+  text-align: left;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 98px;
+  padding: 8px 16px;
+  background: l.$grey3;
+  border-radius: 4px;
+
+  z-index: 100;
+
+  li {
+    @include l.myTitle16();
+    padding: 8px 16px;
+    color: l.$grey10;
+    text-align: left;
+    cursor: pointer;
   }
 }
