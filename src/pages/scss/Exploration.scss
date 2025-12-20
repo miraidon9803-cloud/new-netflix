@@ -1,5 +1,7 @@
 @use "../../App.scss" as *;
 .Exploration-wrap {
+  padding-top: 11rem;
+  padding-bottom: 12rem;
   background: $grey1;
   height: 872px;
 
@@ -12,7 +14,7 @@
 
   background-repeat: no-repeat;
   background-size: 70%;
-  background-position: center 160%;
+  background-position: center 180%;
 }
 .Exp-textbox {
   margin-top: 10rem;
@@ -37,7 +39,7 @@
   max-width: 24rem;
     width: 100%;
   background: $grey10;
-  padding: 0.8rem;
+  padding: 0.85rem;
     margin-top: 4rem;
     border-radius: 0.4rem;
 
