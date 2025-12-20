@@ -306,7 +306,9 @@
       }
 
       .season-item {
-        position: static;
+        position: absolute;
+        // position: static;
+        top: 40;
         left: 0;
         width: 97px;
         padding: 16px;
@@ -317,9 +319,47 @@
         align-items: center;
         // border-radius: 0 0 4px 4px;
         cursor: pointer;
+        z-index: 1000;
 
         &:hover {
           background-color: l.$grey4;
+        }
+
+        &:nth-child(2) {
+          top: 40px;
+        }
+        &:nth-child(3) {
+          top: 88px;
+        }
+        &:nth-child(4) {
+          top: 136px;
+        }
+        &:nth-child(5) {
+          top: 184px;
+        }
+        &:nth-child(6) {
+          top: 232px;
+        }
+        &:nth-child(7) {
+          top: 280px;
+        }
+        &:nth-child(8) {
+          top: 328px;
+        }
+        &:nth-child(9) {
+          top: 376px;
+        }
+        &:nth-child(10) {
+          top: 424px;
+        }
+        &:nth-child(11) {
+          top: 472px;
+        }
+        &:nth-child(12) {
+          top: 520px;
+        }
+        &:nth-child(13) {
+          top: 568px;
         }
       }
 
