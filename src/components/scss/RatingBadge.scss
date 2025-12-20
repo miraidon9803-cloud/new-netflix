@@ -1,0 +1,10 @@
+.rating-badge {
+  display: flex;
+  align-items: center;
+
+  img {
+    width: 2.4rem;
+    height: 2.4rem;
+    object-fit: contain;
+  }
+}

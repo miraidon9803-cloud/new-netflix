@@ -2,7 +2,8 @@
 
 .detail-page {
   // margin: 40px 0 40px 0;
-  padding-top: 110px;
+  padding-top: 11rem;
+  padding-bottom: 12rem;
 
   // margin: 0 auto;
   .detail-inner {
@@ -29,11 +30,14 @@
       }
 
       .text-box {
+        margin-top: 2rem;
+
         .title-wrap {
           h1 {
             @include l.myTitle32();
             color: l.$grey10;
           }
+
           display: flex;
           justify-content: space-between;
 
@@ -53,6 +57,11 @@
           color: l.$grey10;
           margin-bottom: 20px;
         }
+
+        .HD {
+          max-width: 3.8rem;
+        }
+
         .text-fads {
           @include l.myTitle16();
           color: l.$grey10;
@@ -63,229 +72,356 @@
         .btn-wrap {
           display: flex;
           gap: 12px;
-          margin-bottom: 40px;
-          p {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 14.8rem;
-            height: 8rem;
-            padding: 8px 16px;
-            border-radius: 4px;
-            background-color: l.$grey2;
-          }
-        }
-      }
-      .more-panel {
-        width: 82.8rem;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        .creator-box {
-          margin-bottom: 40px;
-          img {
-            width: 115px;
-            height: 115px;
-            border-radius: 100%;
-          }
+          margin: 4rem 0;
+          //   margin-bottom: 40px;
+          //   p {
+          //     display: flex;
+          //     justify-content: center;
+          //     align-items: center;
+          //     width: 14.8rem;
+          //     height: 8rem;
+          //     padding: 8px 16px;
+          //     border-radius: 4px;
+          //     background-color: l.$grey2;
+          //   }
         }
 
-        .row {
-          // display: flex;
-          gap: 16px;
-          align-items: flex-start;
-        }
-
-        .cast-list {
+        button {
           display: flex;
-          gap: 12px;
-          flex-wrap: wrap;
-          img {
-            width: 115px;
-            height: 115px;
-            border-radius: 100px;
-          }
-        }
+          flex-direction: column; // 🔥 위-아래 정렬 핵심
+          justify-content: center;
+          align-items: center;
+          gap: 8px; // 아이콘-텍스트 간격
 
-        .cast-item {
-          width: 120px;
+          width: 14.8rem;
+          height: 8rem;
+          padding: 8px 16px;
+
+          border-radius: 4px;
+          background-color: l.$grey2;
+          border: none;
+
+          cursor: pointer;
+
+          img {
+            width: 24px; // 아이콘 크기
+            height: 24px;
+            object-fit: contain;
+          }
+
+          span {
+            font-size: 1.4rem;
+            color: l.$grey10;
+          }
+
+          &:hover {
+            background-color: l.$grey3;
+          }
         }
       }
     }
-    .season-box {
-      .detail-tabs {
-        margin-bottom: 20px;
-        display: flex;
-        p {
-          padding: 12px 24px;
-        }
-        activeTab {
-          text-decoration: underline;
-        }
-      }
-      .similar-list {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
 
-      .similar-item {
-        // background: #3a3a3a;
-        border-radius: 12px;
-        overflow: hidden;
-      }
+    .more-panel {
+      width: 82.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      color: l.$grey10;
 
-      .similar-link {
-        display: flex;
-        gap: 24px;
-        padding: 12px;
-        color: l.$grey10;
-      }
+      .creator-box {
+        margin: 2rem 0;
 
-      .thumb {
-        width: 220px;
-        flex-shrink: 0;
         img {
-          width: 220px;
-          aspect-ratio: 16 / 9;
-          object-fit: cover;
+          width: 115px;
+          height: 115px;
+          border-radius: 100%;
         }
       }
 
-      .no-thumb {
-        width: 100%;
+      .row {
+        // display: flex;
+        margin-top: 2rem;
+        gap: 16px;
+        align-items: flex-start;
+      }
+
+      .label {
+        margin-top: 1rem;
+        font-size: 1.6rem;
+        color: l.$grey10; // cast-name과 동일 톤
+        min-width: 4rem; // "감독" 폭 고정 → 정렬 안정
+      }
+
+      .value {
+        font-size: 1.4rem;
+        color: l.$grey7; // cast-role과 동일 톤
+      }
+
+      .cast-list {
+        margin-top: 1.2rem;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+
+        img {
+          width: 115px;
+          height: 115px;
+          border-radius: 100px;
+        }
+      }
+
+      .cast-item {
+        width: 120px;
+        text-align: center;
+
+        .cast-name {
+          margin-top: 1rem;
+          font-size: 1.4rem;
+          color: l.$grey7;
+        }
+
+        .cast-role {
+          font-size: 1.4rem;
+          color: l.$grey7;
+        }
+      }
+    }
+  }
+
+  .season-box {
+    .detail-tabs {
+      margin-bottom: 20px;
+      display: flex;
+
+      p {
+        position: relative;
+        padding: 12px 24px;
+        font-size: 1.6rem;
+        color: l.$grey6;
+        cursor: pointer;
+
+        &.active {
+          color: l.$grey10;
+          font-weight: 600;
+        }
+
+        &.active::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          bottom: -1px;
+          width: 100%;
+          height: 2px;
+          background-color: l.$grey10;
+        }
+      }
+
+      activeTab {
+        text-decoration: underline;
+      }
+    }
+
+    .similar-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .similar-item {
+      // background: #3a3a3a;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .similar-link {
+      display: flex;
+      gap: 24px;
+      padding: 12px;
+      color: l.$grey10;
+    }
+
+    .thumb {
+      width: 220px;
+      flex-shrink: 0;
+
+      img {
+        width: 220px;
         aspect-ratio: 16 / 9;
-        background: #2a2a2a;
-        border-radius: 8px;
+        object-fit: cover;
+        border-radius: 0.8rem;
+      }
+    }
+
+    .no-thumb {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #2a2a2a;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .overview {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #ccc;
+
+      /* ✅ 2~3줄 말줄임 (넷플릭스 느낌) */
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .season-dropdown {
+      position: relative; // ⭐ 기준점만 추가
+      overflow: visible;
+
+      .season-trigger {
+        width: 97px;
+        height: 40px;
+        // padding: 16px;
+        color: #fff;
+        background-color: l.$grey3;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        border-radius: 4px;
+      }
+
+      .season-item {
+        position: static;
+        left: 0;
+        width: 97px;
+        padding: 16px;
+        color: #fff;
+        background-color: l.$grey3;
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        // border-radius: 0 0 4px 4px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: l.$grey4;
+        }
+      }
+
+      .season-item:last-child {
+        border-radius: 0 0 4px 4px;
+      }
+
+      .chev {
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        color: #aaa;
       }
 
-      .info {
+      .chev.open {
+        transform: rotate(180deg);
+      }
+    }
+
+    width: 58.8rem;
+
+    .episode-list {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+
+      li {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 8px;
+        gap: 12px;
       }
 
-      .title {
-        font-size: 18px;
-        font-weight: 700;
+      .episode-title {
+        h3 {
+          @include l.myTitle16($fw: 600);
+          color: l.$grey10;
+          text-align: left;
+          margin-bottom: 10px;
+        }
+
+        p {
+          max-width: 35.4rem;
+          @include l.myTitle14($fw: 400, $ta: left);
+          color: l.$grey7;
+        }
       }
 
-      .overview {
-        font-size: 14px;
-        line-height: 1.5;
-        color: #ccc;
+      .episode-content {
+        position: relative;
+        width: 220px;
+        flex: 0 0 220px;
 
-        /* ✅ 2~3줄 말줄임 (넷플릭스 느낌) */
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
+        img {
+          width: 100%;
+          display: block;
+          border-radius: 0.8rem;
+        }
 
-      .season-dropdown {
-        .season-trigger {
-          width: 97px;
-          height: 40px;
-          // padding: 16px;
-          color: #fff;
-          background-color: l.$grey3;
+        .episode-btn {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 10;
+
           display: flex;
           justify-content: center;
           align-items: center;
-          gap: 10px;
-          border-radius: 4px;
-        }
-        .season-item {
-          width: 97px;
-          padding: 16px;
+
+          width: 48px;
+          height: 48px;
+          border-radius: 999px;
+          border: 0;
+          cursor: pointer;
+          background: rgba(0, 0, 0, 0.6);
           color: #fff;
-          background-color: l.$grey3;
-          display: flex;
-          justify-content: left;
-          align-items: center;
-          // border-radius: 0 0 4px 4px;
-        }
-        .season-item:last-child {
-          border-radius: 0 0 4px 4px;
-        }
-        .chev {
-          display: flex;
-          align-items: center;
-        }
-
-        .chev.open {
-          transform: rotate(180deg);
-        }
-      }
-      width: 58.8rem;
-
-      .episode-list {
-        margin-top: 24px;
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-        li {
-          display: flex;
-          gap: 12px;
-        }
-        .episode-title {
-          h3 {
-            @include l.myTitle16();
-            color: l.$grey10;
-            text-align: left;
-            margin-bottom: 10px;
-          }
-        }
-
-        .episode-content {
-          position: relative;
-          width: 220px;
-          flex: 0 0 220px;
-
-          img {
-            width: 100%;
-            display: block;
-          }
-
-          .episode-btn {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            width: 48px;
-            height: 48px;
-            border-radius: 999px;
-            border: 0;
-            cursor: pointer;
-            background: rgba(0, 0, 0, 0.6);
-            color: #fff;
-          }
         }
       }
     }
   }
-  .media-box:fullscreen {
-    width: 100vw;
-    height: 100vh;
-    aspect-ratio: auto; // 풀스크린에서는 비율 고정 해제
-    background: #000;
-  }
+}
 
-  /* 풀스크린일 때 iframe도 같이 꽉 채우기 */
-  .media-box:fullscreen .trailer-video {
-    width: 100%;
-    height: 100%;
-  }
+.media-box {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.media-box iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.media-box:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  aspect-ratio: auto; // 풀스크린에서는 비율 고정 해제
+  background: #000;
+}
+
+/* 풀스크린일 때 iframe도 같이 꽉 채우기 */
+.media-box:fullscreen .trailer-video {
+  width: 100%;
+  height: 100%;
 }

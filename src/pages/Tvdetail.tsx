@@ -2,6 +2,9 @@ import { Link, useParams } from "react-router-dom";
 import { useEffect, useMemo } from "react";
 import { useMovieStore } from "../store/useMoiveStore";
 import { useWatchingStore } from "../store/WatichingStore";
+import { useLikeStore } from "../store/LikeStore";
+import { useDownloadStore } from "../store/DownloadStore";
+import { useProfileStore } from "../store/Profile";
 import { useDetailUIStore } from "../store/useDetailUIStore";
 import { VideoPlayer } from "../components/VideoPlayer";
 import { TitleSection } from "../components/TitleSection";
@@ -45,6 +48,9 @@ const Tvdetail = () => {
   } = useMovieStore();
 
   const { onAddWatching } = useWatchingStore();
+  const { onAddLike } = useLikeStore();
+  const { onAddDownload } = useDownloadStore();
+  const activeProfileId = useProfileStore((s) => s.activeProfileId);
 
   // UI Store
   const {
@@ -205,6 +211,50 @@ const Tvdetail = () => {
     resetPlayer();
   };
 
+  // 좋아요 핸들러
+  const handleLike = async () => {
+    if (!tvDetail || !activeProfileId) return;
+
+    try {
+      await onAddLike({
+        profileId: activeProfileId,
+        id: tvDetail.id,
+        mediaType: "tv",
+        name: tvDetail.name,
+        poster_path: tvDetail.poster_path,
+        backdrop_path: tvDetail.backdrop_path,
+        vote_average: tvDetail.vote_average,
+      } as any);
+    } catch (e) {
+      console.error("좋아요 저장 실패:", e);
+    }
+  };
+
+  // 다운로드 핸들러
+  const handleDownload = async () => {
+    if (!tvDetail || !activeProfileId || !selectedSeasonNumber) return;
+
+    const firstEp = episodes?.[0];
+
+    try {
+      await onAddDownload({
+        profileId: activeProfileId,
+        mediaType: "tv",
+        id: tvDetail.id,
+        name: tvDetail.name,
+        poster_path: tvDetail.poster_path,
+        backdrop_path: tvDetail.backdrop_path,
+        still_path: firstEp?.still_path,
+        season_number: selectedSeasonNumber,
+        episode_number: firstEp?.episode_number,
+        episode_name: firstEp?.name,
+        runtime: firstEp?.runtime,
+      } as any);
+    } catch (e) {
+      console.error("다운로드 저장 실패:", e);
+    }
+  };
+
   // Loading states
   if (!tvId) return <p>잘못된 접근입니다.</p>;
   if (!tvDetail) return <p>작품 불러오는 중..</p>;
@@ -224,7 +274,11 @@ const Tvdetail = () => {
             onPlayDefault={onPlayDefault}
             contentId={tvDetail.id}
             posterPath={tvDetail.poster_path}
+            backdropPath={tvDetail.backdrop_path}
             mediaType="tv"
+            voteAverage={tvDetail.vote_average}
+            onLike={handleLike}
+            onDownload={handleDownload}
           />
 
           <MoreInfoPanel
@@ -268,7 +322,6 @@ const Tvdetail = () => {
                     return (
                       <li key={item.id} className="similar-item">
                         <Link to={`/tv/${item.id}`} className="similar-link">
-                          {/* 썸네일 */}
                           <div className="thumb">
                             {thumbnail ? (
                               <img src={thumbnail} alt={item.name} />
@@ -277,7 +330,6 @@ const Tvdetail = () => {
                             )}
                           </div>
 
-                          {/* 텍스트 영역 */}
                           <div className="info">
                             <h4 className="title">{item.name}</h4>
                             <p className="overview">

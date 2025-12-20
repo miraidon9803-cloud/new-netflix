@@ -61,6 +61,7 @@ export interface TvDetail {
   first_air_date: string;
   seasons: Season[];
   genres: string;
+  vote_average?: number;
 }
 export interface TvListItem {
   id: number;

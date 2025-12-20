@@ -60,8 +60,14 @@ type MovieStore = {
   /* ================== CREDITS ================== */
   movieCredits: Credits | null;
   tvCredits: Credits | null;
+
+  /* ================== KEYWORDS & SIMILAR ================== */
+  movieKeywords: Keyword[];
   tvKeywords: Keyword[];
+  movieSimilar: Movie[];
   tvSimilar: Movie[];
+  movieSimilarId: string | null;
+  tvSimilarId: string | null;
 
   /* ================== ACTION ================== */
   fetchPopularMovies: () => Promise<void>;
@@ -83,9 +89,13 @@ type MovieStore = {
   fetchMovieCredits: (id: string) => Promise<void>;
   fetchTvCredits: (id: string) => Promise<void>;
 
+  fetchMovieKeywords: (id: string) => Promise<void>;
   fetchTvKeywords: (id: string) => Promise<void>;
-  clearDetail: () => void;
+
+  fetchMovieSimilar: (id: string) => Promise<void>;
   fetchTvSimilar: (id: string) => Promise<void>;
+
+  clearDetail: () => void;
 };
 
 export const useMovieStore = create<MovieStore>((set) => ({
@@ -101,8 +111,12 @@ export const useMovieStore = create<MovieStore>((set) => ({
   videos: [],
   seasons: [],
   episodes: [],
+
+  movieKeywords: [],
   tvKeywords: [],
+  movieSimilar: [],
   tvSimilar: [],
+  movieSimilarId: null,
   tvSimilarId: null,
 
   movieCredits: null,
@@ -128,7 +142,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
         const kr = ageData.results?.find((r: any) => r.iso_3166_1 === "KR")
           ?.release_dates?.[0]?.certification;
 
-        // 로고(Images)
+        // 로고 (Images)
         const logoRes = await fetch(
           `${BASE_URL}/movie/${movie.id}/images?api_key=${API_KEY}`
         );
@@ -291,6 +305,21 @@ export const useMovieStore = create<MovieStore>((set) => ({
     }
   },
 
+  /* ================== KEYWORDS ================== */
+  fetchMovieKeywords: async (id: string) => {
+    if (!API_KEY) return;
+
+    try {
+      const res = await axios.get(`${BASE_URL}/movie/${id}/keywords`, {
+        params: { api_key: API_KEY },
+      });
+
+      set({ movieKeywords: res.data?.keywords ?? [] });
+    } catch {
+      set({ movieKeywords: [] });
+    }
+  },
+
   fetchTvKeywords: async (id: string) => {
     if (!API_KEY) return;
 
@@ -302,6 +331,35 @@ export const useMovieStore = create<MovieStore>((set) => ({
       set({ tvKeywords: res.data?.results ?? [] });
     } catch {
       set({ tvKeywords: [] });
+    }
+  },
+
+  /* ================== SIMILAR ================== */
+  fetchMovieSimilar: async (id: string) => {
+    if (!API_KEY) return;
+
+    try {
+      const res = await fetch(
+        `${BASE_URL}/movie/${id}/similar?api_key=${API_KEY}&language=ko-KR&page=1`
+      );
+      const data = await res.json();
+      set({ movieSimilar: data.results ?? [], movieSimilarId: id });
+    } catch {
+      set({ movieSimilar: [] });
+    }
+  },
+
+  fetchTvSimilar: async (id: string) => {
+    if (!API_KEY) return;
+
+    try {
+      const res = await fetch(
+        `${BASE_URL}/tv/${id}/similar?api_key=${API_KEY}&language=ko-KR&page=1`
+      );
+      const data = await res.json();
+      set({ tvSimilar: data.results ?? [], tvSimilarId: id });
+    } catch {
+      set({ tvSimilar: [] });
     }
   },
 
@@ -317,19 +375,9 @@ export const useMovieStore = create<MovieStore>((set) => ({
       tvRating: null,
       movieCredits: null,
       tvCredits: null,
+      movieKeywords: [],
+      tvKeywords: [],
+      movieSimilar: [],
       tvSimilar: [],
     }),
-  fetchTvSimilar: async (id: string) => {
-    if (!API_KEY) return;
-
-    try {
-      const res = await fetch(
-        `${BASE_URL}/tv/${id}/similar?api_key=${API_KEY}&language=ko-KR&page=1`
-      );
-      const data = await res.json();
-      set({ tvSimilar: data.results ?? [], tvSimilarId: id });
-    } catch {
-      set({ tvSimilar: [] });
-    }
-  },
 }));

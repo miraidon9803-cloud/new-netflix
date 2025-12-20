@@ -5,11 +5,14 @@ import WishlistPopup from "../components/WishlistPopup";
 import type { WishlistContent } from "../store/WishlistStore";
 import "./scss/NetDetail.scss";
 import { useWatchingStore } from "../store/WatichingStore";
+import { useLikeStore } from "../store/LikeStore";
+import { useDownloadStore } from "../store/DownloadStore";
 import { useProfileStore } from "../store/Profile";
+import { useRef } from "react";
+import RatingBadge from "../components/RatingBadge";
 
 const PROFILE_IMG = "https://image.tmdb.org/t/p/w185";
 const FALLBACK_PROFILE = "/images/icon/no_profile.png";
-import { useRef } from "react";
 
 const MovieDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,17 +35,34 @@ const MovieDetail = () => {
   >("정보");
   const [moreOpen, setMoreOpen] = useState(false);
 
+  // 버튼 활성화
+  const [actions, setActions] = useState({
+    liked: false,
+    wishlisted: false,
+    downloaded: false,
+  });
+
+  const toggleAction = (key: "liked" | "wishlisted" | "downloaded") => {
+    setActions((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
   // 위시리스트 팝업 상태
   const [showWishlistPopup, setShowWishlistPopup] = useState(false);
   const { onAddWatching } = useWatchingStore();
+  const { onAddLike } = useLikeStore();
+  const { onAddDownload } = useDownloadStore();
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
+
   const handlePlay = async () => {
     if (!movieDetail || !trailer) return;
 
     // ✅ 1) 보관함 저장 먼저
     try {
       await onAddWatching({
-        profileId: activeProfileId, // store에서 안 쓰면 삭제하셔도 됩니다
+        profileId: activeProfileId,
         mediaType: "movie",
         id: movieDetail.id,
         name: movieDetail.title,
@@ -53,13 +73,12 @@ const MovieDetail = () => {
       } as any);
     } catch (e) {
       console.error("보관함 저장 실패:", e);
-      // 저장 실패해도 재생은 되게
     }
 
     // ✅ 2) 재생
     setPlay(true);
 
-    // ✅ 3) 풀스크린 (사용자 클릭 안에서만 가능)
+    // ✅ 3) 풀스크린
     const el = mediaBoxRef.current;
     if (!el) return;
 
@@ -69,6 +88,46 @@ const MovieDetail = () => {
       }
     } catch (e) {
       console.warn("Fullscreen 실패:", e);
+    }
+  };
+
+  // 좋아요 버튼 핸들러
+  const handleLike = async () => {
+    if (!movieDetail || !activeProfileId) return;
+
+    try {
+      await onAddLike({
+        profileId: activeProfileId,
+        id: movieDetail.id,
+        mediaType: "movie",
+        title: movieDetail.title,
+        poster_path: movieDetail.poster_path,
+        backdrop_path: movieDetail.backdrop_path,
+        vote_average: movieDetail.vote_average,
+      } as any);
+      toggleAction("liked");
+    } catch (e) {
+      console.error("좋아요 저장 실패:", e);
+    }
+  };
+
+  // 다운로드 버튼 핸들러
+  const handleDownload = async () => {
+    if (!movieDetail || !activeProfileId) return;
+
+    try {
+      await onAddDownload({
+        profileId: activeProfileId,
+        mediaType: "movie",
+        id: movieDetail.id,
+        title: movieDetail.title,
+        poster_path: movieDetail.poster_path,
+        backdrop_path: movieDetail.backdrop_path,
+        runtime: movieDetail.runtime,
+      } as any);
+      toggleAction("downloaded");
+    } catch (e) {
+      console.error("다운로드 저장 실패:", e);
     }
   };
 
@@ -144,10 +203,12 @@ const MovieDetail = () => {
             </div>
 
             <div className="text-content">
-              <p>{movieRating ?? "정보 없음"}</p>
+              <RatingBadge rating={movieRating} />
               <p>{movieDetail.release_date}</p>
               <p>{movieDetail.runtime}분</p>
-              <p>HD</p>
+              <p className="HD">
+                <img src="/images/HD.png" alt="HD" />
+              </p>
             </div>
 
             <div className="text-fads">
@@ -155,15 +216,48 @@ const MovieDetail = () => {
             </div>
 
             <div className="btn-wrap">
-              <p
-                onClick={() => setShowWishlistPopup(true)}
-                style={{ cursor: "pointer" }}
+              <button
+                className={actions.wishlisted ? "active" : ""}
+                onClick={() => {
+                  toggleAction("wishlisted");
+                  setShowWishlistPopup(true);
+                }}
               >
-                위시리스트
-              </p>
-              <p>따봉</p>
-              <p>다운로드</p>
-              <p>공유</p>
+                <img
+                  src={
+                    actions.wishlisted
+                      ? "/images/icon/icon-heart-act.png"
+                      : "/images/icon/icon-heart.png"
+                  }
+                  alt="위시리스트"
+                />
+                <span>위시리스트</span>
+              </button>
+              <button
+                className={actions.liked ? "active" : ""}
+                onClick={handleLike}
+              >
+                <img
+                  src={
+                    actions.liked
+                      ? "/images/icon/icon-like-act.png"
+                      : "/images/icon/icon-like.png"
+                  }
+                  alt="좋아요"
+                />
+                <span>좋아요</span>
+              </button>
+              <button
+                className={actions.downloaded ? "active" : ""}
+                onClick={handleDownload}
+              >
+                <img src="/images/icon/icon-download.png" alt="다운로드" />
+                <span>다운로드</span>
+              </button>
+              <button>
+                <img src="/images/icon/icon-paper-plane.png" alt="공유" />
+                <span>공유</span>
+              </button>
             </div>
 
             <p
@@ -175,7 +269,7 @@ const MovieDetail = () => {
                 if (e.key === "Enter" || e.key === " ") setMoreOpen((v) => !v);
               }}
             >
-              정보 더보기 {moreOpen ? "−" : "+"}
+              정보 더보기 {moreOpen ? "∧" : "+"}
             </p>
 
             {moreOpen && (

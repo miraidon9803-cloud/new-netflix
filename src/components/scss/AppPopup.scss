@@ -1,150 +1,267 @@
 @use "../../App.scss" as l;
 
-.app-inner {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  /* 수직 중앙 정렬 */
-  justify-content: center;
-  /* 수평 중앙 정렬 */
-  background: rgba(0, 0, 0, 0.75);
+.inner-mypageMain {
+  padding-top: 110px;
+  margin-top: 40px;
+  margin-bottom: 120px;
 
-  .app-wrap {
-    width: 1000px;
-    height: 700px;
+  // .site-header {
+  //   position: fixed;
+  //   top: 0;
+  //   z-index: 2000;
+  // }
+
+  .app-inner {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
     display: flex;
-    justify-content: center;
     align-items: center;
-    background: l.$grey2;
-    border-radius: 8px;
+    /* 수직 중앙 정렬 */
+    justify-content: center;
+    /* 수평 중앙 정렬 */
+    background: rgba(0, 0, 0, 0.9);
 
-    .app-content {
-      width: 952px;
-      height: 652px;
+    .app-wrap {
+      width: 1000px;
+      height: 700px;
       display: flex;
-      flex-direction: column;
+      justify-content: center;
       align-items: center;
+      background: l.$grey2;
+      border-radius: 8px;
+      padding: 24px 24px;
 
-      /* 가로 방향 중앙 정렬 */
-      .app-header {
-        position: relative;
-
-        h1 {
-          @include l.myTitle20();
-          color: l.$grey10;
-          margin-bottom: 32px;
-        }
-
-        .close {
-          position: absolute;
-          top: 0;
-          left: 470px;
-          background: none;
-          border: none;
-          color: #aaa;
-          font-size: 20px;
-          cursor: pointer;
-
-          &:hover {
-            color: #fff;
-          }
-        }
-      }
-
-      form {
+      .app-content {
+        width: 952px;
+        height: 652px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
+        box-sizing: border-box;
 
-      .setting-wrap {
-        .setting-group {
-          width: 35.8rem;
+        .app-body {
+          flex: 1;
+          overflow-y: auto;
+        }
+
+        .app-footer {
+          padding: 24px;
+        }
+
+        form {
           display: flex;
           flex-direction: column;
-          gap: 32px;
+          flex: 1;
+        }
 
-          .auto-title {
-            @include l.myTitle20();
-            text-align: left;
+        /* 가로 방향 중앙 정렬 */
+        .app-header {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 32px;
+          width: 100%;
+
+          .app-header-inner {
+            width: 100%;
+            max-width: 35.8rem;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
           }
 
-          .toggle-group {
+          .apppop-title {
+            @include l.myTitle20();
+            color: l.$grey10;
+          }
+
+          .close-btn {
+            position: absolute;
+            right: 0px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+
+            img {
+              display: block;
+              width: 24px;
+              height: 24px;
+            }
+          }
+        }
+
+        form {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .setting-wrap {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+
+          .setting-group {
+            width: 35.8rem;
             display: flex;
             flex-direction: column;
-            gap: 32px;
+            gap: 62px;
 
-            .toggle-option {
+            .Playback-Settings,
+            .Content-Settings {
               display: flex;
-              justify-content: space-between;
-              align-items: center;
+              flex-direction: column;
+              gap: 32px;
+            }
 
-              label {
+            .auto-title,
+            .Content-title {
+              @include l.myTitle20();
+              text-align: left;
+            }
+
+            .toggle-group {
+              display: flex;
+              flex-direction: column;
+              gap: 32px;
+
+              .toggle-option {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                label {
+                  @include l.myTitle16(100);
+                  color: l.$grey10;
+                }
+              }
+
+              .quality-title {
                 @include l.myTitle16();
                 color: l.$grey10;
+                text-align: left;
+              }
+
+              .toggle-btn {
+                width: 51px;
+                height: 31px;
+                border-radius: 50px;
+                position: relative;
+                cursor: pointer;
+                transition: background-color 0.3s;
+                border: none;
+              }
+
+              .toggle-btn.on {
+                background-color: l.$main1;
+              }
+
+              .toggle-btn.off {
+                background-color: l.$grey7;
+              }
+
+              .toggle-knob {
+                width: 27px;
+                height: 27px;
+                background-color: white;
+                border-radius: 50%;
+                position: absolute;
+                top: 2px;
+                right: 22px;
+                transition: transform 0.3s;
+              }
+
+              .toggle-btn.on .toggle-knob {
+                transform: translateX(20px);
+              }
+
+              .toggle-btn.off .toggle-knob {
+                transform: translateX(0);
               }
             }
 
-            .toggle-btn {
-              width: 51px;
-              height: 31px;
-              border-radius: 50px;
+            .quality-group {
               position: relative;
-              cursor: pointer;
-              transition: background-color 0.3s;
+              width: 100%;
+            }
+
+            .quality-trigger {
+              width: 100%;
+              background: none;
               border: none;
+              padding: 4px 0;
+              color: l.$grey6;
+              text-align: left;
+              cursor: pointer;
+              @include l.myTitle14();
+              color: l.$grey6;
+
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
             }
 
-            .toggle-btn.on {
-              background-color: l.$main1;
+            .arrow {
+              width: 24px;
+              height: 24px;
+              background: url("/images/icon/AppPopup-Arrow.png") no-repeat
+                center / contain;
+              transition: transform 0.2s ease;
             }
 
-            .toggle-btn.off {
-              background-color: l.$grey7;
+            .arrow.open {
+              transform: rotate(180deg);
             }
 
-            .toggle-knob {
-              width: 27px;
-              height: 27px;
-              background-color: white;
-              border-radius: 50%;
+            .quality-options {
               position: absolute;
-              top: 2px;
-              right: 22px;
-              transition: transform 0.3s;
-            }
+              top: 100%;
+              left: 0;
+              width: 100%;
+              margin-top: 8px;
 
-            .toggle-btn.on .toggle-knob {
-              transform: translateX(20px);
-            }
+              background: #2b2b2b;
+              border: 1px solid #5f5f5f;
+              border-radius: 8px;
+              padding: 8px 0;
+              z-index: 10;
 
-            .toggle-btn.off .toggle-knob {
-              transform: translateX(0);
+              li {
+                padding: 12px 16px;
+                color: #cccccc;
+                cursor: pointer;
+                font-size: 14px;
+
+                &:hover {
+                  background: #575757;
+                }
+              }
             }
-          }
-          select {
-            background: none;
-            border: none;
-            @include l.myTitle14();
-            color: l.$grey6;
-            text-align: left;
           }
         }
       }
     }
-  }
 
-  .save-btn {
-    @include l.myTitle16();
-    margin-top: 130px;
-    padding: 12px 24px;
-    width: 100%;
-    background: l.$sub1;
-    color: l.$grey10;
-    border: none;
-    border-radius: 4px;
+    .auto-spacer {
+      flex: 1;
+    }
+
+    .save-btn {
+      @include l.myTitle16();
+      // margin-top: 130px;
+      padding: 12px 24px;
+      width: 100%;
+      background: l.$sub1;
+      color: l.$grey10;
+      border: none;
+      border-radius: 4px;
+    }
   }
 }
