@@ -35,59 +35,72 @@ const Acount = ({ onClose }) => {
   };
 
   return (
-    <div className="acount-inner">
-      <div className="acount-wrap">
+    <div className="acount-inner" onClick={onClose}>
+      <div className="acount-wrap" onClick={(e) => e.stopPropagation()}>
         <div className="acount-content">
           <div className="acount-header">
-            <h1>계정</h1>
-            <button className="close" onClick={onClose}>
-              ✕
+            <h1 className="account-title">계정</h1>
+            <button
+              type="button"
+              className="account-close"
+              onClick={onClose}
+              aria-label="닫기"
+            >
+              <img src="/images/icon/Acount-close.png" alt="계정 닫기버튼" />
             </button>
           </div>
 
           <form onSubmit={handleSubmit}>
-            <p>이메일 주소</p>
-            <div className="input-wrap">
-              <input
-                type="email"
-                name="email"
-                value={user?.email ?? ""}
-                readOnly
-              />
+            <div className="signup-form-wrap">
+              <p>이메일 주소</p>
+              <div className="input-wrap">
+                <input
+                  type="email"
+                  name="email"
+                  value={user?.email ?? ""}
+                  readOnly
+                />
+              </div>
             </div>
 
-            <p>비밀번호</p>
-            <div className="input-wrap">
-              <input
-                type="password"
-                name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="영어,숫자,특수문자 조합 8~16자리"
-              />
+            <div className="signup-form-wrap">
+              <p>비밀번호</p>
+              <div className="input-wrap">
+                <input
+                  type="password"
+                  name="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="영어,숫자,특수문자 조합 8~16자리"
+                />
+              </div>
             </div>
 
-            <p>비밀번호 확인</p>
-            <div className="input-wrap">
-              <input
-                type="password"
-                name="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="비밀번호를 다시 입력해주세요"
-              />
+            <div className="signup-form-wrap">
+              <p>비밀번호 확인</p>
+              <div className="input-wrap">
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="비밀번호를 다시 입력해주세요"
+                />
+              </div>
             </div>
 
-            <p>휴대폰번호를 입력해주세요</p>
-            <div className="input-wrap">
-              <input
-                type="text"
-                name="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="- 없이 숫자만 입력해주세요"
-                required
-              />
+            <div className="signup-form-wrap">
+              <p>휴대폰 번호</p>
+              <div className="input-wrap">
+                <input
+                  type="text"
+                  name="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="- 없이 숫자만 입력해주세요"
+                  required
+                />
+              </div>
             </div>
 
             <div className="btn-wrap">
@@ -96,7 +109,7 @@ const Acount = ({ onClose }) => {
               </button>
 
               <button type="submit" className="submit btn">
-                저장하기
+                저장
               </button>
             </div>
           </form>

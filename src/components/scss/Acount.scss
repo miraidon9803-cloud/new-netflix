@@ -26,30 +26,35 @@
     height: 652px;
     display: flex;
     flex-direction: column;
-    align-items: center;
 
     /* 가로 방향 중앙 정렬 */
     .acount-header {
       position: relative;
+      width: 100%;
+      margin-bottom: 32px;
 
       h1 {
-        @include l.myTitle20();
+        @include l.myTitle20(200);
         color: l.$grey10;
-        margin-bottom: 32px;
       }
 
-      .close {
+      .account-close {
         position: absolute;
         top: 0;
-        left: 470px;
+        right: 0;
         background: none;
         border: none;
         color: #aaa;
         font-size: 20px;
         cursor: pointer;
 
+        img {
+          width: 24px;
+          height: 24px;
+        }
+
         &:hover {
-          color: #fff;
+          opacity: 1;
         }
       }
     }
@@ -60,16 +65,20 @@
       justify-content: center;
       align-items: center;
 
+      .signup-form-wrap {
+        margin-bottom: 16px;
+      }
+
       p {
-        @include l.myTitle16();
+        @include l.myTitle16(100);
         text-align: left;
         width: 358px;
+        margin-bottom: 8px;
       }
 
       input {
         width: 35.8rem;
         padding: 12px 24px;
-        margin-bottom: 16px;
         border-radius: 4px;
         outline: none;
         border: 1px solid l.$grey9;
@@ -78,7 +87,7 @@
   }
 
   .btn-wrap {
-    width: 100%;
+    width: 35.8rem;
     margin-top: 130px;
     display: flex;
     flex-direction: column;
@@ -87,6 +96,7 @@
     .btn {
       @include l.myTitle16();
       padding: 12px 24px;
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
 
     .del {
@@ -94,6 +104,11 @@
       border: 1px solid l.$grey7;
       color: l.$grey7;
       border-radius: 4px;
+
+      &:hover {
+        background-color: l.$grey8;
+        color: l.$grey1;
+      }
     }
 
     .submit {
@@ -101,6 +116,10 @@
       color: l.$grey10;
       border: none;
       border-radius: 4px;
+
+      &:hover {
+        background-color: darken(l.$main1, 4%);
+      }
     }
   }
 }

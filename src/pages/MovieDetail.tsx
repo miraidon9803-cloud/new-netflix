@@ -1,56 +1,38 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { useMovieStore } from "../store/useMoiveStore";
-import WishlistPopup from "../components/WishlistPopup";
-import type { WishlistContent } from "../store/WishlistStore";
-import "./scss/NetDetail.scss";
 import { useWatchingStore } from "../store/WatichingStore";
 import { useLikeStore } from "../store/LikeStore";
 import { useDownloadStore } from "../store/DownloadStore";
 import { useProfileStore } from "../store/Profile";
 import { useRef } from "react";
-import RatingBadge from "../components/RatingBadge";
-
-const PROFILE_IMG = "https://image.tmdb.org/t/p/w185";
-const FALLBACK_PROFILE = "/images/icon/no_profile.png";
+import { TitleSection } from "../components/TitleSection";
+import "./scss/NetDetail.scss";
 
 const MovieDetail = () => {
   const { id } = useParams<{ id: string }>();
   const movieId = useMemo(() => (id ? String(id) : ""), [id]);
   const mediaBoxRef = useRef<HTMLDivElement>(null);
+
   const {
     movieDetail,
     movieRating,
     videos,
     movieCredits,
+    movieSimilar,
+    movieSimilarId,
     fetchMovieDetail,
     fetchMovieRating,
     fetchVideos,
     fetchMovieCredits,
+    fetchMovieSimilar,
   } = useMovieStore();
 
   const [play, setPlay] = useState(false);
   const [activeTab, setActiveTab] = useState<
     "정보" | "비슷한콘텐츠" | "관련클립"
   >("정보");
-  const [moreOpen, setMoreOpen] = useState(false);
 
-  // 버튼 활성화
-  const [actions, setActions] = useState({
-    liked: false,
-    wishlisted: false,
-    downloaded: false,
-  });
-
-  const toggleAction = (key: "liked" | "wishlisted" | "downloaded") => {
-    setActions((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
-  // 위시리스트 팝업 상태
-  const [showWishlistPopup, setShowWishlistPopup] = useState(false);
   const { onAddWatching } = useWatchingStore();
   const { onAddLike } = useLikeStore();
   const { onAddDownload } = useDownloadStore();
@@ -59,7 +41,7 @@ const MovieDetail = () => {
   const handlePlay = async () => {
     if (!movieDetail || !trailer) return;
 
-    // ✅ 1) 보관함 저장 먼저
+    // 1) 보관함 저장 먼저
     try {
       await onAddWatching({
         profileId: activeProfileId,
@@ -75,10 +57,10 @@ const MovieDetail = () => {
       console.error("보관함 저장 실패:", e);
     }
 
-    // ✅ 2) 재생
+    // 2) 재생
     setPlay(true);
 
-    // ✅ 3) 풀스크린
+    // 3) 풀스크린
     const el = mediaBoxRef.current;
     if (!el) return;
 
@@ -105,7 +87,6 @@ const MovieDetail = () => {
         backdrop_path: movieDetail.backdrop_path,
         vote_average: movieDetail.vote_average,
       } as any);
-      toggleAction("liked");
     } catch (e) {
       console.error("좋아요 저장 실패:", e);
     }
@@ -125,7 +106,6 @@ const MovieDetail = () => {
         backdrop_path: movieDetail.backdrop_path,
         runtime: movieDetail.runtime,
       } as any);
-      toggleAction("downloaded");
     } catch (e) {
       console.error("다운로드 저장 실패:", e);
     }
@@ -145,6 +125,16 @@ const MovieDetail = () => {
     fetchMovieCredits,
   ]);
 
+  // 비슷한 콘텐츠 fetch
+  useEffect(() => {
+    if (!movieId) return;
+    if (activeTab !== "비슷한콘텐츠") return;
+
+    if (movieSimilarId !== movieId) {
+      fetchMovieSimilar(movieId);
+    }
+  }, [movieId, activeTab, movieSimilarId, fetchMovieSimilar]);
+
   if (!movieId) return <p>잘못된 접근입니다.</p>;
   if (!movieDetail) return <p>작품 불러오는 중..</p>;
 
@@ -163,14 +153,7 @@ const MovieDetail = () => {
       ?.join(", ") ?? "정보 없음";
 
   const topCast = movieCredits?.cast?.slice(0, 10) ?? [];
-
-  // 위시리스트용 콘텐츠 정보
-  const wishlistContent: WishlistContent = {
-    id: movieDetail.id,
-    title: movieDetail.title,
-    poster_path: movieDetail.poster_path || null,
-    media_type: "movie",
-  };
+  const genres = movieDetail?.genres ?? [];
 
   return (
     <div className="detail-page">
@@ -192,127 +175,24 @@ const MovieDetail = () => {
             )}
           </div>
 
-          <div className="text-box">
-            <div className="title-wrap">
-              <h1>{movieDetail.title}</h1>
-              {trailer && (
-                <button type="button" onClick={handlePlay}>
-                  재생
-                </button>
-              )}
-            </div>
-
-            <div className="text-content">
-              <RatingBadge rating={movieRating} />
-              <p>{movieDetail.release_date}</p>
-              <p>{movieDetail.runtime}분</p>
-              <p className="HD">
-                <img src="/images/HD.png" alt="HD" />
-              </p>
-            </div>
-
-            <div className="text-fads">
-              <p>{movieDetail.overview}</p>
-            </div>
-
-            <div className="btn-wrap">
-              <button
-                className={actions.wishlisted ? "active" : ""}
-                onClick={() => {
-                  toggleAction("wishlisted");
-                  setShowWishlistPopup(true);
-                }}
-              >
-                <img
-                  src={
-                    actions.wishlisted
-                      ? "/images/icon/icon-heart-act.png"
-                      : "/images/icon/icon-heart.png"
-                  }
-                  alt="위시리스트"
-                />
-                <span>위시리스트</span>
-              </button>
-              <button
-                className={actions.liked ? "active" : ""}
-                onClick={handleLike}
-              >
-                <img
-                  src={
-                    actions.liked
-                      ? "/images/icon/icon-like-act.png"
-                      : "/images/icon/icon-like.png"
-                  }
-                  alt="좋아요"
-                />
-                <span>좋아요</span>
-              </button>
-              <button
-                className={actions.downloaded ? "active" : ""}
-                onClick={handleDownload}
-              >
-                <img src="/images/icon/icon-download.png" alt="다운로드" />
-                <span>다운로드</span>
-              </button>
-              <button>
-                <img src="/images/icon/icon-paper-plane.png" alt="공유" />
-                <span>공유</span>
-              </button>
-            </div>
-
-            <p
-              className={`more-btn ${moreOpen ? "open" : ""}`}
-              role="button"
-              tabIndex={0}
-              onClick={() => setMoreOpen((v) => !v)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") setMoreOpen((v) => !v);
-              }}
-            >
-              정보 더보기 {moreOpen ? "∧" : "+"}
-            </p>
-
-            {moreOpen && (
-              <div className="more-panel">
-                <div className="row">
-                  <span className="label">감독</span>
-                  <span className="value">{directorNames}</span>
-                </div>
-                <div className="row" style={{ flexDirection: "column" }}>
-                  <span className="label">출연</span>
-                  {topCast.length === 0 ? (
-                    <span className="value">정보 없음</span>
-                  ) : (
-                    <ul className="cast-list">
-                      {topCast.map((cast) => (
-                        <li key={cast.id} className="cast-item">
-                          <div className="cast-img">
-                            <img
-                              src={
-                                cast.profile_path
-                                  ? `${PROFILE_IMG}${cast.profile_path}`
-                                  : FALLBACK_PROFILE
-                              }
-                              alt={cast.name}
-                              loading="lazy"
-                              onError={(e) => {
-                                (e.currentTarget as HTMLImageElement).src =
-                                  FALLBACK_PROFILE;
-                              }}
-                            />
-                          </div>
-                          <p className="cast-name">{cast.name}</p>
-                          {cast.character && (
-                            <p className="cast-role">{cast.character}</p>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
+          <TitleSection
+            title={movieDetail.title}
+            rating={movieRating}
+            firstAirDate={movieDetail.release_date}
+            overview={movieDetail.overview}
+            onPlayDefault={handlePlay}
+            contentId={movieDetail.id}
+            posterPath={movieDetail.poster_path}
+            backdropPath={movieDetail.backdrop_path}
+            mediaType="movie"
+            voteAverage={movieDetail.vote_average}
+            onLike={handleLike}
+            onDownload={handleDownload}
+            director={directorNames}
+            topCast={topCast}
+            genres={genres}
+            runtime={movieDetail.runtime}
+          />
         </div>
 
         <div className="season-box">
@@ -360,7 +240,40 @@ const MovieDetail = () => {
             </div>
           ) : activeTab === "비슷한콘텐츠" ? (
             <div className="tab-panel">
-              <p>비슷한 콘텐츠를 준비 중입니다.</p>
+              {movieSimilar.length === 0 ? (
+                <p>비슷한 콘텐츠가 없습니다.</p>
+              ) : (
+                <ul className="similar-list">
+                  {movieSimilar.slice(0, 7).map((item: any) => {
+                    const thumbnail = item.backdrop_path
+                      ? `https://image.tmdb.org/t/p/w780${item.backdrop_path}`
+                      : null;
+
+                    return (
+                      <li key={item.id} className="similar-item">
+                        <Link to={`/movie/${item.id}`} className="similar-link">
+                          <div className="thumb">
+                            {thumbnail ? (
+                              <img src={thumbnail} alt={item.title} />
+                            ) : (
+                              <div className="no-thumb">NO IMAGE</div>
+                            )}
+                          </div>
+
+                          <div className="info">
+                            <h4 className="title">{item.title}</h4>
+                            <p className="overview">
+                              {item.overview
+                                ? item.overview
+                                : "작품 설명이 제공되지 않습니다."}
+                            </p>
+                          </div>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </div>
           ) : (
             <div className="tab-panel">
@@ -369,14 +282,6 @@ const MovieDetail = () => {
           )}
         </div>
       </div>
-
-      {/* 위시리스트 팝업 */}
-      {showWishlistPopup && (
-        <WishlistPopup
-          content={wishlistContent}
-          onClose={() => setShowWishlistPopup(false)}
-        />
-      )}
     </div>
   );
 };

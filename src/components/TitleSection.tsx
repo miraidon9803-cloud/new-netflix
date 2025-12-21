@@ -3,6 +3,9 @@ import WishlistPopup from "./WishlistPopup";
 import type { WishlistContent } from "../store/WishlistStore";
 import RatingBadge from "./RatingBadge";
 
+const PROFILE_IMG = "https://image.tmdb.org/t/p/w185";
+const FALLBACK_PROFILE = "/images/icon/no_profile.png";
+
 interface TitleSectionProps {
   title: string;
   rating?: string | null;
@@ -17,6 +20,14 @@ interface TitleSectionProps {
   voteAverage?: number;
   onLike?: () => void;
   onDownload?: () => void;
+  // TV용 추가 props
+  creator?: {
+    name: string;
+    profile_path: string | null;
+  };
+  topCast?: any[];
+  genres?: any[];
+  keywords?: any[];
 }
 
 export const TitleSection = ({
@@ -33,6 +44,10 @@ export const TitleSection = ({
   voteAverage,
   onLike,
   onDownload,
+  creator,
+  topCast = [],
+  genres = [],
+  keywords = [],
 }: TitleSectionProps) => {
   const [moreOpen, setMoreOpen] = useState(false);
   const [showWishlistPopup, setShowWishlistPopup] = useState(false);
@@ -147,8 +162,76 @@ export const TitleSection = ({
             if (e.key === "Enter" || e.key === " ") setMoreOpen((v) => !v);
           }}
         >
-          정보 더보기 {moreOpen ? "∧" : "+"}
+          정보 더보기 {moreOpen ? "-" : "+"}
         </p>
+
+        {/* 정보 더보기 패널 */}
+        {moreOpen && (
+          <div className="more-panel">
+            {/* TV용 제작자 정보 */}
+            {mediaType === "tv" && creator && (
+              <div className="row">
+                <span className="label">제작자</span>
+                <span className="value">{creator.name}</span>
+              </div>
+            )}
+
+            {/* 출연진 */}
+            {topCast.length > 0 && (
+              <div className="row" style={{ flexDirection: "column" }}>
+                <span className="label">출연</span>
+                <ul className="cast-list">
+                  {topCast.map((cast: any) => (
+                    <li key={cast.id} className="cast-item">
+                      <div className="cast-img">
+                        <img
+                          src={
+                            cast.profile_path
+                              ? `${PROFILE_IMG}${cast.profile_path}`
+                              : FALLBACK_PROFILE
+                          }
+                          alt={cast.name}
+                          loading="lazy"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).src =
+                              FALLBACK_PROFILE;
+                          }}
+                        />
+                      </div>
+                      <p className="cast-name">{cast.name}</p>
+                      {cast.character && (
+                        <p className="cast-role">{cast.character}</p>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* 장르 */}
+            {genres.length > 0 && (
+              <div className="row">
+                <span className="label">장르</span>
+                <span className="value">
+                  {genres.map((g: any) => g.name).join(", ")}
+                </span>
+              </div>
+            )}
+
+            {/* 키워드 */}
+            {keywords.length > 0 && (
+              <div className="row">
+                <span className="label">키워드</span>
+                <span className="value">
+                  {keywords
+                    .slice(0, 5)
+                    .map((k: any) => k.name)
+                    .join(", ")}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {showWishlistPopup && (

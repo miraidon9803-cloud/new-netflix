@@ -58,7 +58,10 @@ const MypageMain = () => {
 
             <Link to="profile">
               <p className="profile-change">
-                <img src="/images/MypageMain-Exchange.png" alt="프로필변경" />
+                <img
+                  src="/images/icon/MypageMain-Exchange.png"
+                  alt="프로필변경"
+                />
                 <span>프로필변경</span>
               </p>
             </Link>

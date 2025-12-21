@@ -8,7 +8,6 @@ import { useProfileStore } from "../store/Profile";
 import { useDetailUIStore } from "../store/useDetailUIStore";
 import { VideoPlayer } from "../components/VideoPlayer";
 import { TitleSection } from "../components/TitleSection";
-import { MoreInfoPanel } from "../components/MoreInfoPanel";
 import { TabNavigation } from "../components/TabNavigation";
 import { SeasonSelector } from "../components/SeasonSelector";
 import { EpisodeList } from "./EpisodeList";
@@ -94,7 +93,7 @@ const Tvdetail = () => {
   }, [tvDetail]);
 
   const topCast = useMemo(
-    () => tvCredits?.cast?.slice(0, 8) ?? [],
+    () => tvCredits?.cast?.slice(0, 10) ?? [],
     [tvCredits]
   );
 
@@ -279,9 +278,6 @@ const Tvdetail = () => {
             voteAverage={tvDetail.vote_average}
             onLike={handleLike}
             onDownload={handleDownload}
-          />
-
-          <MoreInfoPanel
             creator={creator}
             topCast={topCast}
             genres={genres}
