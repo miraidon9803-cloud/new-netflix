@@ -1,7 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchRecentTVSeries2025, type TVItem } from '../../api/tmdbSeries';
 import './scss/Series.scss';
+
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/free-mode';
 
 const IMG = 'https://image.tmdb.org/t/p/w342';
 const FALLBACK_POSTER = '/images/icon/no_poster.png';
@@ -21,13 +26,6 @@ const LightSeries: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const scrollRef = useRef<HTMLUListElement>(null);
-
-  // ✅ 드래그 상태
-  const isDraggingRef = useRef(false);
-  const startXRef = useRef(0);
-  const startScrollLeftRef = useRef(0);
-
   useEffect(() => {
     let mounted = true;
 
@@ -37,21 +35,9 @@ const LightSeries: React.FC = () => {
         setError('');
 
         const [comedyRes, romanceRes, animationRes] = await Promise.all([
-          fetchRecentTVSeries2025({
-            with_genres: '35', // 코미디
-            sort_by: 'popularity.desc',
-            page: 1,
-          }),
-          fetchRecentTVSeries2025({
-            with_genres: '10749', // 로맨스
-            sort_by: 'popularity.desc',
-            page: 1,
-          }),
-          fetchRecentTVSeries2025({
-            with_genres: '16', // 애니메이션
-            sort_by: 'popularity.desc',
-            page: 1,
-          }),
+          fetchRecentTVSeries2025({ with_genres: '35', sort_by: 'popularity.desc', page: 1 }),
+          fetchRecentTVSeries2025({ with_genres: '10749', sort_by: 'popularity.desc', page: 1 }),
+          fetchRecentTVSeries2025({ with_genres: '16', sort_by: 'popularity.desc', page: 1 }),
         ]);
 
         if (!mounted) return;
@@ -62,15 +48,11 @@ const LightSeries: React.FC = () => {
           ...(animationRes.results ?? []),
         ];
 
-        // ✅ 포스터 없는 것 제거 + id 중복 제거
         const unique = Array.from(
           new Map(merged.filter((tv) => tv.poster_path).map((tv) => [tv.id, tv])).values()
         );
 
-        // ✅ 랜덤 정렬
-        const randomized = shuffle(unique);
-
-        setList(randomized);
+        setList(shuffle(unique));
       } catch (err: any) {
         if (!mounted) return;
         setError(err?.message ?? '가볍게 즐길 콘텐츠 로딩 실패');
@@ -84,82 +66,24 @@ const LightSeries: React.FC = () => {
     };
   }, []);
 
-  // ✅ 마우스 드래그
-  const onMouseDown: React.MouseEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    isDraggingRef.current = true;
-    el.classList.add('dragging');
-
-    startXRef.current = e.pageX;
-    startScrollLeftRef.current = el.scrollLeft;
-  };
-
-  const onMouseMove: React.MouseEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el || !isDraggingRef.current) return;
-
-    e.preventDefault();
-    const dx = e.pageX - startXRef.current;
-    el.scrollLeft = startScrollLeftRef.current - dx;
-  };
-
-  const endDrag = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    isDraggingRef.current = false;
-    el.classList.remove('dragging');
-  };
-
-  // ✅ 터치 드래그(모바일)
-  const onTouchStart: React.TouchEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    isDraggingRef.current = true;
-    el.classList.add('dragging');
-
-    startXRef.current = e.touches[0].pageX;
-    startScrollLeftRef.current = el.scrollLeft;
-  };
-
-  const onTouchMove: React.TouchEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el || !isDraggingRef.current) return;
-
-    const dx = e.touches[0].pageX - startXRef.current;
-    el.scrollLeft = startScrollLeftRef.current - dx;
-  };
-
-  const onTouchEnd: React.TouchEventHandler<HTMLUListElement> = () => {
-    endDrag();
-  };
-
   return (
     <section className="series-section">
       <h2 className="series-title">가볍게 즐길 콘텐츠</h2>
 
       {loading && <p className="state">로딩중...</p>}
       {error && <p className="state error">에러: {error}</p>}
-
       {!loading && !error && !list.length && <div className="series-empty">결과가 없습니다</div>}
 
       {!loading && !error && !!list.length && (
-        <ul
+        <Swiper
           className="series-row"
-          ref={scrollRef}
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={endDrag}
-          onMouseLeave={endDrag}
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}>
+          modules={[FreeMode]}
+          freeMode
+          grabCursor
+          slidesPerView="auto"
+          spaceBetween={12}>
           {list.map((tv) => (
-            <li className="series-card" key={tv.id}>
-              {/* ✅ TV 상세 페이지 이동 */}
+            <SwiperSlide key={tv.id} className="series-card" style={{ width: 'auto' }}>
               <Link to={`/tv/${tv.id}`}>
                 <img
                   className="series-poster"
@@ -172,9 +96,9 @@ const LightSeries: React.FC = () => {
                   }}
                 />
               </Link>
-            </li>
+            </SwiperSlide>
           ))}
-        </ul>
+        </Swiper>
       )}
     </section>
   );
