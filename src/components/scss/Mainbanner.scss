@@ -196,13 +196,14 @@
   /* ===========================
      🟩 모바일 (max-width: 430px)
      =========================== */
-  @media (max-width: 430px) {
+  @media (max-width: 430.98px) {
     max-width: 100%;
     height: auto;
     min-height: unset;
 
     .mobile-wrap {
       position: relative;
+      margin-top: 8rem;
       // top: -154px;
       display: block;
       // border: 1px solid green;

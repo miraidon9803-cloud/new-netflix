@@ -1,0 +1,87 @@
+/* src/components/scss/ChoiceContentBGMobile.scss */
+
+.choice-rolling-m {
+  --gapX: 0.8rem;
+  --gapY: 0.8rem;
+
+  position: relative;
+  display: flex;
+  gap: var(--gapX);
+
+  width: calc(100% - 3.2rem);
+  margin: 0 1.6rem;
+
+  /* ✅ 모바일 화면에서 "2줄이 꽉 차 보이게"를 위해
+     배경은 부모에서 잘려야 함(ChoiceContentTxt.scss에서 overflow hidden 처리) */
+  height: 78svh;
+  min-height: 54rem;
+  overflow: hidden;
+
+  .m-col {
+    flex: 0 0 calc((100% - var(--gapX)) / 2);
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .m-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gapY);
+    will-change: transform;
+  }
+
+  .m-card {
+    flex: 0 0 auto;
+
+    > img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 11 / 16;
+      object-fit: cover;
+      border-radius: 0.6rem;
+      filter: brightness(0.9);
+    }
+  }
+}
+
+/* ✅ 모바일 2컬럼 무한 롤링 */
+@keyframes vm-scroll-up {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+@keyframes vm-scroll-down {
+  0% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.choice-rolling-m .col-0 {
+  animation: vm-scroll-up 44s linear infinite;
+}
+.choice-rolling-m .col-1 {
+  animation: vm-scroll-down 48s linear infinite;
+}
+
+/* ✅ 태블릿/PC에서는 모바일 전용 숨김 */
+@media (min-width: 431px) {
+  .choice-rolling-m {
+    display: none;
+  }
+}
+
+/* 모션 줄이기 */
+@media (prefers-reduced-motion: reduce) {
+  .choice-rolling-m .col-0,
+  .choice-rolling-m .col-1 {
+    animation: none;
+  }
+}

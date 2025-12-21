@@ -1,7 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useNetflixStore } from "../store/NetflixStore";
 import "./scss/Top10.scss";
-import { Link } from "react-router-dom";
+
+// ✅ Swiper
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import { FreeMode, Mousewheel } from "swiper/modules";
 
 const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 const FALLBACK_POSTER = "/images/icon/no_poster.png";
@@ -27,13 +32,6 @@ const TodayTop10: React.FC = () => {
     onFetchNetflixTop10();
   }, [onFetchNetflixTop10]);
 
-  const scrollRef = useRef<HTMLUListElement>(null);
-
-  // ✅ 드래그 상태
-  const isDraggingRef = useRef(false);
-  const startXRef = useRef(0);
-  const startScrollLeftRef = useRef(0);
-
   const getTitle = (item: Top10Item) =>
     (item.name ?? item.title ?? "poster") as string;
 
@@ -44,75 +42,17 @@ const TodayTop10: React.FC = () => {
     return null;
   };
 
-  // ✅ 마우스 드래그 핸들러
-  const onMouseDown: React.MouseEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    isDraggingRef.current = true;
-    el.classList.add("dragging");
-
-    startXRef.current = e.pageX;
-    startScrollLeftRef.current = el.scrollLeft;
-  };
-
-  const onMouseMove: React.MouseEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    if (!isDraggingRef.current) return;
-
-    e.preventDefault(); // ✅ 드래그 중 텍스트 선택 방지
-    const dx = e.pageX - startXRef.current;
-    el.scrollLeft = startScrollLeftRef.current - dx; // ✅ 드래그 방향에 맞게 이동
-  };
-
-  const endDrag = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    isDraggingRef.current = false;
-    el.classList.remove("dragging");
-  };
-
-  // ✅ 터치 드래그(모바일)도 같이 지원
-  const onTouchStart: React.TouchEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    isDraggingRef.current = true;
-    el.classList.add("dragging");
-
-    startXRef.current = e.touches[0].pageX;
-    startScrollLeftRef.current = el.scrollLeft;
-  };
-
-  const onTouchMove: React.TouchEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    if (!isDraggingRef.current) return;
-
-    const dx = e.touches[0].pageX - startXRef.current;
-    el.scrollLeft = startScrollLeftRef.current - dx;
-  };
-
-  const onTouchEnd: React.TouchEventHandler<HTMLUListElement> = () => {
-    endDrag();
-  };
-
   return (
     <div className="top10Wrap">
       <h2>오늘의 TOP 10 시리즈</h2>
 
-      <ul
-        className="top10List"
-        ref={scrollRef}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={endDrag}
-        onMouseLeave={endDrag}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
+      <Swiper
+        className="top10Swiper"
+        modules={[FreeMode, Mousewheel]}
+        slidesPerView="auto"
+        spaceBetween={24}
+        freeMode
+        mousewheel={{ forceToAxis: true }}
       >
         {netflixTop10.map((item, index) => {
           const badge = getBadgeType(item);
@@ -121,11 +61,11 @@ const TodayTop10: React.FC = () => {
             : FALLBACK_POSTER;
 
           return (
-            <li key={item.id} className="top10Item">
-              <span className="rank">{index + 1}</span>
+            <SwiperSlide key={item.id} className="top10Slide">
+              <div className="top10Item">
+                <span className="rank">{index + 1}</span>
 
-              <div className="posterWrap">
-                <Link to={`/tv/${item.id}`}>
+                <Link to={`/tv/${item.id}`} className="posterWrap" aria-label={getTitle(item)}>
                   {badge === "netflix" && (
                     <img
                       className="netflixBadge"
@@ -159,16 +99,15 @@ const TodayTop10: React.FC = () => {
                     alt={getTitle(item)}
                     draggable={false}
                     onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src =
-                        FALLBACK_POSTER;
+                      (e.currentTarget as HTMLImageElement).src = FALLBACK_POSTER;
                     }}
                   />
                 </Link>
               </div>
-            </li>
+            </SwiperSlide>
           );
         })}
-      </ul>
+      </Swiper>
     </div>
   );
 };

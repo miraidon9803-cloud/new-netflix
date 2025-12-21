@@ -9,84 +9,78 @@
     margin-bottom: 1.6rem;
   }
 
-  .top10List {
+  /* ✅ Swiper 컨테이너 (기존 .top10List 역할) */
+  .top10Swiper {
+    overflow: visible; /* 랭크/hover 확대 잘리면 안됨 */
+
+    /* Swiper 내부 wrapper는 flex라서 gap 대신 spaceBetween이 적용됨 */
+    /* 스크롤바 숨김은 브라우저 스크롤이 아니라 swiper라 크게 필요없지만,
+       혹시 mousewheel + overflow 관련 이슈 방지용으로 유지해도 OK */
+  }
+
+  /* ✅ slidesPerView="auto"일 때 슬라이드 폭을 여기서 고정 */
+  .top10Slide {
+    width: 28.4rem;
+    overflow: visible; /* hover 확대 */
+  }
+
+  .top10Item {
+    position: relative;
+    width: 28.4rem;
+    padding-bottom: 1.2rem;
+    padding-left: 7rem;
+
     display: flex;
-    gap: 2.4rem;
-    overflow-x: auto;
-    overflow-y: visible;
+    align-items: flex-end;
+    overflow: visible;
 
-    &::-webkit-scrollbar {
-      display: none;
+    .rank {
+      position: absolute;
+      left: 0;
+      bottom: -0.2rem;
+      z-index: 1;
+      font-family: 'Esamanru';
+      font-size: 12.8rem;
+      font-weight: 500;
+      color: #fff;
+      opacity: 0.9;
+      pointer-events: none;
     }
-    scrollbar-width: none;
 
-    .top10Item {
+    /* 포스터 + 배지 래퍼 */
+    .posterWrap {
       position: relative;
-      flex: 0 0 28.4rem;
-      width: 28.4rem;
-      padding-bottom: 1.2rem;
-      padding-left: 7rem;
+      z-index: 3;
+      width: 22rem;
+      display: block; /* Link라서 안전하게 */
+      transition: transform 0.25s ease;
+    }
 
-      display: flex;
-      align-items: flex-end;
-      overflow: visible;
+    .poster {
+      width: 100%;
+      aspect-ratio: 11 / 16;
+      border-radius: 0.8rem;
+      box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.6);
+      display: block;
+      object-fit: cover;
+    }
 
-      .rank {
-        position: absolute;
-        left: 0;
-        bottom: -0.2rem;
-        z-index: 1;
-        font-family: 'Esamanru';
-        font-size: 12.8rem;
-        font-weight: 500;
-        color: #fff;
-        opacity: 0.9;
-        pointer-events: none;
-      }
+    /* 배지들 공통: 무조건 우상단 딱붙 */
+    .netflixBadge,
+    .newBadge,
+    .oldBadge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 5;
+      pointer-events: none;
+      filter: drop-shadow(0 0.4rem 0.6rem rgba(0, 0, 0, 0.6));
+      width: 3.2rem; /* PC 기본 */
+    }
 
-      /* 포스터 + 배지 래퍼 */
-      .posterWrap {
-        position: relative;
-        z-index: 3;
-        width: 22rem;
-        transition: transform 0.25s ease;
-      }
-
-      .poster {
-        width: 100%;
-        aspect-ratio: 11 / 16;
-        border-radius: 0.8rem;
-        box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.6);
-        display: block;
-      }
-
-      /* 배지들 공통: 무조건 우상단 딱붙 */
-      .netflixBadge,
-      .newBadge,
-      .oldBadge {
-        position: absolute;
-        top: 0;
-        right: 0;
-        z-index: 5;
-        pointer-events: none;
-        filter: drop-shadow(0 0.4rem 0.6rem rgba(0, 0, 0, 0.6));
-      }
-
-      /* PC 배지 크기(3종 동일) */
-      .netflixBadge {
-        width: 3.2rem;
-      }
-      .newBadge {
-        width: 3.2rem;
-      }
-      .oldBadge {
-        width: 3.2rem;
-      }
-
-      /* hover 시 포스터 + 배지 같이 */
-      &:hover .posterWrap {
-        transform: translateY(-0.4rem) scale(1.03);
-      }
+    /* hover 시 포스터 + 배지 같이 */
+    &:hover .posterWrap {
+      transform: translateY(-0.4rem) scale(1.03);
     }
   }
 
@@ -95,16 +89,19 @@
      =================== */
   @media (max-width: 1440px) {
     margin: 4rem 1.6rem 0;
+
     h2 {
       font-size: 2rem;
     }
-    .top10List {
-      gap: 1.6rem;
+
+    /* ✅ 너 기존 의도(가로 4개 꽉차게 = 25%)를 SwiperSlide 폭으로 적용 */
+    .top10Slide {
+      width: 25%;
+      overflow: visible;
     }
 
     .top10Item {
-      flex: 0 0 20%;
-      width: 20%;
+      width: 100%;
       padding-left: 24.6%;
 
       .rank {
@@ -120,12 +117,9 @@
         border-radius: 0.8rem;
       }
 
-      /* 태블릿 배지 */
       .netflixBadge,
       .newBadge,
       .oldBadge {
-        top: 0;
-        right: 0;
         width: 2.8rem;
       }
     }
@@ -142,12 +136,15 @@
       margin-bottom: 1.2rem;
     }
 
-    .top10List {
-      gap: 1.2rem;
+    /* ✅ 모바일 2개 꽉차게 = 50%인데,
+       너는 “40%”로 2.5개 느낌을 원했던 스타일이라 그대로 유지 */
+    .top10Slide {
+      width: 40%;
+      overflow: visible;
     }
 
     .top10Item {
-      flex: 0 0 40%;
+      width: 100%;
       padding-left: 22%;
 
       .rank {
@@ -164,12 +161,9 @@
         border-radius: 0.4rem;
       }
 
-      /* 모바일 배지 */
       .netflixBadge,
       .newBadge,
       .oldBadge {
-        top: 0;
-        right: 0;
         width: 2rem;
       }
 

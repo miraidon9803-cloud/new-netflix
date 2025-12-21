@@ -5,70 +5,66 @@
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 1.6rem;
+    color: #fff;
   }
 
-  .sfTopList {
-    display: flex;
-    gap: 2.4rem;
-    overflow-x: auto;
-    overflow-y: hidden;
+  /* ✅ Swiper */
+  .sfTopSwiper {
+    width: 100%;
+    overflow: hidden;
+  }
 
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    scrollbar-width: none;
+  /* ✅ slide 폭 고정 (핵심) */
+  .sfTopSlide {
+    width: 22rem; /* PC 카드 폭 */
+    flex-shrink: 0;
+  }
 
-    .sfItem {
-      position: relative;
-      flex: 0 0 auto;
+  /* ✅ 링크 자체를 카드로 */
+  .sfItem {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
 
-      /* ✅ 포스터/뱃지 래퍼 */
-      .posterWrap {
-        position: relative;
-        width: 22rem; // PC 포스터 폭
-        transform-origin: center bottom;
-        transition: transform 0.25s ease;
-      }
+  .posterWrap {
+    position: relative;
+    width: 100%;
+    transform-origin: center bottom;
+    transition: transform 0.25s ease;
+  }
 
-      /* ✅ 포스터 */
-      .poster {
-        width: 100%;
-        aspect-ratio: 11 / 16;
-        border-radius: 0.8rem; // PC
-        display: block;
-        object-fit: cover;
-      }
+  .poster {
+    width: 100%;
+    aspect-ratio: 11 / 16;
+    border-radius: 0.8rem;
+    display: block;
+    object-fit: cover;
+    -webkit-user-drag: none;
+  }
 
-      /* ✅ 뱃지들 공통: 무조건 우상단 딱붙 */
-      .netflixBadge,
-      .newBadge,
-      .oldBadge {
-        position: absolute;
-        top: 0;
-        right: 0;
-        z-index: 5;
-        height: auto;
-        pointer-events: none;
-        filter: drop-shadow(0 0.4rem 0.6rem rgba(0, 0, 0, 0.6));
-        transition: transform 0.25s ease; // ✅ 혹시 개별 transform 줄 때도 부드럽게
-      }
+  /* ✅ 배지 공통: 우상단 고정 */
+  .netflixBadge,
+  .newBadge,
+  .oldBadge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 5;
+    height: auto;
+    pointer-events: none;
+    filter: drop-shadow(0 0.4rem 0.6rem rgba(0, 0, 0, 0.6));
+  }
 
-      /* ✅ 사이즈(PC) */
-      .netflixBadge {
-        width: 3.2rem;
-      }
-      .newBadge {
-        width: 3.2rem;
-      }
-      .oldBadge {
-        width: 3.2rem;
-      }
+  .netflixBadge,
+  .newBadge,
+  .oldBadge {
+    width: 3.2rem; /* PC */
+  }
 
-      /* ✅ hover 시 포스터 + 뱃지 같이 (wrapper 자체를 움직여서 “같이” 보장) */
-      .posterWrap:hover {
-        transform: translateY(-0.4rem) scale(1.03);
-      }
-    }
+  /* ✅ hover 시 같이 움직이기 */
+  .sfItem:hover .posterWrap {
+    transform: translateY(-0.4rem) scale(1.03);
   }
 
   /* ===========================
@@ -82,28 +78,19 @@
       margin-bottom: 1.4rem;
     }
 
-    .sfTopList {
-      gap: 1.6rem;
+    .sfTopSlide {
+      width: 17.2rem;
+    }
 
-      .sfItem {
-        .posterWrap {
-          width: 17.2rem;
-        }
+    .poster {
+      aspect-ratio: 172 / 244;
+      border-radius: 0.8rem;
+    }
 
-        .poster {
-          aspect-ratio: 172 / 244;
-          border-radius: 0.8rem;
-        }
-
-        /* ✅ 뱃지 우상단 딱붙 유지 + 사이즈만 조절 */
-        .netflixBadge,
-        .newBadge,
-        .oldBadge {
-          top: 0;
-          right: 0;
-          width: 2.8rem;
-        }
-      }
+    .netflixBadge,
+    .newBadge,
+    .oldBadge {
+      width: 2.8rem;
     }
   }
 
@@ -118,34 +105,24 @@
       margin-bottom: 1.2rem;
     }
 
-    .sfTopList {
-      gap: 1.2rem;
+    /* ✅ 2.5개 보이기 */
+    .sfTopSlide {
+      width: 40%;
+    }
 
-      .sfItem {
-        flex: 0 0 40%;
+    .poster {
+      aspect-ratio: 104 / 152;
+      border-radius: 0.4rem;
+    }
 
-        .posterWrap {
-          width: 100%;
-        }
+    .netflixBadge,
+    .newBadge,
+    .oldBadge {
+      width: 2.2rem;
+    }
 
-        .poster {
-          width: 100%;
-          aspect-ratio: 104 / 152;
-          border-radius: 0.4rem;
-        }
-
-        .netflixBadge,
-        .newBadge,
-        .oldBadge {
-          top: 0;
-          right: 0;
-          width: 2.2rem;
-        }
-
-        .posterWrap:hover {
-          transform: translateY(-0.2rem) scale(1.01);
-        }
-      }
+    .sfItem:hover .posterWrap {
+      transform: translateY(-0.2rem) scale(1.01);
     }
   }
 }

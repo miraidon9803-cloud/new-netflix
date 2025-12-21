@@ -19,26 +19,8 @@ const SORT_MAP: Record<SortKey, string> = {
   popular: "popularity.desc",
 };
 
-// const GENRES: { label: string; id: number }[] = [
-//   { label: '액션', id: 10759 },
-//   { label: '모험', id: 10759 },
-//   { label: '애니메이션', id: 16 },
-//   { label: '코미디', id: 35 },
-//   { label: '범죄', id: 80 },
-//   { label: '다큐멘터리', id: 99 },
-//   { label: '드라마', id: 18 },
-//   { label: '가족', id: 10751 },
-//   { label: '판타지', id: 10765 },
-//   { label: '역사', id: 36 },
-//   { label: '공포', id: 27 },
-//   { label: '음악', id: 10402 },
-//   { label: '미스터리', id: 9648 },
-//   { label: '로맨스', id: 10749 },
-//   { label: 'SF', id: 10765 },
-//   { label: '스릴러', id: 53 },
-//   { label: '전쟁', id: 10752 },
-// ];
 const GENRES = genre;
+
 const COUNTRIES: { label: string; code: string }[] = [
   { label: "미국", code: "US" },
   { label: "영국", code: "GB" },
@@ -78,6 +60,7 @@ const FilterPopup: React.FC = () => {
     () => ({ sort: "latest", genres: [], runtimes: [], countries: [] }),
     []
   );
+
   const [filters, setFilters] = useState<FilterState>(initial);
 
   const toggleNumber = (arr: number[], v: number) =>
@@ -97,28 +80,36 @@ const FilterPopup: React.FC = () => {
   const buildParams = (f: FilterState) => {
     const params: Record<string, string> = {};
 
+    // 정렬
     params.sort_by = SORT_MAP[f.sort];
 
+    // 장르/국가
     if (f.genres.length) params.with_genres = f.genres.join(",");
     if (f.countries.length) params.with_origin_country = f.countries.join(",");
 
-    // 러닝타임 gte/lte
+    // ✅ 러닝타임 gte/lte (TS 밑줄 해결 버전)
     let gte: number | undefined;
     let lte: number | undefined;
 
     f.runtimes.forEach((key) => {
       const rule = RUNTIMES.find((r) => r.key === key);
       if (!rule) return;
-      if (rule.gte !== undefined)
-        gte = gte === undefined ? rule.gte : Math.max(gte, rule.gte);
-      if (rule.lte !== undefined)
-        lte = lte === undefined ? rule.lte : Math.min(lte, rule.lte);
+
+      if (rule.gte !== undefined) {
+        if (gte === undefined) gte = rule.gte;
+        else gte = Math.max(gte, rule.gte);
+      }
+
+      if (rule.lte !== undefined) {
+        if (lte === undefined) lte = rule.lte;
+        else lte = Math.min(lte, rule.lte);
+      }
     });
 
     if (gte !== undefined) params["with_runtime.gte"] = String(gte);
     if (lte !== undefined) params["with_runtime.lte"] = String(lte);
 
-    // 페이지도 같이 넘기고 싶으면:
+    // 페이지 고정(원하면 삭제 가능)
     params.page = "1";
 
     return params;
@@ -127,17 +118,14 @@ const FilterPopup: React.FC = () => {
   const onReset = () => setFilters(initial);
 
   const onApply = () => {
-    const params = buildParams(filters);
-    const qs = new URLSearchParams(params).toString();
-
+    const qs = new URLSearchParams(buildParams(filters)).toString();
     setOpen(false);
-    navigate(`/series/filter?${qs}`); // ✅ 결과창으로 이동
+    navigate(`/series/filter?${qs}`);
   };
 
   return (
     <>
-      {/* 버튼은 기존 유지 */}
-      <div className="filter-wrap">
+      <div className="series-filter-wrap">
         <button type="button" onClick={() => setOpen(true)}>
           <img src="/images/icon/filter.png" alt="filter" />
           필터
@@ -145,23 +133,27 @@ const FilterPopup: React.FC = () => {
       </div>
 
       {open && (
-        <div className="filter-dim" onClick={() => setOpen(false)}>
-          <div className="filter-popup" onClick={(e) => e.stopPropagation()}>
-            <div className="filter-head">
-              <div className="filter-title">카테고리</div>
+        <div className="series-filter-dim" onClick={() => setOpen(false)}>
+          <div
+            className="series-filter-popup"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="series-filter-head">
+              <div className="series-filter-title">카테고리</div>
               <button
                 type="button"
-                className="filter-close"
+                className="series-filter-close"
                 onClick={() => setOpen(false)}
               >
                 ×
               </button>
             </div>
 
-            <section className="filter-sec">
-              <div className="filter-sec-title">정렬</div>
-              <div className="radio-row">
-                <label className="radio-item">
+            {/* 정렬 */}
+            <section className="series-filter-sec">
+              <div className="series-filter-sec-title">정렬</div>
+              <div className="series-radio-row">
+                <label className="series-radio-item">
                   <input
                     type="radio"
                     name="sort"
@@ -172,7 +164,8 @@ const FilterPopup: React.FC = () => {
                   />
                   최신순
                 </label>
-                <label className="radio-item">
+
+                <label className="series-radio-item">
                   <input
                     type="radio"
                     name="sort"
@@ -183,7 +176,8 @@ const FilterPopup: React.FC = () => {
                   />
                   제목순
                 </label>
-                <label className="radio-item">
+
+                <label className="series-radio-item">
                   <input
                     type="radio"
                     name="sort"
@@ -197,14 +191,15 @@ const FilterPopup: React.FC = () => {
               </div>
             </section>
 
-            <section className="filter-sec">
-              <div className="filter-sec-title">장르</div>
-              <div className="chip-grid">
+            {/* 장르 */}
+            <section className="series-filter-sec">
+              <div className="series-filter-sec-title">장르</div>
+              <div className="series-chip-grid">
                 {GENRES.map((g) => (
                   <button
                     key={`${g.label}-${g.id}`}
                     type="button"
-                    className={`chip ${
+                    className={`series-chip ${
                       filters.genres.includes(g.id) ? "is-active" : ""
                     }`}
                     onClick={() =>
@@ -220,14 +215,15 @@ const FilterPopup: React.FC = () => {
               </div>
             </section>
 
-            <section className="filter-sec">
-              <div className="filter-sec-title">러닝타임</div>
-              <div className="chip-row">
+            {/* 러닝타임 */}
+            <section className="series-filter-sec">
+              <div className="series-filter-sec-title">러닝타임</div>
+              <div className="series-chip-row">
                 {RUNTIMES.map((r) => (
                   <button
                     key={r.key}
                     type="button"
-                    className={`chip ${
+                    className={`series-chip ${
                       filters.runtimes.includes(r.key) ? "is-active" : ""
                     }`}
                     onClick={() => toggleRuntime(r.key)}
@@ -238,14 +234,15 @@ const FilterPopup: React.FC = () => {
               </div>
             </section>
 
-            <section className="filter-sec">
-              <div className="filter-sec-title">국가</div>
-              <div className="chip-grid">
+            {/* 국가 */}
+            <section className="series-filter-sec">
+              <div className="series-filter-sec-title">국가</div>
+              <div className="series-chip-grid">
                 {COUNTRIES.map((c) => (
                   <button
                     key={c.code}
                     type="button"
-                    className={`chip ${
+                    className={`series-chip ${
                       filters.countries.includes(c.code) ? "is-active" : ""
                     }`}
                     onClick={() =>
@@ -261,7 +258,7 @@ const FilterPopup: React.FC = () => {
               </div>
             </section>
 
-            <div className="filter-actions">
+            <div className="series-filter-actions">
               <button type="button" className="btn ghost" onClick={onReset}>
                 초기화
               </button>
