@@ -4,9 +4,9 @@
   position: absolute;
   right: 12.5%;
   top: 80rem;
-  width: 12.5%;
+  width: 12%;
   height: 4rem;
-  z-index: 9999;
+  z-index: 2000;
 
   > button {
     width: 100%;
@@ -29,14 +29,25 @@
   }
 }
 
+/* ✅ DIM + BLUR */
 .filter-dim {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
   z-index: 3000;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  /* ✅ 어둡게 + 블러가 같이 보이도록 투명도 살짝 낮춤 */
+  background: rgba(0, 0, 0, 0.35);
+
+  /* ✅ 뒤 배경 블러 4px */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+
+  /* ✅ (선택) 렌더 안정 */
+  will-change: backdrop-filter;
 }
 
 .filter-popup {

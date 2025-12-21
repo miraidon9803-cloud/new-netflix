@@ -1,4 +1,6 @@
-.movie10Wrap {
+/* src/components/scss/Top10.scss */
+
+.top10Wrap {
   position: relative;
   margin-top: 4rem;
 
@@ -11,30 +13,33 @@
     margin-bottom: 1.6rem;
   }
 
-  .movie10List {
-    display: flex;
-    gap: 8.8rem;
-    overflow-x: auto;
-    overflow-y: visible;
+  /* ✅ Swiper 컨테이너 */
+  .top10Swiper {
     padding: 0 0 0 8rem;
+    overflow: visible;
 
+    /* 드래그 감성 */
     cursor: grab;
     user-select: none;
     -webkit-user-select: none;
 
-    &.dragging {
+    &:active {
       cursor: grabbing;
     }
-
-    /* 스크롤바 숨기기 */
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    scrollbar-width: none;
-    -ms-overflow-style: none;
   }
 
-  .movie10Item {
+  /* ✅ Swiper가 만드는 wrapper/slide는 밖으로 보이게 */
+  .top10Swiper .swiper-wrapper {
+    overflow: visible;
+  }
+
+  /* ✅ slide는 auto 폭을 가지게 */
+  .top10Slide {
+    width: auto;
+    overflow: visible;
+  }
+
+  .top10Item {
     position: relative;
     flex: 0 0 auto;
     padding-bottom: 1.2rem;
@@ -67,47 +72,26 @@
     transition: transform 0.25s ease, box-shadow 0.25s ease;
   }
 
+  .posterWrap a {
+    display: block;
+  }
+
   .poster {
     width: 100%;
     aspect-ratio: 11 / 16;
     border-radius: 0.8rem;
     box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.6);
     display: block;
+
+    -webkit-user-drag: none;
+    user-select: none;
   }
 
-  /* ✅ 배지: 우상단 고정 */
-  .netflixBadge {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 5;
-    width: 3.2rem;
-    pointer-events: none;
-    filter: drop-shadow(0 0.4rem 0.6rem rgba(0, 0, 0, 0.6));
-  }
-
-  /* ✅ hover 효과: 포스터만 살짝 떠오르게 */
-  .movie10Item:hover .posterWrap {
+  /* ✅ hover 효과 */
+  .top10Item:hover .posterWrap {
     transform: translateY(-0.4rem) scale(1.03);
   }
 
-  /* ✅ 은은한 라이트 박스(원래 너 코드의 before 유지) */
-  .movie10Item::before {
-    content: '';
-    position: absolute;
-    top: -1.6rem;
-    bottom: 0;
-    left: 20%;
-    right: 20%;
-    background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.08),
-      rgba(255, 255, 255, 0.02)
-    );
-    opacity: 0.4;
-    border-radius: 0.8rem;
-    z-index: 0;
-  }
 
   /* ===================
      🟦 태블릿 ≤1440px
@@ -119,8 +103,7 @@
       font-size: 2rem;
     }
 
-    .movie10List {
-      gap: 6rem;
+    .top10Swiper {
       padding-left: 1.6rem;
     }
 
@@ -137,10 +120,6 @@
       font-size: 10.8rem;
       left: -30%;
     }
-
-    .netflixBadge {
-      width: 2.8rem;
-    }
   }
 
   /* ===================
@@ -154,8 +133,7 @@
       margin-bottom: 1.2rem;
     }
 
-    .movie10List {
-      gap: 3.2rem;
+    .top10Swiper {
       padding-left: 1.6rem;
     }
 
@@ -175,11 +153,7 @@
       bottom: -0.05rem;
     }
 
-    .netflixBadge {
-      width: 2rem;
-    }
-
-    .movie10Item:hover .posterWrap {
+    .top10Item:hover .posterWrap {
       transform: translateY(-0.2rem) scale(1.01);
     }
   }

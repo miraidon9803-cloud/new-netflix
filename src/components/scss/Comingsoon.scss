@@ -1,36 +1,87 @@
 .comingsoon {
   margin-top: 8rem;
+
   > p {
     font-size: 2.4rem;
     font-weight: 600;
     line-height: 140%;
     margin-bottom: 1.6rem;
   }
+
   .cominglist {
     display: flex;
     overflow-x: auto;
-    .comingimg {
-      margin-right: 2.4rem;
-    }
-    .comingimg:last-child {
-      margin-right: 0;
+    overflow-y: hidden;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    /* ✅ 스와이퍼 느낌 */
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+
+    /* 스크롤바 숨김 */
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
     }
   }
-  @media (max-width: 1440px) {
+
+  .comingimg {
+    flex: 0 0 auto;
+    width: 32rem; /* PC 기본 폭 */
+    margin-right: 2.4rem;
+
+    scroll-snap-align: start;
+
+    img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 320 / 120; /* ✅ 8:3 비율 유지 */
+      object-fit: cover;
+      display: block;
+      border-radius: 0.8rem;
+    }
+  }
+
+  .comingimg:last-child {
+    margin-right: 0;
+  }
+
+  @media (max-width: 144rem) {
     > p {
       font-size: 2rem;
     }
   }
 
-  @media (max-width: 430px) {
+  /* =========================
+     📱 모바일: 430px (43rem)
+     - 2개만 보이게
+     - 320/120 비율 유지
+     ========================= */
+  @media (max-width: 43rem) {
     margin-top: 4rem;
+    padding: 0 1.6rem 0;
+
     > p {
       font-size: 2rem;
     }
+
     .cominglist {
-      .comingimg {
-        flex: 0 0 50%;
-      }
+      gap: 1.2rem; /* 카드 사이 간격 */
+    }
+
+    .comingimg {
+      margin-right: 0;
+      width: auto;
+
+      /* ✅ (전체 - gap) / 2 = 화면에 2개 */
+      flex: 0 0 calc((100% - 1.2rem) / 2);
+    }
+
+    .comingimg img {
+      border-radius: 0.6rem;
     }
   }
 }

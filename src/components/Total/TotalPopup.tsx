@@ -128,7 +128,7 @@ const TotalPopup: React.FC<Props> = ({ initialParams, onApply }) => {
   return (
     <>
       {/* 필터 버튼 */}
-      <div className="filter-wrap">
+      <div className="total-wrap">
         <button type="button" onClick={() => setOpen(true)}>
           <img src="/images/icon/filter.png" alt="" />
           필터
@@ -137,11 +137,11 @@ const TotalPopup: React.FC<Props> = ({ initialParams, onApply }) => {
 
       {open && (
         <div
-          className="filter-dim"
+          className="total-dim"
           onMouseDown={(e) => {
             if (e.target === e.currentTarget) close();
           }}>
-          <div className="filter-popup" role="dialog" aria-label="total filter popup">
+          <div className="total-popup" role="dialog" aria-label="total filter popup">
             {/* ✅ 헤더: 타이틀 가운데 + X 우측 */}
             <div className="popup-top">
               <h3 className="popup-title">카테고리</h3>
@@ -151,8 +151,8 @@ const TotalPopup: React.FC<Props> = ({ initialParams, onApply }) => {
             </div>
 
             {/* ✅ 정렬 */}
-            <section className="filter-sec">
-              <p className="filter-sec-title">정렬</p>
+            <section className="total-sec">
+              <p className="total-sec-title">정렬</p>
               <div className="radio-row">
                 {SORTS.map((s) => (
                   <label key={s.value} className="radio-item">
@@ -169,8 +169,8 @@ const TotalPopup: React.FC<Props> = ({ initialParams, onApply }) => {
             </section>
 
             {/* ✅ 콘텐츠 타입 */}
-            <section className="filter-sec">
-              <p className="filter-sec-title">콘텐츠 타입</p>
+            <section className="total-sec">
+              <p className="total-sec-title">콘텐츠 타입</p>
               <div className="chip-row">
                 {TYPES.map((t) => (
                   <button
@@ -185,8 +185,8 @@ const TotalPopup: React.FC<Props> = ({ initialParams, onApply }) => {
             </section>
 
             {/* ✅ 장르 */}
-            <section className="filter-sec">
-              <p className="filter-sec-title">장르</p>
+            <section className="total-sec">
+              <p className="total-sec-title">장르</p>
               <div className="chip-grid">
                 {GENRES.map((g) => (
                   <button
@@ -201,8 +201,8 @@ const TotalPopup: React.FC<Props> = ({ initialParams, onApply }) => {
             </section>
 
             {/* ✅ 러닝타임 */}
-            <section className="filter-sec">
-              <p className="filter-sec-title">러닝타임</p>
+            <section className="total-sec">
+              <p className="total-sec-title">러닝타임</p>
               <div className="chip-row">
                 {RUNTIMES.map((r) => (
                   <button
@@ -217,8 +217,8 @@ const TotalPopup: React.FC<Props> = ({ initialParams, onApply }) => {
             </section>
 
             {/* ✅ 국가 */}
-            <section className="filter-sec">
-              <p className="filter-sec-title">국가</p>
+            <section className="total-sec">
+              <p className="total-sec-title">국가</p>
               <div className="chip-grid">
                 {COUNTRIES.map((c) => (
                   <button
@@ -233,7 +233,7 @@ const TotalPopup: React.FC<Props> = ({ initialParams, onApply }) => {
             </section>
 
             {/* ✅ 하단 버튼: 좌 초기화 / 우 적용하기 */}
-            <div className="filter-actions">
+            <div className="total-actions">
               <button type="button" className="btn ghost" onClick={reset}>
                 초기화
               </button>

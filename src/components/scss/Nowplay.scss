@@ -8,39 +8,38 @@
     margin-bottom: 1.6rem;
   }
 
-  .Nowplay {
-    display: flex;
-    gap: 2.4rem;
+  /* ✅ Swiper 컨테이너 */
+  .nowplaySwiper {
+    overflow: visible; /* hover 확대 안 잘리게 */
+  }
 
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding-bottom: 1rem;
+  /* ✅ slidesPerView="auto"라 슬라이드 폭을 여기서 고정 */
+  .nowplaySlide {
+    width: 22rem;
+    aspect-ratio: 220 / 320;
+    overflow: visible;
 
-    &::-webkit-scrollbar {
-      display: none;
+    transform-origin: center bottom;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+    &:hover {
+      transform: translateY(-0.4rem) scale(1.03);
     }
-    scrollbar-width: none;
+  }
 
-    li {
-      flex: 0 0 auto;
-      width: 22rem;
-      aspect-ratio: 220 / 320;
+  .nowplayLink {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
 
-      transform-origin: center bottom;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-
-      &:hover {
-        transform: translateY(-0.4rem) scale(1.03);
-      }
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        border-radius: 0.8rem; // ✅ PC
-      }
-    }
+  .nowplayLink img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0.8rem; /* ✅ PC */
+    -webkit-user-drag: none;
   }
 
   /* ===========================
@@ -54,17 +53,13 @@
       margin-bottom: 1.4rem;
     }
 
-    .Nowplay {
-      gap: 1.6rem;
+    .nowplaySlide {
+      width: 17.2rem; /* ✅ 172 기준 */
+      aspect-ratio: 172 / 244;
     }
 
-    .Nowplay li {
-      width: 17.2rem; // ✅ 172 기준
-      aspect-ratio: 172 / 244; // ✅ 태블릿 비율
-    }
-
-    .Nowplay li img {
-      border-radius: 0.8rem; // ✅ 태블릿도 0.8
+    .nowplayLink img {
+      border-radius: 0.8rem;
     }
   }
 
@@ -79,24 +74,18 @@
       margin-bottom: 1.2rem;
     }
 
-    .Nowplay {
-      gap: 1.2rem;
-      padding-bottom: 0.8rem;
+    /* ✅ 화면에 2.5개 보이게: 40% */
+    .nowplaySlide {
+      width: 40%;
+      aspect-ratio: 104 / 152;
+
+      &:hover {
+        transform: translateY(-0.2rem) scale(1.01);
+      }
     }
 
-    .Nowplay li {
-      /* ✅ 화면에 2.5개 보이게 */
-      flex: 0 0 40%;
-      width: auto; // width 고정 해제(2.5개 규칙 우선)
-      aspect-ratio: 104 / 152; // ✅ 모바일 비율
-    }
-
-    .Nowplay li img {
-      border-radius: 0.4rem; // ✅ 모바일만 0.4
-    }
-
-    .Nowplay li:hover {
-      transform: translateY(-0.2rem) scale(1.01);
+    .nowplayLink img {
+      border-radius: 0.4rem;
     }
   }
 }

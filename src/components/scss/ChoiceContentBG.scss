@@ -92,38 +92,5 @@
 }
 
 /* =========================
-   모바일: 2컬럼 꽉 (가로 2개), 최소 3장 보이게 높이 확보
+   ✅ 모바일: 기존 BG 아예 숨김
    ========================= */
-@media (max-width: 430px) {
-  .choice-rolling {
-    --gapX: 0.8rem;
-    --gapY: 0.8rem;
-
-    width: calc(100% - 3.2rem);
-    margin: 0 1.6rem;
-
-    /* ✅ "한 화면 꽉" + 3장 이상 보이도록 */
-    height: 78svh;
-    min-height: 54rem;
-  }
-
-  /* ✅ 2컬럼만 보이게 */
-  .choice-rolling > .v-column {
-    flex: 0 0 calc((100% - var(--gapX)) / 2);
-  }
-
-  /* ✅ 3~4번째 컬럼 숨김 */
-  .choice-rolling > .v-column:nth-child(n + 3) {
-    display: none;
-  }
-}
-
-/* 모션 줄이기 */
-@media (prefers-reduced-motion: reduce) {
-  .choice-rolling .col-0,
-  .choice-rolling .col-1,
-  .choice-rolling .col-2,
-  .choice-rolling .col-3 {
-    animation: none;
-  }
-}

@@ -1,12 +1,18 @@
-import React, { useRef } from "react";
+import React from "react";
 import "./scss/Nowplay.scss";
 import { Link } from "react-router-dom";
+
+// ✅ Swiper
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import { FreeMode, Mousewheel } from "swiper/modules";
 
 type PlayItem = {
   id: number;
   type: "tv" | "movie";
   src: string;
 };
+
 const play: PlayItem[] = [
   { id: 70593, type: "tv", src: "/images/nowplay/킹덤.png" },
   { id: 197067, type: "tv", src: "/images/nowplay/우영우.png" },
@@ -54,92 +60,26 @@ const play: PlayItem[] = [
 ];
 
 const NowPlay: React.FC = () => {
-  const scrollRef = useRef<HTMLUListElement>(null);
-
-  // ✅ 드래그 상태
-  const isDraggingRef = useRef(false);
-  const startXRef = useRef(0);
-  const startScrollLeftRef = useRef(0);
-
-  // ✅ 마우스 드래그
-  const onMouseDown: React.MouseEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    isDraggingRef.current = true;
-    el.classList.add("dragging");
-
-    startXRef.current = e.pageX;
-    startScrollLeftRef.current = el.scrollLeft;
-  };
-
-  const onMouseMove: React.MouseEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    if (!isDraggingRef.current) return;
-
-    e.preventDefault();
-    const dx = e.pageX - startXRef.current;
-    el.scrollLeft = startScrollLeftRef.current - dx;
-  };
-
-  const endDrag = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    isDraggingRef.current = false;
-    el.classList.remove("dragging");
-  };
-
-  // ✅ 터치 드래그(모바일)
-  const onTouchStart: React.TouchEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    isDraggingRef.current = true;
-    el.classList.add("dragging");
-
-    startXRef.current = e.touches[0].pageX;
-    startScrollLeftRef.current = el.scrollLeft;
-  };
-
-  const onTouchMove: React.TouchEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    if (!isDraggingRef.current) return;
-
-    const dx = e.touches[0].pageX - startXRef.current;
-    el.scrollLeft = startScrollLeftRef.current - dx;
-  };
-
-  const onTouchEnd: React.TouchEventHandler<HTMLUListElement> = () => {
-    endDrag();
-  };
-
   return (
     <div className="playWrap">
       <p>지금 방영 중인 콘텐츠</p>
 
-      <ul
-        className="Nowplay"
-        ref={scrollRef}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={endDrag}
-        onMouseLeave={endDrag}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
+      <Swiper
+        className="nowplaySwiper"
+        modules={[FreeMode, Mousewheel]}
+        slidesPerView="auto"
+        spaceBetween={24}
+        freeMode
+        mousewheel={{ forceToAxis: true }}
       >
-        {play.map((src, i) => (
-          <li key={i}>
-            {/* 자동 분기 */}
-            <Link to={`/${src.type}/${src.id}`}>
-              <img src={src.src} alt="" draggable={false} />
+        {play.map((item, i) => (
+          <SwiperSlide key={`${item.type}-${item.id}-${i}`} className="nowplaySlide">
+            <Link to={`/${item.type}/${item.id}`} className="nowplayLink" aria-label="go detail">
+              <img src={item.src} alt="" draggable={false} />
             </Link>
-          </li>
+          </SwiperSlide>
         ))}
-      </ul>
+      </Swiper>
     </div>
   );
 };
