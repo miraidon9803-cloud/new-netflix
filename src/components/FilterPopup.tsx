@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./scss/FilterPopup.scss";
 import { genre } from "../data/genre";
@@ -51,15 +51,15 @@ const RUNTIMES: {
   { key: "30to60", label: "30분 ~ 1시간", gte: 30, lte: 60 },
   { key: "over60", label: "1시간 이상", gte: 60 },
 ];
-
+const initial: FilterState = {
+  sort: "latest",
+  genres: [],
+  runtimes: [],
+  countries: [],
+};
 const FilterPopup: React.FC = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-
-  const initial: FilterState = useMemo(
-    () => ({ sort: "latest", genres: [], runtimes: [], countries: [] }),
-    []
-  );
 
   const [filters, setFilters] = useState<FilterState>(initial);
 
@@ -87,7 +87,6 @@ const FilterPopup: React.FC = () => {
     if (f.genres.length) params.with_genres = f.genres.join(",");
     if (f.countries.length) params.with_origin_country = f.countries.join(",");
 
-    // ✅ 러닝타임 gte/lte (TS 밑줄 해결 버전)
     let gte: number | undefined;
     let lte: number | undefined;
 

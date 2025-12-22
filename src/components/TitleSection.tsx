@@ -20,14 +20,30 @@ interface TitleSectionProps {
   voteAverage?: number;
   onLike?: () => void;
   onDownload?: () => void;
-  // TV용 추가 props
+
+  /** movie */
+  director?: string;
+  runtime?: number;
+
+  /** tv */
   creator?: {
     name: string;
     profile_path: string | null;
   };
-  topCast?: any[];
-  genres?: any[];
-  keywords?: any[];
+
+  /** common */
+  topCast?: {
+    id: number;
+    name: string;
+    profile_path?: string | null;
+    character?: string;
+  }[];
+
+  genres: string[];
+  keywords?: {
+    id: number;
+    name: string;
+  }[];
 }
 
 export const TitleSection = ({
@@ -39,12 +55,12 @@ export const TitleSection = ({
   onPlayDefault,
   contentId,
   posterPath,
-  backdropPath,
   mediaType,
-  voteAverage,
   onLike,
   onDownload,
   creator,
+  director,
+  runtime,
   topCast = [],
   genres = [],
   keywords = [],
@@ -65,23 +81,21 @@ export const TitleSection = ({
   };
 
   const handleLike = () => {
-    if (onLike) {
-      onLike();
-      toggleAction("liked");
-    }
+    if (!onLike) return;
+    onLike();
+    toggleAction("liked");
   };
 
   const handleDownload = () => {
-    if (onDownload) {
-      onDownload();
-      toggleAction("downloaded");
-    }
+    if (!onDownload) return;
+    onDownload();
+    toggleAction("downloaded");
   };
 
   const wishlistContent: WishlistContent = {
     id: contentId,
-    title: title,
-    poster_path: posterPath || null,
+    title,
+    poster_path: posterPath ?? null,
     media_type: mediaType,
   };
 
@@ -97,17 +111,20 @@ export const TitleSection = ({
 
         <div className="text-content">
           <RatingBadge rating={rating} />
-          <p>{firstAirDate}</p>
+          {firstAirDate && <p>{firstAirDate}</p>}
           {selectedSeasonNumber && <p>시즌 {selectedSeasonNumber}</p>}
           <p className="HD">
             <img src="/images/HD.png" alt="HD" />
           </p>
         </div>
 
-        <div className="text-fads">
-          <p>{overview}</p>
-        </div>
+        {overview && (
+          <div className="text-fads">
+            <p>{overview}</p>
+          </div>
+        )}
 
+        {/* 액션 버튼 */}
         <div className="btn-wrap">
           <button
             className={actions.wishlisted ? "active" : ""}
@@ -126,6 +143,7 @@ export const TitleSection = ({
             />
             <span>위시리스트</span>
           </button>
+
           <button
             className={actions.liked ? "active" : ""}
             onClick={handleLike}
@@ -140,6 +158,7 @@ export const TitleSection = ({
             />
             <span>좋아요</span>
           </button>
+
           <button
             className={actions.downloaded ? "active" : ""}
             onClick={handleDownload}
@@ -147,12 +166,14 @@ export const TitleSection = ({
             <img src="/images/icon/icon-download.png" alt="다운로드" />
             <span>다운로드</span>
           </button>
+
           <button>
             <img src="/images/icon/icon-paper-plane.png" alt="공유" />
             <span>공유</span>
           </button>
         </div>
 
+        {/* 더보기 버튼 */}
         <p
           className={`more-btn ${moreOpen ? "open" : ""}`}
           role="button"
@@ -165,14 +186,30 @@ export const TitleSection = ({
           정보 더보기 {moreOpen ? "-" : "+"}
         </p>
 
-        {/* 정보 더보기 패널 */}
+        {/* 더보기 패널 */}
         {moreOpen && (
           <div className="more-panel">
-            {/* TV용 제작자 정보 */}
+            {/* 감독 */}
+            {director && (
+              <div className="row">
+                <span className="label">감독</span>
+                <span className="value">{director}</span>
+              </div>
+            )}
+
+            {/* 제작자 (TV) */}
             {mediaType === "tv" && creator && (
               <div className="row">
                 <span className="label">제작자</span>
                 <span className="value">{creator.name}</span>
+              </div>
+            )}
+
+            {/* 러닝타임 */}
+            {runtime != null && (
+              <div className="row">
+                <span className="label">러닝타임</span>
+                <span className="value">{runtime}분</span>
               </div>
             )}
 
@@ -181,7 +218,7 @@ export const TitleSection = ({
               <div className="row" style={{ flexDirection: "column" }}>
                 <span className="label">출연</span>
                 <ul className="cast-list">
-                  {topCast.map((cast: any) => (
+                  {topCast.map((cast) => (
                     <li key={cast.id} className="cast-item">
                       <div className="cast-img">
                         <img
@@ -212,9 +249,7 @@ export const TitleSection = ({
             {genres.length > 0 && (
               <div className="row">
                 <span className="label">장르</span>
-                <span className="value">
-                  {genres.map((g: any) => g.name).join(", ")}
-                </span>
+                <span className="value">{genres.join(", ")}</span>
               </div>
             )}
 
@@ -225,7 +260,7 @@ export const TitleSection = ({
                 <span className="value">
                   {keywords
                     .slice(0, 5)
-                    .map((k: any) => k.name)
+                    .map((k) => k.name)
                     .join(", ")}
                 </span>
               </div>

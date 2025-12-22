@@ -1,6 +1,5 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import './scss/SideNav.scss';
+import { Link, useLocation } from "react-router-dom";
+import "./scss/SideNav.scss";
 
 const SideNav = () => {
   const { pathname } = useLocation();
@@ -15,9 +14,9 @@ const SideNav = () => {
       <Link to="/exploration">
         <img
           src={
-            pathname === '/exploration'
-              ? '/images/icon/바로가기-active.png'
-              : '/images/icon/바로가기.png'
+            pathname === "/exploration"
+              ? "/images/icon/바로가기-active.png"
+              : "/images/icon/바로가기.png"
           }
           alt=""
         />
@@ -25,14 +24,22 @@ const SideNav = () => {
 
       <Link to="/shorts">
         <img
-          src={pathname === '/shorts' ? '/images/icon/쇼츠-active.png' : '/images/icon/쇼츠.png'}
+          src={
+            pathname === "/shorts"
+              ? "/images/icon/쇼츠-active.png"
+              : "/images/icon/쇼츠.png"
+          }
           alt=""
         />
       </Link>
 
       <Link to="/">
         <img
-          src={pathname === '/main' ? '/images/icon/홈-active.png' : '/images/icon/홈.png'}
+          src={
+            pathname === "/main"
+              ? "/images/icon/홈-active.png"
+              : "/images/icon/홈.png"
+          }
           alt=""
         />
       </Link>
@@ -40,9 +47,9 @@ const SideNav = () => {
       <Link to="/wishlist">
         <img
           src={
-            pathname === '/wishlist'
-              ? '/images/icon/위시리스트-active.png'
-              : '/images/icon/위시리스트.png'
+            pathname === "/wishlist"
+              ? "/images/icon/위시리스트-active.png"
+              : "/images/icon/위시리스트.png"
           }
           alt=""
         />
@@ -51,9 +58,9 @@ const SideNav = () => {
       <Link to="/StorageBox">
         <img
           src={
-            pathname === '/StorageBox'
-              ? '/images/icon/보관함-active.png'
-              : '/images/icon/보관함.png'
+            pathname === "/StorageBox"
+              ? "/images/icon/보관함-active.png"
+              : "/images/icon/보관함.png"
           }
           alt=""
         />

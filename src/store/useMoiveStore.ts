@@ -17,7 +17,7 @@ export type CreditCast = {
   id: number;
   name: string;
   character?: string;
-  profile_path?: string | null;
+  profile_path?: string | null; // ✅ undefined 허용
 };
 
 export type CreditCrew = {
@@ -139,8 +139,9 @@ export const useMovieStore = create<MovieStore>((set) => ({
         );
         const ageData = await ageRes.json();
 
-        const kr = ageData.results?.find((r: any) => r.iso_3166_1 === "KR")
-          ?.release_dates?.[0]?.certification;
+        const kr =
+          ageData.results?.find((r: any) => r.iso_3166_1 === "KR")
+            ?.release_dates?.[0]?.certification ?? null;
 
         // 로고 (Images)
         const logoRes = await fetch(
@@ -149,7 +150,9 @@ export const useMovieStore = create<MovieStore>((set) => ({
         const logoData = await logoRes.json();
         const logo = logoData.logos?.[0]?.file_path ?? null;
 
-        return { ...movie, rating: kr ?? null, logo };
+        // ⚠️ Movie 타입에 rating/logo가 없으면 types/movie 쪽에 추가하거나,
+        // 여기서 as any로 캐스팅 처리 필요할 수 있어요.
+        return { ...(movie as any), rating: kr, logo } as Movie;
       })
     );
 
@@ -157,7 +160,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
   },
 
   /* ================== DETAIL ================== */
-  fetchMovieDetail: async (id) => {
+  fetchMovieDetail: async (id: string) => {
     if (!API_KEY) return;
 
     const res = await fetch(
@@ -167,7 +170,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
     set({ movieDetail: data });
   },
 
-  fetchTvDetail: async (id) => {
+  fetchTvDetail: async (id: string) => {
     if (!API_KEY) return;
 
     const res = await fetch(
@@ -178,7 +181,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
   },
 
   /* ================== RATING ================== */
-  fetchMovieRating: async (id) => {
+  fetchMovieRating: async (id: string) => {
     if (!API_KEY) return;
 
     try {
@@ -201,7 +204,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
     }
   },
 
-  fetchTvRating: async (id) => {
+  fetchTvRating: async (id: string) => {
     if (!API_KEY) return;
 
     try {
@@ -258,7 +261,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
   },
 
   /* ================== TV ONLY ================== */
-  fetchSeasons: async (tvId) => {
+  fetchSeasons: async (tvId: string) => {
     if (!API_KEY) return;
 
     const res = await fetch(
@@ -268,7 +271,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
     set({ seasons: data.seasons ?? [] });
   },
 
-  fetchEpisodes: async (tvId, season) => {
+  fetchEpisodes: async (tvId: string, season: number) => {
     if (!API_KEY) return;
 
     const res = await fetch(
@@ -313,7 +316,6 @@ export const useMovieStore = create<MovieStore>((set) => ({
       const res = await axios.get(`${BASE_URL}/movie/${id}/keywords`, {
         params: { api_key: API_KEY },
       });
-
       set({ movieKeywords: res.data?.keywords ?? [] });
     } catch {
       set({ movieKeywords: [] });
@@ -327,7 +329,6 @@ export const useMovieStore = create<MovieStore>((set) => ({
       const res = await axios.get(`${BASE_URL}/tv/${id}/keywords`, {
         params: { api_key: API_KEY },
       });
-
       set({ tvKeywords: res.data?.results ?? [] });
     } catch {
       set({ tvKeywords: [] });
@@ -379,5 +380,7 @@ export const useMovieStore = create<MovieStore>((set) => ({
       tvKeywords: [],
       movieSimilar: [],
       tvSimilar: [],
+      movieSimilarId: null,
+      tvSimilarId: null,
     }),
 }));

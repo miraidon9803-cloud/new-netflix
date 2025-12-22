@@ -4,9 +4,8 @@ import { EffectCoverflow } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 
 import "swiper/css";
-import "swiper/css/effect-coverflow";
+// import "swiper/css/effect-coverflow";
 import "./scss/Step2.scss";
-
 
 type FlowValue = "light" | "medium" | "immersive" | "binge";
 
@@ -26,13 +25,33 @@ interface Step2Props {
 
 /* 카드 데이터 */
 const flowCards: FlowCard[] = [
-  { id: 1, label: "가볍게 보고 싶어요", value: "light", images: "/images/card-1.png" },
-  { id: 2, label: "적당히 몰입하고 싶어요", value: "medium",images: "/images/card-1-1.png" },
-  { id: 3, label: "시간 가는 줄 몰랐어요",value: "immersive", images: "/images/card-1-2.png" },
-  { id: 4, label: "정주행하고 싶어요", value: "binge", images: "/images/card-1-3.png" },
+  {
+    id: 1,
+    label: "가볍게 보고 싶어요",
+    value: "light",
+    images: "/images/card-1.png",
+  },
+  {
+    id: 2,
+    label: "적당히 몰입하고 싶어요",
+    value: "medium",
+    images: "/images/card-1-1.png",
+  },
+  {
+    id: 3,
+    label: "시간 가는 줄 몰랐어요",
+    value: "immersive",
+    images: "/images/card-1-2.png",
+  },
+  {
+    id: 4,
+    label: "정주행하고 싶어요",
+    value: "binge",
+    images: "/images/card-1-3.png",
+  },
 ];
 
-const Step2 = ({ onNext}: Step2Props) => {
+const Step2 = ({ onNext }: Step2Props) => {
   const [activeIndex, setActiveIndex] = useState(1);
 
   const handleSlideChange = (swiper: SwiperType) => {
@@ -50,9 +69,7 @@ const Step2 = ({ onNext}: Step2Props) => {
     <section className="step2_section">
       <div className="step2_textbox">
         <p className="step2_small">2단계</p>
-        <h2 className="step2_title">
-          오늘은 어느 정도의 몰입을 원하시나요?
-        </h2>
+        <h2 className="step2_title">오늘은 어느 정도의 몰입을 원하시나요?</h2>
       </div>
 
       <Swiper
@@ -76,9 +93,7 @@ const Step2 = ({ onNext}: Step2Props) => {
         {flowCards.map((card, index) => (
           <SwiperSlide key={card.id} className="step2_slide">
             <button
-              className={`step2_card ${
-                activeIndex === index ? "active" : ""
-              }`}
+              className={`step2_card ${activeIndex === index ? "active" : ""}`}
               onClick={() => handleCardClick(card.value, index)}
             >
               <img src={card.images} alt={card.label} />
