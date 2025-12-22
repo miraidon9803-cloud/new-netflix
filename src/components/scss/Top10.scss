@@ -1,3 +1,5 @@
+/* src/components/scss/Top10.scss */
+
 .top10Wrap {
   position: relative;
   margin-top: 4rem;
@@ -11,7 +13,9 @@
     margin-bottom: 1.6rem;
   }
 
-  /* Swiper */
+  /* =========================
+     Swiper
+     ========================= */
   .top10Swiper {
     padding-left: 8rem;
     overflow: visible;
@@ -21,81 +25,90 @@
     &:active {
       cursor: grabbing;
     }
+
+    /* swiper 내부 */
+    .swiper-wrapper {
+      overflow: visible;
+    }
+
+    .top10Slide {
+      width: auto;
+      overflow: visible;
+
+      /* =========================
+         Item
+         ========================= */
+      .top10Item {
+        position: relative;
+        flex: 0 0 auto;
+        padding-bottom: 1.2rem;
+
+        /* 랭크 숫자 */
+        .rank {
+          position: absolute;
+          bottom: -0.2rem;
+          left: -28%;
+          z-index: 1;
+
+          font-family: "Esamanru";
+          font-size: 12rem;
+          font-weight: 500;
+          color: #fff;
+          letter-spacing: -0.32rem;
+
+          pointer-events: none;
+        }
+
+        /* 포스터 링크 래퍼 */
+        .posterWrap {
+          position: relative;
+          z-index: 3;
+          display: block;
+          width: 22rem;
+
+          transform-origin: center bottom;
+          transition: transform 0.25s ease;
+
+          /* 뱃지 (우상단 고정) */
+          .netflixBadge,
+          .newBadge,
+          .oldBadge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 5;
+
+            width: 4rem;
+            height: auto;
+
+            pointer-events: none;
+            user-select: none;
+          }
+
+          /* 포스터 */
+          .poster {
+            width: 100%;
+            aspect-ratio: 11 / 16;
+            border-radius: 0.8rem;
+            box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.6);
+            display: block;
+            user-select: none;
+          }
+        }
+
+        /* hover */
+        &:hover {
+          .posterWrap {
+            transform: translateY(-0.4rem) scale(1.03);
+          }
+        }
+      }
+    }
   }
 
-  .top10Swiper .swiper-wrapper {
-    overflow: visible;
-  }
-
-  .top10Slide {
-    width: auto;
-    overflow: visible;
-  }
-
-  .top10Item {
-    position: relative;
-    flex: 0 0 auto;
-    padding-bottom: 1.2rem;
-  }
-
-  /* 랭크 숫자 */
-  .rank {
-    position: absolute;
-    bottom: -0.2rem;
-    left: -28%;
-    z-index: 1;
-
-    font-family: "Esamanru";
-    font-size: 12rem;
-    font-weight: 500;
-    color: #fff;
-    letter-spacing: -0.32rem;
-
-    pointer-events: none;
-  }
-
-  /* 포스터 */
-  .posterWrap {
-    position: relative;
-    z-index: 3;
-    display: block;
-    width: 22rem;
-
-    transform-origin: center bottom;
-    transition: transform 0.25s ease;
-  }
-
-  .poster {
-    width: 100%;
-    aspect-ratio: 11 / 16;
-    border-radius: 0.8rem;
-    box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.6);
-    display: block;
-    user-select: none;
-  }
-
-  /* 뱃지 – 완전 구석 */
-  .netflixBadge,
-  .newBadge,
-  .oldBadge {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 5;
-
-    width: 4rem;
-    height: auto;
-
-    pointer-events: none;
-    user-select: none;
-  }
-
-  /* hover */
-  .top10Item:hover .posterWrap {
-    transform: translateY(-0.4rem) scale(1.03);
-  }
-
-  /* 태블릿 */
+  /* =========================
+     태블릿 ≤1440px
+     ========================= */
   @media (max-width: 1440px) {
     margin: 4rem 1.6rem 0;
 
@@ -105,25 +118,31 @@
 
     .top10Swiper {
       padding-left: 1.6rem;
-    }
 
-    .posterWrap {
-      width: 17.2rem;
-    }
+      .top10Slide {
+        .top10Item {
+          .posterWrap {
+            width: 17.2rem;
 
-    .rank {
-      font-size: 10.8rem;
-      left: -30%;
-    }
+            .netflixBadge,
+            .newBadge,
+            .oldBadge {
+              width: 4.8rem;
+            }
+          }
 
-    .netflixBadge,
-    .newBadge,
-    .oldBadge {
-      width: 4.8rem;
+          .rank {
+            font-size: 10.8rem;
+            left: -30%;
+          }
+        }
+      }
     }
   }
 
-  /* 모바일 */
+  /* =========================
+     모바일 ≤430px
+     ========================= */
   @media (max-width: 430px) {
     margin: 2.8rem 1.6rem 0;
 
@@ -134,36 +153,39 @@
 
     .top10Swiper {
       padding-left: 2.6rem;
-    }
 
-    .posterWrap {
-      width: 40vw;
-      max-width: 16rem;
-    }
+      .top10Slide {
+        .top10Item {
+          .posterWrap {
+            width: 40vw;
+            max-width: 16rem;
 
-    .poster {
-      aspect-ratio: 104 / 152;
-      border-radius: 0.4rem;
-    }
-    .netflixBadge,
-    .newBadge,
-    .oldBadge {
-      width: 3rem;
-    }
-    .rank {
-      font-size: 6.4rem;
-      left: -22%;
-      bottom: -0.05rem;
-    }
+            .poster {
+              aspect-ratio: 104 / 152;
+              border-radius: 0.4rem;
+            }
 
-    .top10Item:hover .posterWrap {
-      transform: translateY(-0.2rem) scale(1.01);
-    }
+            /* ✅ 모바일 뱃지 크기: 3rem */
+            .netflixBadge,
+            .newBadge,
+            .oldBadge {
+              width: 3rem;
+            }
+          }
 
-    .netflixBadge,
-    .newBadge,
-    .oldBadge {
-      width: 3.8rem;
+          .rank {
+            font-size: 6.4rem;
+            left: -22%;
+            bottom: -0.05rem;
+          }
+
+          &:hover {
+            .posterWrap {
+              transform: translateY(-0.2rem) scale(1.01);
+            }
+          }
+        }
+      }
     }
   }
 }
