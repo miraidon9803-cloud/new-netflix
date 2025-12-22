@@ -215,7 +215,8 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
                   <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    maxLength={10}
+                    maxLength={16}
+                    placeholder="한글 8글자 혹은 영어 16글자를 입력하세요"
                     disabled={submitting}
                   />
                 </div>
@@ -246,7 +247,7 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
                         value={ageLimit}
                         onChange={(e) => setAgeLimit(Number(e.target.value))}
                         className="age-slider"
-                        style={{ "--percent": percent } as any}
+                        style={{ "--percent": percent } as CSSProperties}
                         disabled={submitting}
                       />
 
@@ -284,8 +285,11 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
                           setPin(e.target.value.replace(/\D/g, "").slice(0, 4))
                         }
                       />
+
                       <p>잠금 비밀번호 재확인</p>
                       <input
+                        type="password"
+                        placeholder="4자리 비밀번호를 입력해주세요"
                         value={pinConfirm}
                         onChange={(e) =>
                           setPinConfirm(
@@ -296,48 +300,69 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
                     </div>
                   )}
                 </div>
-                {errorMsg && <div className="error-message">{errorMsg}</div>}
+
                 {/* ===== 언어 ===== */}
-                <div className="language-method">
-                  <p className="Voice-subtitles">기본 음성 및 자막</p>
+                <div className="language-wrap">
+                  <div className="language-method">
+                    <p className="Voice-subtitles">기본 음성 및 자막</p>
 
-                  <div className="language-select">
-                    <button
-                      type="button"
-                      className={`language-btn ${openlanguage ? "open" : ""}`}
-                      onClick={() => setOpenlanguage((v) => !v)}
-                    >
-                      <span>{language}</span>
-                    </button>
-
-                    {openlanguage && (
-                      <ul className="language-list">
-                        {(
-                          [
-                            "Magyar",
-                            "Nederlands",
-                            "Norsk bokmal",
-                            "Polski",
-                            "中文",
-                            "日本語",
-                            "한국어",
-                          ] as const
-                        ).map((lang) => (
-                          <li key={lang}>
-                            <button
-                              type="button"
-                              className={language === lang ? "active" : ""}
-                              onClick={() => {
-                                setLanguage(lang);
-                                setOpenlanguage(false);
-                              }}
-                            >
-                              {lang}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                    <div className="language-select">
+                      <button
+                        type="button"
+                        className={`language-btn ${openlanguage ? "open" : ""}`}
+                        onClick={() => setOpenlanguage((v) => !v)}
+                      >
+                        <span className="language-text">{language}</span>
+                      </button>
+                      {openlanguage && (
+                        <ul
+                          className="language-list"
+                          onWheel={(e) => e.stopPropagation()}
+                        >
+                          {(
+                            [
+                              "Dansk",
+                              "Deutsch",
+                              "English",
+                              "Español",
+                              "Filipino",
+                              "Français",
+                              "Hrvatski",
+                              "Indonesia",
+                              "Italiano",
+                              "Magyar",
+                              "Nederlands",
+                              "Norsk bokmal",
+                              "Polski",
+                              "中文",
+                              "日本語",
+                              "한국어",
+                            ] as const
+                          ).map((lang) => (
+                            <li key={lang}>
+                              <button
+                                type="button"
+                                className={language === lang ? "active" : ""}
+                                onClick={() => {
+                                  setLanguage(lang);
+                                  setOpenlanguage(false);
+                                }}
+                              >
+                                {lang}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                  <div className="language-img">
+                    <img
+                      src="/images/icon/ProfilePopup-Arrow.png"
+                      alt=""
+                      className={`language-arrow ${openlanguage ? "open" : ""}`}
+                      aria-hidden="true"
+                    />
                   </div>
                 </div>
               </div>
