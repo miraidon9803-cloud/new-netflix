@@ -274,7 +274,7 @@
   /* ✅ 모바일(430.98 이하) */
   @media (max-width: 430.98px) {
     max-width: 100%;
-    height: 60.8rem;
+    height: 150vw;
     overflow: hidden;
     position: relative;
 
@@ -317,7 +317,7 @@
         position: absolute;
         left: 0;
         right: 0;
-        bottom: 3%;
+        bottom: 7%;
         z-index: 60;
 
         button {
@@ -333,6 +333,7 @@
           justify-content: center;
           gap: 0.6rem;
           cursor: pointer;
+          text-decoration: none;
         }
 
         button:last-child {
