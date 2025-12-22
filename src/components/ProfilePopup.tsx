@@ -211,6 +211,7 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
           </div>
 
           <div className="modal-wrap">
+            {errorMsg && <p className="error-msg">{errorMsg}</p>}
             <div className="avatar-preview">
               <img src={selectedAvatar.poster} alt={selectedAvatar.title} />
 

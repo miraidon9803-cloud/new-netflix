@@ -6,8 +6,9 @@ import { useLikeStore } from "../store/LikeStore";
 import { useDownloadStore } from "../store/DownloadStore";
 import { useProfileStore } from "../store/Profile";
 import { useRef } from "react";
-import { TitleSection } from "../components/TitleSection";
+
 import "./scss/NetDetail.scss";
+import TitleSection from "../components/TitleSection";
 
 const MovieDetail = () => {
   const { id } = useParams<{ id: string }>();

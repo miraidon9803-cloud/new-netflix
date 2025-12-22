@@ -83,6 +83,7 @@ export interface MovieDetail {
   release_date: string;
   runtime?: number;
   vote_average: number;
+  genres: Genre[];
 }
 
 export interface MovieState {

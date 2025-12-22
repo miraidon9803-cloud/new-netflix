@@ -10,7 +10,7 @@ interface TitleSectionProps {
   title: string;
   rating?: string | null;
   firstAirDate?: string;
-  selectedSeasonNumber: number | null;
+  selectedSeasonNumber?: number | null;
   overview?: string;
   onPlayDefault: () => void;
   contentId: number;
