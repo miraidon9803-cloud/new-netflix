@@ -31,10 +31,10 @@ const AvatarSelPopup: React.FC<AvatarPickerPopupProps> = ({
         <div className="avatar-wrap">
           {/* HEADER */}
           <div className="avatar-header">
-            <h1>아바타 선택</h1>
-            <p className="close" onClick={onClose}>
-              ✕
-            </p>
+            <p className="avatar-create">프로필 생성</p>
+            <button className="close" onClick={onClose} aria-label="닫기">
+              <img src="/images/icon/AvatarSelPopup-close.png" alt="닫기버튼" />
+            </button>
           </div>
 
           {/* BODY */}

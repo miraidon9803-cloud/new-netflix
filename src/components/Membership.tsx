@@ -43,7 +43,7 @@ const Membership: React.FC<MembershipProps> = ({ onPrev, onNext }) => {
       if (tempJoin) {
         setTempMembership({
           ...plan,
-          // ⭐ Payment가 쓰는 key로 맞춰서 저장
+
           type: selected === "adStandard" ? "adStandard" : selected,
         });
 
