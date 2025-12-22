@@ -8,6 +8,7 @@ import type { SortOrder } from '../types/search';
 import './scss/Wishlist.scss';
 // ✅ 추가: SearchModal import
 import SearchModal from './SearchModal';
+import MobileNav from './MobileNav';
 
 // SVG 아이콘 컴포넌트들
 const SortIcon: React.FC = () => (
@@ -285,13 +286,14 @@ const Wishlist: React.FC = () => {
       </main>
 
       {/* <div className="wishlist-footer"><Footer /></div> */}
-      <nav className="wishlist-bottom-nav">
+      {/* <nav className="wishlist-bottom-nav">
         <Link to="/" className="bottom-nav-item"><img src="/images/icon/바로가기.png" alt="" /></Link>
         <Link to="/shorts" className="bottom-nav-item"><img src="/images/icon/쇼츠.png" alt="" /></Link>
         <Link to="/" className="bottom-nav-item"><img src="/images/icon/홈.png" alt="" /></Link>
         <Link to="/wishlist" className="bottom-nav-item"><img src="/images/icon/위시리스트.png" alt="" /></Link>
         <Link to="/" className="bottom-nav-item"><img src="/images/icon/보관함.png" alt="" /></Link>
-      </nav>
+      </nav> */}
+      <MobileNav/>
 
       {showCreatePopup && (
         <div className="popup-overlay" onClick={handlePopupOverlayClick}>

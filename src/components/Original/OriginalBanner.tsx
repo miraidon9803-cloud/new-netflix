@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchNetflixOriginalAll } from '../../api/TmdbOriginal';
+import WishlistPopup from '../WishlistPopup';
 import './scss/OriginalBanner.scss';
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY as string;
 const BASE = 'https://api.themoviedb.org/3';
 const IMG_BACKDROP = 'https://image.tmdb.org/t/p/original';
+const IMG_POSTER = 'https://image.tmdb.org/t/p/w500';
 const FALLBACK_BG = '/images/icon/no_poster.png';
 
 type OriginalPick = {
@@ -23,6 +25,7 @@ type BannerDetail = {
   name?: string;
   overview: string;
   backdrop_path: string | null;
+  poster_path?: string | null;
 };
 
 type BannerState = BannerDetail & { type: 'tv' | 'movie' };
@@ -30,6 +33,9 @@ type BannerState = BannerDetail & { type: 'tv' | 'movie' };
 const OriginalBanner: React.FC = () => {
   const [item, setItem] = useState<BannerState | null>(null);
   const navigate = useNavigate();
+
+  // 위시리스트 팝업 상태
+  const [showWishlistPopup, setShowWishlistPopup] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -73,36 +79,57 @@ const OriginalBanner: React.FC = () => {
     navigate(item.type === 'tv' ? `/tv/${item.id}` : `/movie/${item.id}`);
   };
 
+  // 위시리스트 버튼 클릭 핸들러
+  const handleWishlistClick = () => {
+    setShowWishlistPopup(true);
+  };
+
   return (
-    <section className="original-banner">
-      <img className="original-bg" src={imgSrc} alt={displayTitle} draggable={false} />
+    <>
+      <section className="original-banner">
+        <img className="original-bg" src={imgSrc} alt={displayTitle} draggable={false} />
 
-      <div className="original-banner-inner">
-        <div className="original-bannertxt">
-          <h2>{displayTitle}</h2>
-          <h3>{item.overview}</h3>
+        <div className="original-banner-inner">
+          <div className="original-bannertxt">
+            <h2>{displayTitle}</h2>
+            <h3>{item.overview}</h3>
+          </div>
+
+          <div className="original-banner-btns">
+            {/* 재생 버튼 */}
+            <button className="play" type="button" onClick={onClickPlay}>
+              <span className="play-ico">
+                <img className="playicon" src="/images/icon/play.png" alt="" />
+                <img className="play-hover" src="/images/icon/play-hover.png" alt="" />
+              </span>
+              <span>재생</span>
+            </button>
+
+            {/* 위시리스트 버튼 */}
+            <button className="wish" type="button" onClick={handleWishlistClick}>
+              <span className="wish-ico">
+                <img className="wishicon" src="/images/icon/heart.png" alt="" />
+                <img className="wish-hover" src="/images/icon/heart-active.png" alt="" />
+              </span>
+              <span>위시리스트</span>
+            </button>
+          </div>
         </div>
+      </section>
 
-        <div className="original-banner-btns">
-          {/* ✅ 아이콘 교체 유지 */}
-          <button className="play" type="button" onClick={onClickPlay}>
-            <span className="play-ico">
-              <img className="playicon" src="/images/icon/play.png" alt="" />
-              <img className="play-hover" src="/images/icon/play-hover.png" alt="" />
-            </span>
-            <span>재생</span>
-          </button>
-
-          <button className="wish" type="button">
-            <span className="wish-ico">
-              <img className="wishicon" src="/images/icon/heart.png" alt="" />
-              <img className="wish-hover" src="/images/icon/heart-active.png" alt="" />
-            </span>
-            <span>위시리스트</span>
-          </button>
-        </div>
-      </div>
-    </section>
+      {/* 위시리스트 팝업 */}
+      {showWishlistPopup && item && (
+        <WishlistPopup
+          content={{
+            id: item.id,
+            title: displayTitle,
+            poster_path: item.poster_path ? `${IMG_POSTER}${item.poster_path}` : null,
+            media_type: item.type,
+          }}
+          onClose={() => setShowWishlistPopup(false)}
+        />
+      )}
+    </>
   );
 };
 

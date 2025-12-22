@@ -6,6 +6,7 @@ import { useWishlistStore } from "../store/WishlistStore";
 import type { WishlistContent } from "../store/WishlistStore";
 import type { SortOrder } from "../types/search";
 import "./scss/WishlistDetail.scss";
+import MobileNav from "./MobileNav";
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 
@@ -539,7 +540,7 @@ const WishlistDetail: React.FC = () => {
         <Footer />
       </div> */}
 
-      <nav className="wishlist-detail-bottom-nav">
+      {/* <nav className="wishlist-detail-bottom-nav">
         <a href="/" className="bottom-nav-item">
           <img src="/images/icon/바로가기.png" alt="" />
         </a>
@@ -555,7 +556,8 @@ const WishlistDetail: React.FC = () => {
         <a href="/" className="bottom-nav-item">
           <img src="/images/icon/보관함.png" alt="" />
         </a>
-      </nav>
+      </nav> */}
+      <MobileNav/>
     </div>
   );
 };
