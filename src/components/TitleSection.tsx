@@ -2,6 +2,7 @@ import { useState } from "react";
 import WishlistPopup from "./WishlistPopup";
 import type { WishlistContent } from "../store/WishlistStore";
 import RatingBadge from "./RatingBadge";
+import type { Genre } from "../types/movie";
 
 const PROFILE_IMG = "https://image.tmdb.org/t/p/w185";
 const FALLBACK_PROFILE = "/images/icon/no_profile.png";
@@ -39,7 +40,7 @@ interface TitleSectionProps {
     character?: string;
   }[];
 
-  genres: string[];
+  genres: Genre[];
   keywords?: {
     id: number;
     name: string;

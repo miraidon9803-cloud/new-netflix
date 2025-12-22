@@ -247,7 +247,7 @@ const Tvdetail = () => {
         season_number: selectedSeasonNumber,
         episode_number: firstEp?.episode_number,
         episode_name: firstEp?.name,
-        runtime: firstEp?.runtime,
+        // runtime: firstEp?.runtime,
       } as any);
     } catch (e) {
       console.error("다운로드 저장 실패:", e);

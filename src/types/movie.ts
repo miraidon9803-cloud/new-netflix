@@ -51,6 +51,10 @@ export interface Episode {
   episode_number: number;
   still_path: string | null; // TMDB에서 null일 수 있음
 }
+export interface Genre {
+  id: number;
+  name: string;
+}
 
 export interface TvDetail {
   id: number;
@@ -60,8 +64,9 @@ export interface TvDetail {
   backdrop_path: string;
   first_air_date: string;
   seasons: Season[];
-  genres: string;
+  genres: Genre[];
   vote_average?: number;
+  runtime?: number;
 }
 export interface TvListItem {
   id: number;
