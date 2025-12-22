@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import "./scss/AppPopup.scss";
 
 const STORAGE_KEY = "app-settings";
@@ -7,60 +7,67 @@ interface AppPopupProps {
   onClose: () => void;
 }
 
-const AppPopup = ({ onClose }: AppPopupProps) => {
-  const [autoPlay, setAutoPlay] = useState(false);
-  const [saveContent, setSaveContent] = useState(false);
-  const [wifiOnly, setWifiOnly] = useState(false);
-  const [quality, setQuality] = useState("고화질");
-  const [open, setOpen] = useState(false);
+type AppSettings = {
+  autoPlay: boolean;
+  saveContent: boolean;
+  wifiOnly: boolean;
+  quality: string;
+};
 
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, []);
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
-
-      const saved = JSON.parse(raw) as {
-        autoPlay?: boolean;
-        saveContent?: boolean;
-        wifiOnly?: boolean;
-        quality?: string;
+const getInitialSettings = (): AppSettings => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      return {
+        autoPlay: false,
+        saveContent: false,
+        wifiOnly: false,
+        quality: "고화질",
       };
-
-      setAutoPlay(!!saved.autoPlay);
-      setSaveContent(!!saved.saveContent);
-      setWifiOnly(!!saved.wifiOnly);
-      setQuality(saved.quality ?? "고화질");
-    } catch (e) {
-      console.error("앱 설정 불러오기 실패:", e);
     }
-  }, []);
+
+    const saved = JSON.parse(raw) as Partial<AppSettings>;
+
+    return {
+      autoPlay: !!saved.autoPlay,
+      saveContent: !!saved.saveContent,
+      wifiOnly: !!saved.wifiOnly,
+      quality: saved.quality ?? "고화질",
+    };
+  } catch (e) {
+    console.error("앱 설정 불러오기 실패:", e);
+    return {
+      autoPlay: false,
+      saveContent: false,
+      wifiOnly: false,
+      quality: "고화질",
+    };
+  }
+};
+
+const AppPopup = ({ onClose }: AppPopupProps) => {
+  // ✅ 최초 렌더에서 한 번만 localStorage 읽어서 초기값 세팅
+  const [settings, setSettings] = useState<AppSettings>(getInitialSettings);
+
+  const [open, setOpen] = useState(false);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const payload = { autoPlay, saveContent, wifiOnly, quality };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
     alert("앱 설정이 저장되었습니다.");
     onClose();
   };
 
   return (
     <div className="app-inner">
-      <div className="app-wrap">
+      <div className="app-dim" onClick={onClose} />
+      <div className="app-wrap" onClick={(e) => e.stopPropagation()}>
         <div className="app-content">
           <div className="app-header">
             <div className="app-header-inner">
               <h1 className="apppop-title">앱 설정</h1>
-              <button className="close-btn" onClick={onClose}>
+              <button className="close-btn" onClick={onClose} type="button">
                 <img src="/images/icon/AppPopup-close.png" alt="앱 설정 닫기" />
               </button>
             </div>
@@ -71,13 +78,18 @@ const AppPopup = ({ onClose }: AppPopupProps) => {
               <div className="setting-group">
                 <div className="Playback-Settings">
                   <p className="auto-title">자동재생 설정</p>
+
                   <div className="toggle-group">
                     <div className="toggle-option">
                       <label>다음 화 자동 재생</label>
                       <button
                         type="button"
-                        className={`toggle-btn ${autoPlay ? "on" : "off"}`}
-                        onClick={() => setAutoPlay((v) => !v)}
+                        className={`toggle-btn ${
+                          settings.autoPlay ? "on" : "off"
+                        }`}
+                        onClick={() =>
+                          setSettings((p) => ({ ...p, autoPlay: !p.autoPlay }))
+                        }
                       >
                         <span className="toggle-knob" />
                       </button>
@@ -87,8 +99,15 @@ const AppPopup = ({ onClose }: AppPopupProps) => {
                       <label>미리보기 자동 재생</label>
                       <button
                         type="button"
-                        className={`toggle-btn ${saveContent ? "on" : "off"}`}
-                        onClick={() => setSaveContent((v) => !v)}
+                        className={`toggle-btn ${
+                          settings.saveContent ? "on" : "off"
+                        }`}
+                        onClick={() =>
+                          setSettings((p) => ({
+                            ...p,
+                            saveContent: !p.saveContent,
+                          }))
+                        }
                       >
                         <span className="toggle-knob" />
                       </button>
@@ -98,13 +117,18 @@ const AppPopup = ({ onClose }: AppPopupProps) => {
 
                 <div className="Content-Settings">
                   <p className="Content-title">콘텐츠 저장 설정</p>
+
                   <div className="toggle-group">
                     <div className="toggle-option">
                       <label>Wi-Fi만 사용</label>
                       <button
                         type="button"
-                        className={`toggle-btn ${wifiOnly ? "on" : "off"}`}
-                        onClick={() => setWifiOnly((v) => !v)}
+                        className={`toggle-btn ${
+                          settings.wifiOnly ? "on" : "off"
+                        }`}
+                        onClick={() =>
+                          setSettings((p) => ({ ...p, wifiOnly: !p.wifiOnly }))
+                        }
                       >
                         <span className="toggle-knob" />
                       </button>
@@ -122,7 +146,7 @@ const AppPopup = ({ onClose }: AppPopupProps) => {
                         className="quality-trigger"
                         onClick={() => setOpen((v) => !v)}
                       >
-                        {quality}
+                        {settings.quality}
                         <span className={`arrow ${open ? "open" : ""}`} />
                       </button>
 
@@ -130,7 +154,7 @@ const AppPopup = ({ onClose }: AppPopupProps) => {
                         <ul className="quality-options">
                           <li
                             onClick={() => {
-                              setQuality("고화질");
+                              setSettings((p) => ({ ...p, quality: "고화질" }));
                               setOpen(false);
                             }}
                           >
@@ -138,7 +162,10 @@ const AppPopup = ({ onClose }: AppPopupProps) => {
                           </li>
                           <li
                             onClick={() => {
-                              setQuality("일반화질");
+                              setSettings((p) => ({
+                                ...p,
+                                quality: "일반화질",
+                              }));
                               setOpen(false);
                             }}
                           >

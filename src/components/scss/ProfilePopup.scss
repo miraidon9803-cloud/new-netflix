@@ -1,372 +1,467 @@
 @use "../../App.scss" as l;
 
+/* ================= 공통 ================= */
+
+.inner-mypageMain {
+  padding-top: 110px;
+  margin-bottom: 120px;
+  margin-top: 40px;
+}
+
+
 .modal-dim {
   position: fixed;
   inset: 0;
+  background: rgba(0, 0, 0, 0.7);
   z-index: 1000;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.75);
 
-  .modal {
-    width: 100rem;
-    height: 70rem;
-    max-height: 80vh;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    border-radius: 8px;
-    background: l.$grey2;
+
+}
+
+.modal {
+  width: 1000px;
+  height: 700px;
+  background: #1c1c1c;
+  border-radius: 8px;
+
+  display: flex;
+  flex-direction: column;
+
+}
+
+.modal-body {
+  padding: 24px;
+  height: 100%;
+  box-sizing: border-box;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+/* ================= 헤더 ================= */
+
+.modal-header {
+  position: relative;
+  text-align: center;
+  padding-bottom: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  h2 {
+    @include l.myTitle20(200);
+    color: l.$grey10;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 0;
+    right: 0px;
+    background: none;
+    border: none;
     color: #fff;
+    font-size: 22px;
+    cursor: pointer;
 
-    .modal-body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+  }
+}
 
-      .modal-header {
-        position: relative;
-        width: 100%;
-        margin-bottom: 20px;
-        text-align: center;
+/* ================= 전체 래퍼 ================= */
+.modal-wrap {
+  height: 100%;
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 
-        h2 {
-          @include l.myTitle20();
-          font-size: 18px;
-          font-weight: 600;
-        }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-        .modal-close {
-          position: absolute;
-          top: 0;
-          right: 16px;
-          background: none;
-          border: none;
-          color: #aaa;
-          font-size: 20px;
-          cursor: pointer;
-          &:hover {
-            color: #fff;
-          }
-        }
-      }
+/* Chrome / Safari */
+.modal-wrap::-webkit-scrollbar {
+  display: none;
+}
 
-      .modal-wrap {
-        width: 35.8rem;
-        height: 59rem;
 
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
+/* ================= 아바타 ================= */
 
-        .age-wrap {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 12px;
-          width: 12.6rem;
-          height: 23.2rem;
+.avatar-preview {
+  position: relative;
+  margin-bottom: 20px;
 
-          .age-slider {
-            transform: rotate(90deg);
-            -webkit-appearance: none;
-            appearance: none;
-            background-color: l.$sub1;
-            width: 232px;
-            height: 10px;
-            border-radius: 10px;
-          }
-          .age-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 34px;
-            height: 34px;
-            border-radius: 100%;
-            background-color: l.$grey10;
-          }
-          .age-labels {
-            display: flex;
-            flex-direction: column;
-            span {
-              &.active {
-                color: red;
-              }
-            }
-          }
-        }
-        .toggle-group {
-          display: flex;
-          flex-direction: column;
-          gap: 32px;
-          .pin {
-            p {
-              margin-top: 16px;
-            }
-            input {
-              padding: 12px 24px;
-              width: 35.8rem;
-              border-radius: 4px;
-            }
-          }
-          .toggle-option {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+  img {
+    width: 170px;
+    height: 170px;
+    border-radius: 8px;
+    object-fit: fill;
+    display: block;
+  }
 
-            label {
-              @include l.myTitle16();
-              color: l.$grey10;
-            }
-          }
+  .change-btn {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
 
-          .toggle-btn {
-            width: 51px;
-            height: 31px;
-            border-radius: 50px;
-            position: relative;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            border: none;
-          }
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
 
-          .toggle-btn.on {
-            background-color: l.$main1;
-          }
+    padding: 4px 8px;
+    border-radius: 8px 0;
+    border: none;
 
-          .toggle-btn.off {
-            background-color: l.$grey7;
-          }
+    background: rgba(255, 255, 255, 0.60);
+    color: #111;
+    font-size: 13px;
+    font-weight: 500;
 
-          .toggle-knob {
-            width: 27px;
-            height: 27px;
-            background-color: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 2px;
-            right: 22px;
-            transition: transform 0.3s;
-          }
+    cursor: pointer;
 
-          .toggle-btn.on .toggle-knob {
-            transform: translateX(20px);
-          }
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 
-          .toggle-btn.off .toggle-knob {
-            transform: translateX(0);
-          }
-        }
-
-        .language-method {
-          .language-select {
-            position: relative;
-          }
-          .language-list {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            cursor: pointer;
-          }
-          p {
-            @include l.myTitle16(400, left);
-            color: l.$grey10;
-          }
-
-          .language-btn {
-            margin-bottom: 12px;
-            cursor: pointer;
-          }
-
-          .language-title {
-            display: flex;
-            justify-content: space-between;
-          }
-        }
-
-        /* Avatar Preview */
-        .avatar-preview {
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-
-          img {
-            width: 170px;
-            height: 170px;
-            object-fit: cover;
-          }
-
-          .change-btn {
-            position: absolute;
-            top: 140px;
-            right: 93px;
-            img {
-              width: 76px;
-              height: 32px;
-            }
-
-            cursor: pointer;
-          }
-        }
-
-        /* =======================
-           Form Field
-        ======================= */
-        .field {
-          display: flex;
-          flex-direction: column;
-          gap: 32px;
-
-          span {
-            @include l.myTitle16();
-            color: l.$grey10;
-            text-align: left;
-          }
-
-          .profile-name {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-
-            input {
-              @include l.myTitle16();
-              padding: 12px 24px;
-              outline: none;
-              border-radius: 4px;
-              border: 1px solid l.$grey9;
-              background: l.$grey10;
-              text-align: left;
-            }
-          }
-
-          /* Toggle Rows */
-          .adult-toggle,
-          .lock-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-          }
-
-          /* Toggle Switch */
-          .toggle {
-            position: relative;
-            width: 51px;
-            height: 31px;
-            border-radius: 999px;
-
-            background: #555;
-            border: none;
-            cursor: pointer;
-            transition: background 0.2s;
-
-            &.on {
-              background: #e50914;
-            }
-
-            .knob {
-              position: absolute;
-              top: 2px;
-              left: 2px;
-              width: 27px;
-              height: 27px;
-              border-radius: 50%;
-              background: #fff;
-              transition: transform 0.2s;
-            }
-
-            &.on .knob {
-              transform: translateX(20px);
-            }
-          }
-        }
-
-        /* =======================
-           Footer Buttons
-        ======================= */
-        .btn-wrap {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-
-          .btn {
-            padding: 12px;
-
-            &.del {
-              @include l.myTitle16();
-              background: none;
-              border: 1px solid l.$grey7;
-              border-radius: 4px;
-              color: l.$grey7;
-            }
-
-            &.create {
-              @include l.myTitle16();
-              background: l.$sub1;
-              border: none;
-              color: l.$grey10;
-              border-radius: 4px;
-
-              &:hover {
-                background: #f6121d;
-              }
-            }
-          }
-        }
-      }
+    img {
+      width: 24px;
+      height: 24px;
     }
 
-    /* =======================
-       Avatar Picker (Outside Body)
-    ======================= */
-    .avatar-section {
-      margin-top: 20px;
-
-      .avatar-title {
-        font-size: 14px;
-        margin-bottom: 10px;
-      }
-
-      .avatar-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-
-        .avatar {
-          padding: 4px;
-          border-radius: 6px;
-          border: 2px solid transparent;
-          background: none;
-          cursor: pointer;
-
-          img {
-            width: 100%;
-            border-radius: 4px;
-          }
-
-          span {
-            display: block;
-            margin-top: 4px;
-            font-size: 11px;
-            text-align: center;
-            color: #aaa;
-          }
-
-          &.active {
-            border-color: #e50914;
-          }
-        }
-      }
+    .change-name {
+      @include l.myTitle16(400);
+      color: l.$BG;
     }
+  }
+}
 
-    /* =======================
-       Error Message
-    ======================= */
-    .error {
-      margin-top: 12px;
-      font-size: 13px;
+/* ================= 입력 영역 ================= */
+
+.field {
+  width: 360px;
+}
+
+/* 프로필 이름 */
+.profile-name {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 32px;
+
+  span {
+    @include l.myTitle16(10);
+    color: l.$grey10;
+    text-align: left;
+  }
+
+  input {
+    height: 44px;
+    border-radius: 4px;
+    border: none;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+}
+
+/* ================= 토글 공통 ================= */
+
+.toggle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.toggle-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  label {
+    @include l.myTitle16(10);
+    color: l.$grey10;
+    text-align: left;
+  }
+}
+
+.rating-mark {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+
+  // transform: translateY(-8px);
+  transition:
+    max-height 0.35s ease,
+    opacity 0.25s ease,
+    transform 0.35s ease;
+}
+
+.rating-mark.open {
+  max-height: 80px; // 충분히 큰 값
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+.toggle-btn {
+  width: 51px;
+  height: 31px;
+  border-radius: 999px;
+  border: none;
+  background: #555;
+  position: relative;
+  cursor: pointer;
+
+  &.on {
+    background: #e50914;
+  }
+
+  .toggle-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 27px;
+    height: 27px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+  }
+
+  &.on .toggle-knob {
+    transform: translateX(20px);
+  }
+}
+
+/* ================= 시청 제한 ================= */
+
+.age-wrap {
+  margin-top: 12px;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-12px);
+  transition:
+    max-height 0.4s ease,
+    opacity 0.3s ease,
+    transform 0.4s ease;
+
+  pointer-events: none;
+
+}
+
+/* 실제 내용 */
+.age-inner {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+  // overflow: hidden; // ✅ 여기로 이동
+  // padding: 300px;
+}
+
+.age-wrap.open {
+  max-height: 300px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+
+/* 등급 텍스트 */
+.age-slider {
+  -webkit-appearance: none;
+  appearance: none;
+
+  width: 232px;
+  height: 10px;
+  border-radius: 40px;
+
+  background: linear-gradient(to left, // ← 이게 핵심
+      #555 0%,
+      #555 var(--percent),
+      #e50914 var(--percent),
+      #e50914 100%);
+  transform: rotate(90deg);
+  transform-origin: center;
+}
+
+
+/* 동그란 토글 */
+.age-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 34.2px;
+  height: 34.2px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* 라벨 */
+.age-labels {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 232px;
+  margin-left: -80px;
+
+  span {
+    color: #ccc;
+
+    &.active {
       color: #e50914;
+      font-weight: 600;
     }
+  }
+}
+
+/* ================= PIN ================= */
+
+.pin {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  p {
+    @include l.myTitle16(10);
+    color: l.$grey10;
+    text-align: left;
+    margin-top: 8px;
+  }
+
+  input {
+    height: 44px;
+    border-radius: 4px;
+    border: none;
+    padding: 0 12px;
+  }
+}
+
+/* ================= 언어 ================= */
+
+.language-method {
+  margin-top: 32px;
+
+  .Voice-subtitles {
+    @include l.myTitle16(10);
+    color: l.$grey10;
+    text-align: left;
+    margin-bottom: 4px;
+  }
+}
+
+.language-select {
+  position: relative;
+}
+
+.language-btn {
+  width: 100%;
+  height: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  /* ⭐ 왼쪽 정렬 */
+
+  // padding: 0 12px;
+
+  background: none;
+  border: none;
+  // background: transparent;
+  // /* ⭐ 배경 제거 */
+  // border: 1px solid l.$grey7;
+  // border-radius: 4px;
+
+  color: l.$grey10;
+  font-size: 14px;
+
+  cursor: pointer;
+
+  // &:hover {
+  //   border-color: l.$grey6;
+  // }
+
+  // &.open {
+  //   background: l.$grey9;
+  //   /* ⭐ 열린 상태 강조 */
+  //   border-color: l.$grey5;
+  // }
+}
+
+.language-list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  li {
+    list-style: none;
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 15px;
+    cursor: pointer;
+
+    &.active {
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+}
+
+/* ================= 버튼 ================= */
+
+.btn-wrap {
+  width: 360px;
+  margin-top: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn {
+  width: 100%;
+  height: 48px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  padding: 12px 24px;
+
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.btn.del {
+  background: none;
+  border: 1px solid l.$grey7;
+  color: l.$grey7;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: l.$grey8;
+    color: l.$grey1;
+  }
+}
+
+.btn.create {
+  background: l.$sub1;
+  color: l.$grey10;
+  border: none;
+  border-radius: 4px;
+
+  &:hover {
+    background: l.$main1;
   }
 }

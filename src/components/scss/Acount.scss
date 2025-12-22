@@ -81,6 +81,7 @@
         padding: 12px 24px;
         border-radius: 4px;
         outline: none;
+        // border: 1px solid l.$grey9;
       }
     }
   }
@@ -117,7 +118,7 @@
       border-radius: 4px;
 
       &:hover {
-        background-color: darken(l.$main1, 4%);
+        background: l.$main1;
       }
     }
   }
