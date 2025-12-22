@@ -6,11 +6,12 @@ import { useLikeStore } from "../store/LikeStore";
 import { useDownloadStore } from "../store/DownloadStore";
 import { useProfileStore } from "../store/Profile";
 import { useDetailUIStore } from "../store/useDetailUIStore";
-import { VideoPlayer } from "../components/VideoPlayer";
 import { TitleSection } from "../components/TitleSection";
 import { TabNavigation } from "../components/TabNavigation";
 import { SeasonSelector } from "../components/SeasonSelector";
 import { EpisodeList } from "./EpisodeList";
+import { useRef } from "react";
+import VideoPlayer, { type VideoPlayerHandle } from "../components/VideoPlayer";
 import "./scss/NetDetail.scss";
 
 type Video = {
@@ -99,6 +100,7 @@ const Tvdetail = () => {
 
   const genres = useMemo(() => tvDetail?.genres ?? [], [tvDetail]);
   const keywords = useMemo(() => tvKeywords ?? [], [tvKeywords]);
+  const playerRef = useRef<VideoPlayerHandle | null>(null);
 
   // Fetch data
   useEffect(() => {
@@ -180,6 +182,7 @@ const Tvdetail = () => {
     setSelectedVideoKey(null);
     setPlay(true);
     refreshPlayer();
+    playerRef.current?.enterFullscreen();
   };
 
   const onPlayEpisode = async (ep: any) => {
@@ -262,7 +265,7 @@ const Tvdetail = () => {
     <div className="detail-page">
       <div className="detail-inner">
         <div className="left-side">
-          <VideoPlayer videoKey={iframeKey} />
+          <VideoPlayer ref={playerRef} videoKey={iframeKey} />
 
           <TitleSection
             title={tvDetail.name}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./scss/FilterPopup.scss";
 import { genre } from "../data/genre";
@@ -51,70 +51,75 @@ const RUNTIMES: {
   { key: "30to60", label: "30분 ~ 1시간", gte: 30, lte: 60 },
   { key: "over60", label: "1시간 이상", gte: 60 },
 ];
-const initial: FilterState = {
+
+// ✅ TS6133 방지: 실제로 useState/onReset에서 재사용
+const INITIAL_FILTERS: FilterState = {
   sort: "latest",
   genres: [],
   runtimes: [],
   countries: [],
 };
+
+const toggleNumber = (arr: number[], v: number) =>
+  arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
+
+const toggleString = (arr: string[], v: string) =>
+  arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
+
 const FilterPopup: React.FC = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
-  const [filters, setFilters] = useState<FilterState>(initial);
+  const [filters, setFilters] = useState<FilterState>(INITIAL_FILTERS);
 
-  const toggleNumber = (arr: number[], v: number) =>
-    arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
-
-  const toggleString = (arr: string[], v: string) =>
-    arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
-
-  const toggleRuntime = (key: RuntimeKey) =>
+  const toggleRuntime = (key: RuntimeKey) => {
     setFilters((p) => ({
       ...p,
       runtimes: p.runtimes.includes(key)
         ? p.runtimes.filter((x) => x !== key)
         : [...p.runtimes, key],
     }));
-
-  const buildParams = (f: FilterState) => {
-    const params: Record<string, string> = {};
-
-    // 정렬
-    params.sort_by = SORT_MAP[f.sort];
-
-    // 장르/국가
-    if (f.genres.length) params.with_genres = f.genres.join(",");
-    if (f.countries.length) params.with_origin_country = f.countries.join(",");
-
-    let gte: number | undefined;
-    let lte: number | undefined;
-
-    f.runtimes.forEach((key) => {
-      const rule = RUNTIMES.find((r) => r.key === key);
-      if (!rule) return;
-
-      if (rule.gte !== undefined) {
-        if (gte === undefined) gte = rule.gte;
-        else gte = Math.max(gte, rule.gte);
-      }
-
-      if (rule.lte !== undefined) {
-        if (lte === undefined) lte = rule.lte;
-        else lte = Math.min(lte, rule.lte);
-      }
-    });
-
-    if (gte !== undefined) params["with_runtime.gte"] = String(gte);
-    if (lte !== undefined) params["with_runtime.lte"] = String(lte);
-
-    // 페이지 고정(원하면 삭제 가능)
-    params.page = "1";
-
-    return params;
   };
 
-  const onReset = () => setFilters(initial);
+  const buildParams = useMemo(() => {
+    return (f: FilterState) => {
+      const params: Record<string, string> = {};
+
+      // 정렬
+      params.sort_by = SORT_MAP[f.sort];
+
+      // 장르/국가
+      if (f.genres.length) params.with_genres = f.genres.join(",");
+      if (f.countries.length)
+        params.with_origin_country = f.countries.join(",");
+
+      // 런타임 (선택 여러 개면 교집합 범위로 계산)
+      let gte: number | undefined;
+      let lte: number | undefined;
+
+      f.runtimes.forEach((key) => {
+        const rule = RUNTIMES.find((r) => r.key === key);
+        if (!rule) return;
+
+        if (rule.gte !== undefined) {
+          gte = gte === undefined ? rule.gte : Math.max(gte, rule.gte);
+        }
+        if (rule.lte !== undefined) {
+          lte = lte === undefined ? rule.lte : Math.min(lte, rule.lte);
+        }
+      });
+
+      if (gte !== undefined) params["with_runtime.gte"] = String(gte);
+      if (lte !== undefined) params["with_runtime.lte"] = String(lte);
+
+      // 페이지 고정
+      params.page = "1";
+
+      return params;
+    };
+  }, []);
+
+  const onReset = () => setFilters(INITIAL_FILTERS);
 
   const onApply = () => {
     const qs = new URLSearchParams(buildParams(filters)).toString();
@@ -132,10 +137,19 @@ const FilterPopup: React.FC = () => {
       </div>
 
       {open && (
-        <div className="series-filter-dim" onClick={() => setOpen(false)}>
+        <div
+          className="series-filter-dim"
+          onClick={() => setOpen(false)}
+          role="presentation"
+        >
           <div
             className="series-filter-popup"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e: React.MouseEvent<HTMLDivElement>) =>
+              e.stopPropagation()
+            }
+            role="dialog"
+            aria-modal="true"
+            aria-label="필터 팝업"
           >
             <div className="series-filter-head">
               <div className="series-filter-title">카테고리</div>
@@ -143,6 +157,7 @@ const FilterPopup: React.FC = () => {
                 type="button"
                 className="series-filter-close"
                 onClick={() => setOpen(false)}
+                aria-label="필터 닫기"
               >
                 ×
               </button>

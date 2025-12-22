@@ -198,10 +198,9 @@ const StorageBox = () => {
 
                         <div className="storage-content">
                           <div className="info-wrap">
-                            {/* ✅ TV면 시즌/몇화 표시 */}
                             {isTv && season != null && episode != null && (
                               <p className="ep">
-                                {title} 시즌 {season} : {episode}화
+                                {title} 시즌 {season} · {episode}화
                               </p>
                             )}
 

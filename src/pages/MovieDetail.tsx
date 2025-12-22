@@ -1,19 +1,30 @@
 import { Link, useParams } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useMovieStore } from "../store/useMoiveStore";
 import { useWatchingStore } from "../store/WatichingStore";
 import { useLikeStore } from "../store/LikeStore";
 import { useDownloadStore } from "../store/DownloadStore";
 import { useProfileStore } from "../store/Profile";
-import { useRef } from "react";
+import { useDetailUIStore } from "../store/useDetailUIStore";
+
+import VideoPlayer, { type VideoPlayerHandle } from "../components/VideoPlayer";
+import TitleSection from "../components/TitleSection";
+import { TabNavigation } from "../components/TabNavigation";
 
 import "./scss/NetDetail.scss";
-import TitleSection from "../components/TitleSection";
+
+type Video = {
+  id: string;
+  key: string;
+  site: string;
+  type: string;
+  official?: boolean;
+  name?: string;
+};
 
 const MovieDetail = () => {
   const { id } = useParams<{ id: string }>();
   const movieId = useMemo(() => (id ? String(id) : ""), [id]);
-  const mediaBoxRef = useRef<HTMLDivElement>(null);
 
   const {
     movieDetail,
@@ -29,20 +40,80 @@ const MovieDetail = () => {
     fetchMovieSimilar,
   } = useMovieStore();
 
-  const [play, setPlay] = useState(false);
-  const [activeTab, setActiveTab] = useState<
-    "정보" | "비슷한콘텐츠" | "관련클립"
-  >("정보");
-
   const { onAddWatching } = useWatchingStore();
   const { onAddLike } = useLikeStore();
   const { onAddDownload } = useDownloadStore();
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
 
-  const handlePlay = async () => {
-    if (!movieDetail || !trailer) return;
+  const {
+    selectedVideoKey,
+    activeTab,
+    setSelectedVideoKey,
+    setPlay,
+    refreshPlayer,
+    resetPlayer,
+    setActiveTab,
+  } = useDetailUIStore();
 
-    // 1) 보관함 저장 먼저
+  // ✅ VideoPlayer fullscreen 제어용 ref
+  const playerRef = useRef<VideoPlayerHandle | null>(null);
+
+  useEffect(() => {
+    setActiveTab("정보");
+    resetPlayer();
+    setSelectedVideoKey(null);
+  }, [movieId, setActiveTab, resetPlayer, setSelectedVideoKey]);
+
+  useEffect(() => {
+    if (!movieId) return;
+    fetchMovieDetail(movieId);
+    fetchMovieRating(movieId);
+    fetchVideos(movieId, "movie");
+    fetchMovieCredits(movieId);
+  }, [
+    movieId,
+    fetchMovieDetail,
+    fetchMovieRating,
+    fetchVideos,
+    fetchMovieCredits,
+  ]);
+
+  useEffect(() => {
+    if (!movieId) return;
+    if (activeTab !== "비슷한콘텐츠") return;
+
+    if (movieSimilarId !== movieId) {
+      fetchMovieSimilar(movieId);
+    }
+  }, [movieId, activeTab, movieSimilarId, fetchMovieSimilar]);
+
+  if (!movieId) return <p>잘못된 접근입니다.</p>;
+  if (!movieDetail) return <p>작품 불러오는 중..</p>;
+
+  const defaultTrailer: Video | undefined =
+    (videos as Video[]).find(
+      (v) => v.site === "YouTube" && v.type === "Trailer" && v.official
+    ) ??
+    (videos as Video[]).find(
+      (v) => v.site === "YouTube" && v.type === "Trailer"
+    ) ??
+    (videos as Video[]).find((v) => v.site === "YouTube");
+
+  const iframeKey = selectedVideoKey ?? defaultTrailer?.key ?? null;
+
+  const directorNames =
+    movieCredits?.crew
+      ?.filter((c: any) => c.job === "Director")
+      ?.map((d: any) => d.name)
+      ?.slice(0, 3)
+      ?.join(", ") ?? "정보 없음";
+
+  const topCast = movieCredits?.cast?.slice(0, 10) ?? [];
+  const genres = movieDetail?.genres ?? [];
+
+  const onPlayDefault = async () => {
+    if (!movieDetail) return;
+
     try {
       await onAddWatching({
         profileId: activeProfileId,
@@ -58,23 +129,15 @@ const MovieDetail = () => {
       console.error("보관함 저장 실패:", e);
     }
 
-    // 2) 재생
+    // ✅ 기본 트레일러로 재생
+    setSelectedVideoKey(null);
     setPlay(true);
+    refreshPlayer();
 
-    // 3) 풀스크린
-    const el = mediaBoxRef.current;
-    if (!el) return;
-
-    try {
-      if (!document.fullscreenElement) {
-        await el.requestFullscreen();
-      }
-    } catch (e) {
-      console.warn("Fullscreen 실패:", e);
-    }
+    // ✅ 재생 누르면 유튜브 풀스크린
+    playerRef.current?.enterFullscreen();
   };
 
-  // 좋아요 버튼 핸들러
   const handleLike = async () => {
     if (!movieDetail || !activeProfileId) return;
 
@@ -93,7 +156,6 @@ const MovieDetail = () => {
     }
   };
 
-  // 다운로드 버튼 핸들러
   const handleDownload = async () => {
     if (!movieDetail || !activeProfileId) return;
 
@@ -112,76 +174,19 @@ const MovieDetail = () => {
     }
   };
 
-  useEffect(() => {
-    if (!movieId) return;
-    fetchMovieDetail(movieId);
-    fetchMovieRating(movieId);
-    fetchVideos(movieId, "movie");
-    fetchMovieCredits(movieId);
-  }, [
-    movieId,
-    fetchMovieDetail,
-    fetchMovieRating,
-    fetchVideos,
-    fetchMovieCredits,
-  ]);
-
-  // 비슷한 콘텐츠 fetch
-  useEffect(() => {
-    if (!movieId) return;
-    if (activeTab !== "비슷한콘텐츠") return;
-
-    if (movieSimilarId !== movieId) {
-      fetchMovieSimilar(movieId);
-    }
-  }, [movieId, activeTab, movieSimilarId, fetchMovieSimilar]);
-
-  if (!movieId) return <p>잘못된 접근입니다.</p>;
-  if (!movieDetail) return <p>작품 불러오는 중..</p>;
-
-  const trailer =
-    videos.find(
-      (v: any) => v.site === "YouTube" && v.type === "Trailer" && v.official
-    ) ??
-    videos.find((v: any) => v.site === "YouTube" && v.type === "Trailer") ??
-    videos.find((v: any) => v.site === "YouTube");
-
-  const directorNames =
-    movieCredits?.crew
-      ?.filter((c) => c.job === "Director")
-      ?.map((d) => d.name)
-      ?.slice(0, 3)
-      ?.join(", ") ?? "정보 없음";
-
-  const topCast = movieCredits?.cast?.slice(0, 10) ?? [];
-  const genres = movieDetail?.genres ?? [];
-
   return (
     <div className="detail-page">
       <div className="detail-inner">
         <div className="left-side">
-          <div className="media-box" ref={mediaBoxRef}>
-            {trailer ? (
-              <iframe
-                className="trailer-video"
-                src={`https://www.youtube.com/embed/${trailer.key}?autoplay=${
-                  play ? 1 : 0
-                }&mute=1&playsinline=1`}
-                title="YouTube trailer"
-                allow="autoplay; encrypted-media; fullscreen"
-                allowFullScreen
-              />
-            ) : (
-              <div className="no-video">예고편이 제공되지 않는 작품입니다.</div>
-            )}
-          </div>
+          {/* ✅ ref 달기 */}
+          <VideoPlayer ref={playerRef} videoKey={iframeKey} />
 
           <TitleSection
             title={movieDetail.title}
             rating={movieRating}
             firstAirDate={movieDetail.release_date}
             overview={movieDetail.overview}
-            onPlayDefault={handlePlay}
+            onPlayDefault={onPlayDefault}
             contentId={movieDetail.id}
             posterPath={movieDetail.poster_path}
             backdropPath={movieDetail.backdrop_path}
@@ -197,43 +202,7 @@ const MovieDetail = () => {
         </div>
 
         <div className="season-box">
-          <div className="detail-tabs">
-            <p
-              role="button"
-              tabIndex={0}
-              className={activeTab === "정보" ? "active" : ""}
-              onClick={() => setActiveTab("정보")}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") setActiveTab("정보");
-              }}
-            >
-              정보
-            </p>
-            <p
-              role="button"
-              tabIndex={0}
-              className={activeTab === "비슷한콘텐츠" ? "active" : ""}
-              onClick={() => setActiveTab("비슷한콘텐츠")}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ")
-                  setActiveTab("비슷한콘텐츠");
-              }}
-            >
-              비슷한 콘텐츠
-            </p>
-            <p
-              role="button"
-              tabIndex={0}
-              className={activeTab === "관련클립" ? "active" : ""}
-              onClick={() => setActiveTab("관련클립")}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ")
-                  setActiveTab("관련클립");
-              }}
-            >
-              관련클립
-            </p>
-          </div>
+          <TabNavigation />
 
           {activeTab === "정보" ? (
             <div className="tab-panel">

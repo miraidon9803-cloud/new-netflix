@@ -98,7 +98,7 @@ interface AuthState {
   initAuth: () => () => void;
 
   /**
-   * ✅ (호환용) 기존 Join이 onMember를 호출해도 "회원생성" 안 되도록 변경
+   *  (호환용) 기존 Join이 onMember를 호출해도 "회원생성" 안 되도록 변경
    * - 이제 회원생성은 Membership에서 finalizeJoinWithComplete로만 합니다.
    */
   onMember: (data: JoinData) => Promise<void>;
@@ -111,7 +111,7 @@ interface AuthState {
 
   onLogout: () => Promise<void>;
 
-  /** ✅ Complete에서 최종 회원가입 + 멤버십 저장 + 로그인 완료 */
+  /**  Complete에서 최종 회원가입 + 멤버십 저장 + 로그인 완료 */
   finalizeJoinWithComplete: (membership: MembershipInfo) => Promise<void>;
 
   /** 기존 로그인 유저의 멤버십 저장/변경 */
@@ -152,7 +152,6 @@ export const useAuthStore = create<AuthState>()(
       setTempMembership: (m) => set({ tempMembership: m }),
       clearTempMembership: () => set({ tempMembership: null }),
 
-      tempJoin: null,
       setTempJoin: (data) => set({ tempJoin: data }),
       clearTempJoin: () => set({ tempJoin: null }),
 
