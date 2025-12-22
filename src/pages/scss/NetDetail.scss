@@ -17,7 +17,7 @@
     // margin-bottom: 40px;
 
     .left-side {
-      width: 100%; // ✅ 고정 83rem 제거
+      // width: 100%;
       max-width: 83rem;
 
       iframe {
@@ -200,6 +200,7 @@
   }
 
   .season-box {
+    width: 58.6rem;
     .detail-tabs {
       margin-bottom: 20px;
       display: flex;
@@ -424,9 +425,18 @@
           max-width: 35.4rem;
           @include l.myTitle14($fw: 400, $ta: left);
           color: l.$grey7;
+
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+
+          /* 안정성 보강 */
+          word-break: break-word;
+          line-height: 1.4; // 줄 계산 안정
+          max-height: calc(1.4em * 3); // 일부 브라우저 대비
         }
       }
-
       .episode-content {
         position: relative;
         width: 220px;
@@ -474,8 +484,8 @@
 .media-box {
   position: relative;
   width: 100%;
-  height: 410px;
-  aspect-ratio: 16 / 9; // ✅ 16:9 고정
+  height: 41rem;
+  // aspect-ratio: 16 / 9; // ✅ 16:9 고정
   background: #000;
   border-radius: 8px;
   overflow: hidden;
@@ -501,4 +511,78 @@
   height: 100% !important;
   border: 0 !important;
   display: block;
+}
+
+@media (max-width: 1024px) {
+  .detail-page {
+    .detail-inner {
+      // margin: 0 16px; // 선택
+    }
+
+    .left-side {
+      max-width: none;
+      width: 47.6rem;
+      min-width: 0;
+
+      iframe {
+        width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 16 / 9;
+        display: block;
+      }
+    }
+
+    .season-box {
+      // 우측도 고정폭 너무 크면 줄어들게
+      width: 47.6rem;
+
+      .title {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    }
+  }
+}
+@media (max-width: 480px) {
+  .detail-page {
+    .detail-inner {
+      flex-direction: column;
+    }
+
+    .left-side {
+      width: 100%;
+      min-width: 0;
+      .text-box {
+        margin: 0 16px;
+        .title-wrap {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 20px;
+          button {
+            width: 35.8rem;
+            margin-bottom: 20px;
+          }
+        }
+      }
+      .media-box {
+        width: 100%;
+        iframe {
+          width: 100% !important;
+          height: 100% !important;
+          aspect-ratio: 16 / 9; // ✅ 비율로 높이 자동
+          display: block;
+        }
+      }
+    }
+
+    .season-box {
+      .episode-list {
+        margin: 20px 16px 0 16px;
+      }
+    }
+  }
 }

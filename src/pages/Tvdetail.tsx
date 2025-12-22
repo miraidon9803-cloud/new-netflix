@@ -13,6 +13,7 @@ import { EpisodeList } from "./EpisodeList";
 import { useRef } from "react";
 import VideoPlayer, { type VideoPlayerHandle } from "../components/VideoPlayer";
 import "./scss/NetDetail.scss";
+import MobileNav from "../components/MobileNav";
 
 type Video = {
   id: string;
@@ -202,7 +203,7 @@ const Tvdetail = () => {
       setPlay(true);
       refreshPlayer();
 
-      // ✅ ✅ 회차 영상 누르면 풀스크린
+      //  회차 영상 누르면 풀스크린
       playerRef.current?.enterFullscreen();
     } catch (e) {
       setSelectedVideoKey(null);
@@ -360,6 +361,7 @@ const Tvdetail = () => {
           )}
         </div>
       </div>
+      <MobileNav />
     </div>
   );
 };
