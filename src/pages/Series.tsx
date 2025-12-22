@@ -10,10 +10,12 @@ import LightSeries from "../components/Series/LightSeries";
 import FilterPopup from "../components/FilterPopup";
 import "./scss/Series.scss";
 import MobileNav from "../components/MobileNav";
+import SideNav from "../components/SideNav";
 
 const Series = () => {
   return (
     <div className="inner">
+      <SideNav/>
       <SeriesBanner />
       <FilterPopup />
       <TodayTop10 />
