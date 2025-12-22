@@ -11,8 +11,6 @@ const Complete: React.FC<CompleteProps> = ({ onPrev }) => {
 
   const tempMembership = useAuthStore((s) => s.tempMembership);
 
-  // ✅ authStore에 정의한 함수명과 동일하게 맞추세요
-  // - 지금 authStore 코드 기준: finalizeJoinWithComplete
   const finalizeJoinWithComplete = useAuthStore(
     (s) => s.finalizeJoinWithComplete
   );

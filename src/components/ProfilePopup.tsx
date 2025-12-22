@@ -247,7 +247,7 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
                         value={ageLimit}
                         onChange={(e) => setAgeLimit(Number(e.target.value))}
                         className="age-slider"
-                        style={{ "--percent": percent } as CSSProperties}
+                        style={{ "--percent": percent } as any}
                         disabled={submitting}
                       />
 
