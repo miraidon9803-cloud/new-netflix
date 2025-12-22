@@ -3,6 +3,7 @@ import NetflixOriginalTop10 from "../components/Original/NetflixOriginalTop10";
 import Originals from "../components/Original/Originals";
 import "./scss/Original.scss";
 import FilterPopup from "../components/Original/FilterPopup";
+import MobileNav from "../components/MobileNav";
 
 const Original = () => {
   return (
@@ -11,6 +12,7 @@ const Original = () => {
       <FilterPopup />
       <NetflixOriginalTop10 />
       <Originals />
+      <MobileNav/>
     </div>
   );
 };

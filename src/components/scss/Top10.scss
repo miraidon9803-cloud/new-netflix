@@ -45,7 +45,7 @@
     left: -28%;
     z-index: 1;
 
-    font-family: 'Esamanru';
+    font-family: "Esamanru";
     font-size: 12rem;
     font-weight: 500;
     color: #fff;
@@ -134,7 +134,6 @@
 
     .top10Swiper {
       padding-left: 2.6rem;
-      
     }
 
     .posterWrap {
@@ -146,7 +145,11 @@
       aspect-ratio: 104 / 152;
       border-radius: 0.4rem;
     }
-
+    .netflixBadge,
+    .newBadge,
+    .oldBadge {
+      width: 3rem;
+    }
     .rank {
       font-size: 6.4rem;
       left: -22%;
