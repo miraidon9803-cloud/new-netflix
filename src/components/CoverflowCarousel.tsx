@@ -5,7 +5,7 @@ import CountUp from "react-countup";
 import type { Swiper as SwiperType } from "swiper";
 
 import "swiper/css";
-import "swiper/css/effect-coverflow";
+// import "swiper/css/effect-coverflow";
 import "./scss/CoverflowCarousel.scss";
 
 interface SlideItem {

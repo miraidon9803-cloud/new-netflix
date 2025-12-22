@@ -1,23 +1,23 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuthStore } from "../store/authStore";
 import "./scss/Acount.scss";
 
-const Acount = ({ onClose }) => {
+type AcountProps = {
+  onClose: () => void;
+};
+
+const Acount = ({ onClose }: AcountProps) => {
   const user = useAuthStore((s) => s.user);
   const updateProfile = useAuthStore((s) => s.updateProfile);
 
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [phone, setPhone] = useState<string>(() => user?.phone ?? "");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  useEffect(() => {
-    setPhone(user?.phone ?? "");
-  }, [user?.phone]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // 비밀번호 변경 로직은 여기서 따로 처리해야 함(아직 미구현이면 검사만)
+    // 비밀번호 변경 로직은 아직 미연결 (검사만)
     if (password || confirmPassword) {
       if (password !== confirmPassword) {
         alert("비밀번호가 일치하지 않습니다.");
@@ -26,7 +26,7 @@ const Acount = ({ onClose }) => {
       alert(
         "비밀번호 변경은 아직 연결되지 않았습니다. (원하시면 연결해드릴게요)"
       );
-      // 여기서 updatePassword 등으로 처리해야 함
+      // TODO: Firebase updatePassword 연결
     }
 
     await updateProfile({ phone });
@@ -72,6 +72,7 @@ const Acount = ({ onClose }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="영어,숫자,특수문자 조합 8~16자리"
+                  autoComplete="new-password"
                 />
               </div>
             </div>
@@ -85,6 +86,7 @@ const Acount = ({ onClose }) => {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="비밀번호를 다시 입력해주세요"
+                  autoComplete="new-password"
                 />
               </div>
             </div>
@@ -113,6 +115,11 @@ const Acount = ({ onClose }) => {
               </button>
             </div>
           </form>
+
+          {/* ✅ 유저 정보가 늦게 들어오는 구조면 안내 */}
+          {!user && (
+            <p className="account-hint">사용자 정보를 불러오는 중입니다…</p>
+          )}
         </div>
       </div>
     </div>

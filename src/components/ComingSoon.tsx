@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react';
-import './scss/Comingsoon.scss';
+import { useEffect, useRef } from "react";
+import "./scss/Comingsoon.scss";
 
 const coming = [
-  '/images/comingsoon/자백의대가.png',
-  '/images/comingsoon/나이브스아웃.png',
-  '/images/comingsoon/캐셔로.png',
-  '/images/comingsoon/살인자리포트.png',
+  "/images/comingsoon/자백의대가.png",
+  "/images/comingsoon/나이브스아웃.png",
+  "/images/comingsoon/캐셔로.png",
+  "/images/comingsoon/살인자리포트.png",
 ];
 // 🔥 휠 → 가로 스크롤 & 끝에서만 페이지 스크롤 허용
 
@@ -34,8 +34,8 @@ const ComingSoon = () => {
       }
     };
 
-    el.addEventListener('wheel', onWheel, { passive: false });
-    return () => el.removeEventListener('wheel', onWheel);
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
   }, []);
   return (
     <div className="comingsoon">

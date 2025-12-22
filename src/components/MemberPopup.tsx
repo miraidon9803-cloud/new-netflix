@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useAuthStore } from "../store/authStore";
 import "./scss/MemberPopup.scss";
 
-const MemberPopup = ({ onClose }) => {
+type AcountProps = {
+  onClose: () => void;
+};
+
+const MemberPopup = ({ onClose }: AcountProps) => {
   const membership = useAuthStore((s) => s.user?.membership);
   const saveMembership = useAuthStore((s) => s.saveMembership);
   const cancelMembership = useAuthStore((s) => s.cancelMembership);

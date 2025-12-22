@@ -1,5 +1,4 @@
 // src/components/VerticalRollingBanner.tsx
-import React from "react";
 import "./scss/ChoiceContentTxt.scss";
 import ChoiceContentBG from "./ChoiceContentBG";
 import { Link } from "react-router-dom";
