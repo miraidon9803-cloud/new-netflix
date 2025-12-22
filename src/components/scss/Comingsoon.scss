@@ -10,6 +10,7 @@
 
   .cominglist {
     display: flex;
+    justify-content:space-between;
     overflow-x: auto;
     overflow-y: hidden;
     padding: 0;
@@ -30,7 +31,7 @@
 
   .comingimg {
     flex: 0 0 auto;
-    width: 32rem; /* PC 기본 폭 */
+    width: 34rem; /* PC 기본 폭 */
     margin-right: 2.4rem;
 
     scroll-snap-align: start;

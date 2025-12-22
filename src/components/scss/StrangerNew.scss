@@ -1,14 +1,16 @@
+/* src/components/scss/StrangerNew.scss */
 .Stranger {
   position: relative;
-  margin-top: 4rem;
+  margin-top: 8rem;
   width: 144rem;
   height: 100%;
 
   .poster {
     position: relative;
-    overflow: hidden; //  커진 부분 잘리게
+    overflow: hidden;
     width: 100%;
     height: 28rem;
+
     > p {
       font-size: 2.4rem;
       font-weight: 600;
@@ -19,24 +21,77 @@
     img {
       width: 100%;
       height: auto;
-      display: block; //  inline 여백/중앙정렬 느낌 차단
+      display: block;
     }
   }
 
   .button {
-    button {
+    .play {
       position: absolute;
       bottom: 10%;
       left: 8.5%;
       width: 16.6%;
       height: 4rem;
+
       border-radius: 0.4rem;
+      cursor: pointer;
+
+      /* ✅ 기본 상태에서 보더 공간 확보 (hover 시 흔들림 방지) */
+      border: 1px solid transparent;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+
+      transition: border-color 0.15s ease;
+
+      &:hover {
+        border-color: #e50914;
+      }
+
+      /* ✅ 아이콘 박스 고정 → hover 아이콘 크기 차이 방지 */
+      .play-ico {
+        position: relative;
+        width: 2rem;
+        height: 2rem;
+        flex: 0 0 2rem;
+
+        img {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          object-position: center;
+          transition: opacity 0.15s ease;
+        }
+
+        .playicon {
+          opacity: 1;
+        }
+        .play-hover {
+          opacity: 0;
+        }
+      }
+
+      &:hover {
+        .play-ico {
+          .playicon {
+            opacity: 0;
+          }
+          .play-hover {
+            opacity: 1;
+          }
+        }
+      }
     }
   }
 
   @media (max-width: 430px) {
     .poster {
       padding: 0 1.6rem 0;
+
       > p {
         font-size: 2rem;
       }
@@ -45,12 +100,9 @@
         width: 125%;
         max-width: none;
 
-        /* ✅ “왼쪽에 딱 붙어서” 확대되게 강제 */
         margin-left: 0;
         margin-right: 0;
         left: 0;
-
-        /*left가 먹게 하려면 position 필요 */
         position: relative;
 
         transform: none;
@@ -60,18 +112,20 @@
     }
 
     .button {
-      button {
+      .play {
         bottom: 5%;
         width: 25%;
         height: 3.6rem;
-      }
 
-      img {
-        width: 1.5rem;
-        height: 1.8rem;
+        .play-ico {
+          width: 1.8rem;
+          height: 1.8rem;
+          flex: 0 0 1.8rem;
+        }
       }
     }
   }
+
   @media (max-width: 1440px) {
     .poster {
       > p {

@@ -3,7 +3,7 @@
 /* ⭐ 여기서 크기를 "딱" 1440 x 600 으로 고정 */
 .rolling-banner-wrap {
   position: relative;
-  margin-top: 8rem;
+  margin: 8rem 0 12rem 0;
   width: 144rem; // 1440px
   height: 60rem; // 600px
   overflow: hidden; // ❗ 이 부모에서 최종적으로 잘라버림
@@ -48,29 +48,34 @@
       margin-bottom: 1.6rem;
     }
 
-    .cta {
-      margin-top: 5.3rem;
-      padding: 0.8rem 1.6rem;
-      font-size: 1.6rem;
-      font-weight: 500;
-      line-height: 140%;
-      border-radius: 0.4rem;
-      border: none;
-      background: rgba(255, 255, 255, 0.9);
-      color: #000;
-      cursor: pointer;
+    >a{
+      width:16% ;
       align-items: center;
-      justify-content: center;
-      transition: 0.2s ease;
-
-      > img {
-        margin-left: 1.2rem;
+      .cta {
+        margin-top: 5.3rem;
+        padding: 0.8rem 1.6rem;
+        font-size: 1.6rem;
+        font-weight: 500;
+        line-height: 140%;
+        border-radius: 0.4rem;
+        border: none;
+        background: rgba(255, 255, 255, 0.9);
+        color: #000;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s ease;
+  
+        > img {
+          margin-left: 1.2rem;
+        }
+  
+        &:hover {
+          background: #fff;
+          transform: translateY(-1px);
+        }
       }
 
-      &:hover {
-        background: #fff;
-        transform: translateY(-1px);
-      }
     }
   }
 }
