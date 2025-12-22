@@ -1,8 +1,8 @@
 // src/utils/tmdbRules.ts
 
-import type { FlowValue } from "@/types/flow";
-import type { ToneValue } from "@/types/tone";
-import type { MoodValue } from "@/types/mood";
+import type { FlowValue } from "../types/flow";
+import type { ToneValue } from "../types/mood";
+import type { MoodValue } from "../types/tone";
 
 export const getTone = (item: any): ToneValue => {
   const g: number[] = item.genre_ids ?? [];
