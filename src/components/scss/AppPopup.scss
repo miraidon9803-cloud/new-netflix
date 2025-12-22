@@ -16,7 +16,6 @@
     /* 수평 중앙 정렬 */
     background: rgba(0, 0, 0, 0.75);
 
-
     .app-dim {
       position: fixed;
       inset: 0;
@@ -68,7 +67,7 @@
 
           .app-header-inner {
             width: 100%;
-            max-width: 35.8rem;
+            // max-width: 35.8rem;
             margin: 0 auto;
             display: flex;
             align-items: center;
@@ -214,7 +213,8 @@
             .arrow {
               width: 24px;
               height: 24px;
-              background: url("/images/icon/AppPopup-Arrow.png") no-repeat center / contain;
+              background: url("/images/icon/AppPopup-Arrow.png") no-repeat
+                center / contain;
               transition: transform 0.2s ease;
             }
 
