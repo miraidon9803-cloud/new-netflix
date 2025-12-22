@@ -16,6 +16,7 @@ import SFNFantasy from '../components/SFNFantasy';
 import TrandingSeries from '../components/TrandingSeries';
 import ChoiceContentTxt from '../components/ChoiceContentTxt';
 import MobileNav from '../components/MobileNav';
+import ContinueWatchingRow from '../components/ContinueWatchingRow';
 
 const Main = () => {
   // const navigate = useNavigate();
@@ -37,6 +38,7 @@ const Main = () => {
       {/* <NetflixOriginal title="넷플릭스 오리지날" original={original} /> */}
       <InfiniSubmenu />
       <MainBanner />
+      <ContinueWatchingRow />
       <TodayTop10 />
       <Originals />
       <NowPlay />

@@ -148,6 +148,8 @@
      =================== */
   @media (max-width: 430px) {
     margin: 2.8rem 1.6rem 0;
+    
+    // border: 1px solid white;
 
     h2 {
       font-size: 1.8rem;
@@ -155,8 +157,9 @@
     }
 
     .movie10List {
-      gap: 3.2rem;
-      padding-left: 1.6rem;
+      gap: 4.3rem;
+      padding-left: 3.2rem;
+      // border: 1px solid blue;
     }
 
     .posterWrap {
@@ -171,8 +174,9 @@
 
     .rank {
       font-size: 6.4rem;
-      left: -22%;
+      left: -20%;
       bottom: -0.05rem;
+      // z-index: 100;
     }
 
     .netflixBadge {

@@ -9,6 +9,7 @@ import BestSeries from "../components/Series/BestSeries";
 import LightSeries from "../components/Series/LightSeries";
 import FilterPopup from "../components/FilterPopup";
 import "./scss/Series.scss";
+import MobileNav from "../components/MobileNav";
 
 const Series = () => {
   return (
@@ -23,6 +24,7 @@ const Series = () => {
       <FunSeries />
       <BestSeries />
       <LightSeries />
+      <MobileNav/>
     </div>
   );
 };
