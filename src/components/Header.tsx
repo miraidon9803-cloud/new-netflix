@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import './scss/Header.scss';
-import SearchModal from './SearchModal';
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import "./scss/Header.scss";
+import SearchModal from "./SearchModal";
 
 interface MenuItem {
   id: number;
@@ -10,15 +10,15 @@ interface MenuItem {
 }
 
 const mainMenu: MenuItem[] = [
-  { id: 1, title: '시리즈', path: '/series' },
-  { id: 2, title: '영화', path: '/Movie' },
-  { id: 3, title: '오리지널', path: '/original' },
+  { id: 1, title: "시리즈", path: "/series" },
+  { id: 2, title: "영화", path: "/Movie" },
+  { id: 3, title: "오리지널", path: "/original" },
 ];
 
 const Header = () => {
   const location = useLocation();
-  const isLand = location.pathname === '/land';
-  const isAuth = location.pathname === '/auth';
+  const isLand = location.pathname === "/land";
+  const isAuth = location.pathname === "/auth";
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -26,6 +26,20 @@ const Header = () => {
   const handleSearchClose = () => setIsSearchOpen(false);
 
   const hideHeaderUI = isLand || isAuth;
+
+  const ALARM_LS_KEY = "alarm_watchlist_v1";
+
+  const getAlarmCount = () => {
+    try {
+      const raw = localStorage.getItem(ALARM_LS_KEY);
+      if (!raw) return 0;
+      const arr = JSON.parse(raw) as string[];
+      return arr.length;
+    } catch {
+      return 0;
+    }
+  };
+  const [alarmCount] = useState<number>(getAlarmCount());
 
   return (
     <>
@@ -52,9 +66,15 @@ const Header = () => {
           {!hideHeaderUI && (
             <div className="header-right">
               <ul>
-                <li>
-                  <Link to="/bell">
+                <li className="bell-wrap">
+                  <Link to="/bell" className="bell-link">
                     <img src="/images/bell-btn.png" alt="bell" />
+
+                    {alarmCount > 0 && (
+                      <span className="alarm-badge">
+                        {alarmCount > 99 ? "99+" : alarmCount}
+                      </span>
+                    )}
                   </Link>
                 </li>
 
@@ -63,7 +83,8 @@ const Header = () => {
                     className="search-btn"
                     onClick={handleSearchOpen}
                     aria-label="검색"
-                    type="button">
+                    type="button"
+                  >
                     <img src="/images/search-btn.png" alt="search" />
                   </button>
                 </li>

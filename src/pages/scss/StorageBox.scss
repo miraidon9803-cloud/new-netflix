@@ -118,11 +118,8 @@
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  :hover {
+  &:hover {
     background-color: l.$grey3;
-  }
-  :active {
-    background: l.$grey3;
   }
 }
 
@@ -133,7 +130,7 @@
   top: 100%;
   left: 0;
   width: 98px;
-  padding: 8px 16px;
+  padding: 8px 0px;
   background: l.$grey3;
   border-radius: 4px;
 
