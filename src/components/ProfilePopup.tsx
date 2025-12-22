@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, CSSProperties } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { profile } from "../data/profile";
 import { useProfileStore } from "../store/Profile";
 import "./scss/ProfilePopup.scss";
@@ -246,7 +246,7 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
                         value={ageLimit}
                         onChange={(e) => setAgeLimit(Number(e.target.value))}
                         className="age-slider"
-                        style={{ "--percent": percent } as CSSProperties}
+                        style={{ "--percent": percent } as any}
                         disabled={submitting}
                       />
 
