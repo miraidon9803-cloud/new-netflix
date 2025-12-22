@@ -1,10 +1,9 @@
-@use '../../../App.scss' as color;
+@use "../../../App.scss" as color;
 
 /* =========================
    필터 버튼
 ========================= */
 .original-filter-wrap {
-  
   width: 16.6%;
   height: 4rem;
   margin-left: auto;
@@ -78,8 +77,11 @@
 }
 
 .original-filter-title {
-  font-size: 1.6rem;
+  display: block;
+  width: 100%;
+  font-size: 2rem;
   font-weight: 700;
+  text-align: center;
 }
 
 .original-filter-close {
@@ -99,7 +101,7 @@
 }
 
 .original-filter-sec-title {
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   opacity: 0.85;
   margin-bottom: 1.2rem;
 }
@@ -117,10 +119,10 @@
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: 1.3rem;
+  font-size: 1.6rem;
 
   input {
-    accent-color: color.$grey3;
+    accent-color: color.$main1;
   }
 }
 
@@ -139,7 +141,7 @@
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: transparent;
   color: #fff;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   cursor: pointer;
   opacity: 0.9;
   transition: all 0.2s ease;

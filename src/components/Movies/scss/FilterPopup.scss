@@ -67,8 +67,11 @@
   margin-bottom: 2.2rem;
 
   .filter-title {
-    font-size: 1.6rem;
-    font-weight: 700;
+    display: block;
+  width: 100%;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
   }
 }
 
@@ -86,7 +89,7 @@
 }
 
 .filter-sec-title {
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   opacity: 0.85;
   margin-bottom: 1.2rem;
 }
@@ -101,10 +104,10 @@
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: 1.3rem;
+  font-size: 1.6rem;
 
   input {
-    accent-color: color.$grey3;
+    accent-color: color.$main1;
   }
 }
 
@@ -121,7 +124,7 @@
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: transparent;
   color: #fff;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   cursor: pointer;
   opacity: 0.9;
 

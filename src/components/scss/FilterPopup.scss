@@ -1,8 +1,7 @@
-@use '../../App.scss' as color;
+@use "../../App.scss" as color;
 
-/* 버튼 */
-.series-filter-wrap {
- width: 16.6%;
+.main-filter-wrap {
+  width: 16.6%;
   height: 4rem;
   margin-left: auto;
   margin-top: 2rem;
@@ -28,8 +27,8 @@
   }
 }
 
-/* DIM + BLUR */
-.series-filter-dim {
+/* ✅ DIM + BLUR */
+.main-filter-dim {
   position: fixed;
   inset: 0;
   z-index: 3000;
@@ -39,12 +38,14 @@
   justify-content: center;
 
   background: rgba(0, 0, 0, 0.35);
+
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+
+  will-change: backdrop-filter;
 }
 
-/* 팝업 */
-.series-filter-popup {
+.main-filter-popup {
   width: min(110rem, 92vw);
   max-height: 80vh;
   overflow: auto;
@@ -56,69 +57,71 @@
   color: #fff;
 }
 
-/* 헤더 */
-.series-filter-head {
+.main-filter-head {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 2.2rem;
-}
 
-.series-filter-title {
-  font-size: 1.6rem;
+  .main-filter-title {
+    display: block;
+  width: 100%;
+  font-size: 2rem;
   font-weight: 700;
+  text-align: center;
+  }
 }
 
-.series-filter-close {
+.main-filter-close {
   background: none;
   border: none;
   color: #fff;
   font-size: 2.4rem;
+  line-height: 1;
   cursor: pointer;
 }
 
-/* 섹션 */
-.series-filter-sec {
+.main-filter-sec {
   margin-top: 2.2rem;
 }
 
-.series-filter-sec-title {
-  font-size: 1.2rem;
+.main-filter-sec-title {
+  font-size: 1.6rem;
   opacity: 0.85;
   margin-bottom: 1.2rem;
 }
 
-/* 라디오 */
-.series-radio-row {
+.main-radio-row {
   display: flex;
   gap: 2rem;
   flex-wrap: wrap;
 }
 
-.series-radio-item {
+.main-radio-item {
   display: flex;
+  align-items: center;
   gap: 0.8rem;
-  font-size: 1.3rem;
+  font-size: 1.6rem;
 
   input {
-    accent-color: color.$grey3;
+    accent-color: color.$main1;
   }
 }
 
-/* 칩 */
-.series-chip-grid,
-.series-chip-row {
+.main-chip-grid,
+.main-chip-row {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
 }
 
-.series-chip {
+.main-chip {
   padding: 0.7rem 1.2rem;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: transparent;
   color: #fff;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   cursor: pointer;
   opacity: 0.9;
 
@@ -129,8 +132,7 @@
   }
 }
 
-/* 액션 */
-.series-filter-actions {
+.main-filter-actions {
   margin-top: 3rem;
   display: flex;
   gap: 1.2rem;
