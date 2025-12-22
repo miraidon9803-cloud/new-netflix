@@ -366,6 +366,6 @@ const Tvdetail = () => {
       <SideNav />
     </div>
   );
-};
+}; 1
 
 export default Tvdetail;

@@ -219,6 +219,6 @@ const MovieDetail = () => {
       </div>
     </div>
   );
-};
+}; 1
 
 export default MovieDetail;
