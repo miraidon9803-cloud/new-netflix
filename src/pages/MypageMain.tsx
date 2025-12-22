@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import "./scss/MypageMain.scss";
 import Acount from "../components/Acount";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AppPopup from "../components/AppPopup";
 import MemberPopup from "../components/MemberPopup";
 import { useProfileStore } from "../store/Profile";
@@ -10,6 +10,7 @@ import ProfilePopup from "../components/ProfilePopup";
 
 import AvatarSelPopup from "../components/AvatarSelPopup";
 import { profile } from "../data/profile";
+import CSpopup from "../components/CSpopup";
 
 const MypageMain = () => {
   const user = useAuthStore((s) => s.user);
@@ -26,14 +27,19 @@ const MypageMain = () => {
   const [showAccount, setShowAccount] = useState(false);
   const [showApp, setShowApp] = useState(false);
   const [showMember, setShowMember] = useState(false);
+  const [showCs, setShowCs] = useState(false);
 
   const [openProfilePopup, setOpenProfilePopup] = useState(false);
-
   const [avatarPopupOpen, setAvatarPopupOpen] = useState(false);
 
   const [selectedAvatarKey, setSelectedAvatarKey] = useState(
     activeProfile?.avatarKey ?? profile?.[0]?.key ?? ""
   );
+
+  // ✅ (선택) activeProfile 바뀌면 selectedAvatarKey도 맞춰주기
+  useEffect(() => {
+    setSelectedAvatarKey(activeProfile?.avatarKey ?? profile?.[0]?.key ?? "");
+  }, [activeProfile?.avatarKey]);
 
   if (!activeProfile) return null;
 
@@ -129,7 +135,7 @@ const MypageMain = () => {
                 />
               </li>
 
-              <li>
+              <li onClick={() => setShowCs((v) => !v)}>
                 <span className="item-left">
                   <img
                     src="/images/icon/MypageMain-service.png"
@@ -176,6 +182,7 @@ const MypageMain = () => {
             {showAccount && <Acount onClose={() => setShowAccount(false)} />}
             {showApp && <AppPopup onClose={() => setShowApp(false)} />}
             {showMember && <MemberPopup onClose={() => setShowMember(false)} />}
+            {showCs && <CSpopup onClose={() => setShowCs(false)} />}
 
             <button onClick={handleLogout} className="logout-btn">
               로그아웃
