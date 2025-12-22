@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import SideNav from "./SideNav";
-import Footer from "./Footer";
+// import Footer from "./Footer";
 import { useWishlistStore } from "../store/WishlistStore";
-import type { WishlistFolder, WishlistContent } from "../store/WishlistStore";
+import type { WishlistContent } from "../store/WishlistStore";
 import type { SortOrder } from "../types/search";
 import "./scss/WishlistDetail.scss";
 
@@ -222,7 +222,7 @@ const WishlistDetail: React.FC = () => {
   } = useWishlistStore();
 
   const [sortOrder, setSortOrder] = useState<SortOrder>("latest");
-  // const [sortedContents, setSortedContents] = useState<WishlistContent[]>([]);
+  const [sortedContents, setSortedContents] = useState<WishlistContent[]>([]);
   const [showEditPopup, setShowEditPopup] = useState<boolean>(false);
   const [showMovePopup, setShowMovePopup] = useState<boolean>(false);
   const [selectedContent, setSelectedContent] =
@@ -236,8 +236,9 @@ const WishlistDetail: React.FC = () => {
   // 현재 폴더
   const currentFolder = folders.find((f) => f.id === folderId);
   const folderName = currentFolder?.name || "폴더";
-  const EMPTY_CONTENTS: Content[] = [];
-  const contents = currentFolder?.contents ?? EMPTY_CONTENTS;
+  // const EMPTY_CONTENTS: Content[] = [];
+  // const contents = currentFolder?.contents ?? EMPTY_CONTENTS;
+  const contents = currentFolder?.contents || [];
 
   // 폴더 로드 (마운트 시 1회만)
   useEffect(() => {
@@ -245,15 +246,15 @@ const WishlistDetail: React.FC = () => {
   }, []);
 
   // 콘텐츠 정렬
-  // useEffect(() => {
-  //   let sorted = [...contents];
-  //   if (sortOrder === 'title') {
-  //     sorted.sort((a, b) => a.title.localeCompare(b.title, 'ko'));
-  //   } else if (sortOrder === 'popular') {
-  //     sorted = [...contents].reverse();
-  //   }
-  //   setSortedContents(sorted);
-  // }, [sortOrder, contents]);
+  useEffect(() => {
+    let sorted = [...contents];
+    if (sortOrder === "title") {
+      sorted.sort((a, b) => a.title.localeCompare(b.title, "ko"));
+    } else if (sortOrder === "popular") {
+      sorted = [...contents].reverse();
+    }
+    setSortedContents(sorted);
+  }, [sortOrder, contents]);
 
   // ESC 키 처리
   useEffect(() => {
@@ -534,9 +535,9 @@ const WishlistDetail: React.FC = () => {
         </div>
       )}
 
-      <div className="wishlist-detail-footer">
+      {/* <div className="wishlist-detail-footer">
         <Footer />
-      </div>
+      </div> */}
 
       <nav className="wishlist-detail-bottom-nav">
         <a href="/" className="bottom-nav-item">
