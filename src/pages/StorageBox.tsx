@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useWatchingStore } from "../store/WatichingStore";
 import { useLikeStore } from "../store/LikeStore";
@@ -26,7 +26,29 @@ const StorageBox = () => {
   const [activeTab, setActiveTab] = useState<TabType>("보관함");
   const [sortType, setSortType] = useState<SortType>("최신순");
   const [filterOpen, setFilterOpen] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+
   const SORT_OPTIONS: SortType[] = ["최신순", "제목순", "평점순"];
+
+  /* ---------------- 외부 클릭 감지 ---------------- */
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        filterRef.current &&
+        !filterRef.current.contains(event.target as Node)
+      ) {
+        setFilterOpen(false);
+      }
+    };
+
+    if (filterOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [filterOpen]);
 
   /* ---------------- 데이터 로드 ---------------- */
   useEffect(() => {
@@ -58,7 +80,6 @@ const StorageBox = () => {
     return `/movie/${item.id}`;
   };
 
-  // ✅ 고유 key 만들기 (중복 key 경고 방지)
   const makeKey = (item: ItemType) => {
     if (item.mediaType === "tv") {
       const season = (item as WatchingItem).season_number ?? "x";
@@ -103,12 +124,23 @@ const StorageBox = () => {
     [downloads, sortItems]
   );
 
-  /* ---------------- 필터 ---------------- */
+  /* ---------------- 필터 핸들러 ---------------- */
+  const handleFilterToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFilterOpen((prev) => !prev);
+  };
+
+  const handleSortChange = (type: SortType) => {
+    setSortType(type);
+    setFilterOpen(false);
+  };
+
+  /* ---------------- 필터 렌더 ---------------- */
   const renderFilter = () => (
-    <div className="storage-filter-wrap">
+    <div className="storage-filter-wrap" ref={filterRef}>
       <p
         className={`filter-btn ${filterOpen ? "active" : ""}`}
-        onClick={() => setFilterOpen((prev) => !prev)}
+        onClick={handleFilterToggle}
       >
         <span className="label">{sortType}</span>
         <span className="icon">⇅</span>
@@ -117,13 +149,7 @@ const StorageBox = () => {
       {filterOpen && (
         <ul className="storage-filter">
           {SORT_OPTIONS.filter((type) => type !== sortType).map((type) => (
-            <li
-              key={type}
-              onClick={() => {
-                setSortType(type);
-                setFilterOpen(false);
-              }}
-            >
+            <li key={type} onClick={() => handleSortChange(type)}>
               {type}
             </li>
           ))}
