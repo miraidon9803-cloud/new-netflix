@@ -66,7 +66,7 @@ const Membership: React.FC<MembershipProps> = ({ onPrev, onNext }) => {
 
           {onPrev && (
             <p className="prev-btn" onClick={onPrev} role="button" tabIndex={0}>
-              dd
+              <img src="/images/ArrowLeft.png" alt="Back" />
             </p>
           )}
         </div>

@@ -19,7 +19,6 @@ const Login: React.FC<LoginProps> = ({ onNext }) => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!email || !password) {
       setError("이메일과 비밀번호를 입력해주세요.");
       return;
@@ -27,73 +26,43 @@ const Login: React.FC<LoginProps> = ({ onNext }) => {
 
     try {
       await onLogin(email, password);
-      setEmail("");
-      setPassword("");
       setError("");
-      // navigate("/mypage/profile", { replace: true });
-    } catch (err) {
-      console.error("로그인 실패:", err);
+    } catch {
       setError("로그인 중 오류가 발생했습니다.");
-    }
-  };
-
-  const handleGoogle = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    try {
-      await onGoogleLogin();
-      navigate("/mypage/profile", { replace: true });
-    } catch (err) {
-      alert("로그인 실패: " + (err as Error).message);
-    }
-  };
-
-  const handleKakao = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    try {
-      await onKakaoLogin(); // navigate를 store에서 안 받도록 바꿨으면 여기서 이동
-      navigate("/mypage/profile", { replace: true });
-    } catch (err) {
-      alert("로그인 실패: " + (err as Error).message);
     }
   };
 
   return (
     <div className="inner-login">
       <div className="login-wrap">
+        {/* LEFT */}
         <div className="login-left">
-          <img src="/images/login-img.png" alt="Login Image" />
+          <img src="/images/login-img.png" alt="Netflix visual" />
         </div>
 
+        {/* RIGHT */}
         <div className="login-right">
-          <h1>
-            <img src="/images/Netflix_Logo.png" alt="" />
-          </h1>
-
-          <div className="login-right2">
+          <section className="login-right2">
             <h2>LOGIN</h2>
 
             <form onSubmit={handleLogin}>
               <div className="input-wrap">
-                <img src="/images/email.svg" alt="email" />
+                <img src="/images/email.svg" alt="" />
                 <input
                   type="email"
-                  name="email"
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  required
                 />
               </div>
 
               <div className="input-wrap">
-                <img src="/images/lyra-icon-lock.svg" alt="password" />
+                <img src="/images/lyra-icon-lock.svg" alt="" />
                 <input
                   type="password"
-                  name="password"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required
                 />
               </div>
 
@@ -104,32 +73,41 @@ const Login: React.FC<LoginProps> = ({ onNext }) => {
               </button>
             </form>
 
-            <p onClick={onNext} className="signup-text">
+            <p className="signup-text" onClick={onNext}>
               계정이 없으신가요? <span>회원가입</span>
             </p>
 
             <div className="social-login">
               <button
-                onClick={handleGoogle}
                 type="button"
                 className="google-btn"
-                disabled={loading}
+                onClick={async () => {
+                  await onGoogleLogin();
+                  navigate("/mypage/profile", { replace: true });
+                }}
               >
-                <img src="/images/google.png" alt="google" />
-                <p>구글 로그인</p>
+                <span className="social-inner">
+                  <img src="/images/google.png" alt="" />
+                  <p>구글 로그인</p>
+                </span>
               </button>
 
               <button
-                onClick={handleKakao}
                 type="button"
                 className="kakao-btn"
-                disabled={loading}
+                onClick={async () => {
+                  await onKakaoLogin();
+                  navigate("/mypage/profile", { replace: true });
+                }}
               >
-                <img src="/images/kakao.png" alt="kakao" />
-                <p>카카오 로그인</p>
+                {" "}
+                <span className="social-inner">
+                  <img src="/images/kakao.png" alt="" />
+                  <p>카카오 로그인</p>
+                </span>
               </button>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </div>

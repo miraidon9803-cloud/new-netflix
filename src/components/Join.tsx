@@ -63,52 +63,54 @@ const Join: React.FC<JoinProps> = ({ onNext, onPrev }) => {
           </div>
 
           <form onSubmit={handleJoin}>
-            <p>이메일 주소</p>
-            <div className="input-wrap">
-              <input
-                type="email"
-                name="email"
-                placeholder="이메일 주소를 입력해주세요"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+            <div className="form-block">
+              <p>이메일 주소</p>
+              <div className="input-wrap">
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="이메일 주소를 입력해주세요"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
 
-            <p>비밀번호</p>
-            <div className="input-wrap">
-              <input
-                type="password"
-                name="password"
-                placeholder="영어,숫자,특수문자 조합 8~16자리"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+              <p>비밀번호</p>
+              <div className="input-wrap">
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="영어,숫자,특수문자 조합 8~16자리"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
 
-            <p>비밀번호 확인</p>
-            <div className="input-wrap">
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="비밀번호를 다시 입력해주세요"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
+              <p>비밀번호 확인</p>
+              <div className="input-wrap">
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="비밀번호를 다시 입력해주세요"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
 
-            <p>휴대폰번호를 입력해주세요</p>
-            <div className="input-wrap">
-              <input
-                type="text"
-                name="phone"
-                placeholder="- 없이 숫자만 입력해주세요"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-              />
+              <p>휴대폰번호</p>
+              <div className="input-wrap">
+                <input
+                  type="text"
+                  name="phone"
+                  placeholder="- 없이 숫자만 입력해주세요"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                />
+              </div>
             </div>
 
             {error && <p className="error-msg">{error}</p>}
