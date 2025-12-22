@@ -1,6 +1,6 @@
-import "./scss/join.scss";
 import React, { useState } from "react";
 import { useAuthStore } from "../store/authStore";
+import "./scss/join.scss";
 
 interface JoinProps {
   onNext?: () => void;
