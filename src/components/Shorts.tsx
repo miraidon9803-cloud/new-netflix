@@ -4,6 +4,7 @@ import SideNav from './SideNav';
 // import Footer from './Footer';
 import './scss/Shorts.scss';
 import SearchModal from './SearchModal';
+import MobileNav from './MobileNav';
 
 // 영상 데이터 타입
 interface ShortsData {
@@ -586,7 +587,7 @@ const Shorts: React.FC = () => {
       </div> */}
 
       {/* 하단 네비게이션 (1440px 이하에서 표시) */}
-      <nav className="shorts-bottom-nav">
+      {/* <nav className="shorts-bottom-nav">
         <Link to="/" className="bottom-nav-item">
           <img src="/images/icon/바로가기.png" alt="" />
 
@@ -607,7 +608,8 @@ const Shorts: React.FC = () => {
           <img src="/images/icon/보관함.png" alt="" />
 
         </Link>
-      </nav>
+      </nav> */}
+      <MobileNav/>
       {/* 추가: SearchModal 렌더링 */}
       {isSearchOpen && <SearchModal onClose={handleSearchClose} />}
     </div>

@@ -12,12 +12,6 @@
   background-color: $BG;
   position: relative;
 
-  // 전역 Footer 숨김
-  // &~footer,
-  // &+footer {
-  //   display: none !important;
-  // }
-
   // ================================================
   // 사이드 네비게이션 (1440px 초과)
   // ================================================
@@ -36,16 +30,6 @@
 
   .wishlist-mobile-header {
     display: none;
-
-    // .mobile-header-left {
-    //   display: flex;
-    //   align-items: center;
-    //   gap: 12px;
-    // }
-
-    // .mobile-logo {
-    //   height: 24px;
-    // }
 
     .wishlist-mobile-title {
       font-family: 'SUIT';
@@ -66,9 +50,6 @@
       border: none;
       cursor: pointer;
       padding: 0;
-      // display: flex;
-      // align-items: center;
-      // justify-content: center;
 
       img {
         width: 24px;
@@ -98,8 +79,6 @@
   .wishlist-header {
     @include myFlex(10px, space-between, center);
     margin-bottom: 26px;
-    // padding: 0 60px;
-    // max-width: 1440px;
 
     .wishlist-title {
       @include myTitle24(600, left);
@@ -132,8 +111,6 @@
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     row-gap: 40px;
     column-gap: 16px;
-    // padding: 0 60px;
-    // max-width: 1440px;
   }
 
   // ================================================
@@ -160,6 +137,7 @@
   .folder-icon-wrapper {
     width: 220px;
     height: 173px;
+    flex-shrink: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -201,6 +179,7 @@
     .folder-new-box {
       width: 220px;
       height: 173px;
+      flex-shrink: 0;
       border: 2px dashed $main1;
       border-radius: 16px;
       display: flex;
@@ -217,39 +196,6 @@
       @include myTitle16(400, center);
       color: $main1;
       margin-top: 16px;
-    }
-  }
-
-  // ================================================
-  // 하단 네비게이션 (기본: 숨김)
-  // ================================================
-
-  .wishlist-bottom-nav {
-    display: none;
-
-    .bottom-nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      color: $grey6;
-      text-decoration: none;
-      transition: color 0.3s;
-
-      img {
-        width: 100%;
-        opacity: 0.6;
-        transition: opacity 0.3s;
-      }
-
-      &:hover,
-      &.active {
-        color: $grey10;
-
-        img {
-          opacity: 1;
-        }
-      }
     }
   }
 
@@ -373,7 +319,6 @@
     @include myTitle16(400, left);
   }
 
-  // 폴더 수정 팝업
   .popup-edit {
     width: 406px;
     display: flex;
@@ -415,7 +360,6 @@
 
 @media (max-width: 1440px) {
   .wishlist-page {
-
     .wishlist-sidenav {
       display: none;
     }
@@ -425,50 +369,13 @@
     }
 
     .wishlist-content {
-      margin: 0 auto !important;
-      padding: 110px 16px 100px !important;
+      padding: 110px 20px 100px;
       max-width: 100%;
     }
 
     .wishlist-grid {
       grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-    }
-
-    .folder-icon-wrapper {
-      width: 100%;
-      // height: auto;
-      aspect-ratio: 220 / 173;
-    }
-
-    .folder-card-new .folder-new-box {
-      width: 100%;
-      // height: auto;
-      aspect-ratio: 220 / 173;
-    }
-
-    .folder-info {
-      max-width: 100%;
-    }
-
-    .folder-name {
-      @include myTitle14(400, center);
-    }
-
-    .wishlist-bottom-nav {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 44px;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 80px;
-      background: rgba(23, 23, 24, 0.60);
-      backdrop-filter: blur(15px);
-      z-index: 100;
-      padding-bottom: 30px;
+      gap: 40px 20px;
     }
   }
 }
@@ -479,39 +386,44 @@
 
 @media (max-width: 950px) {
   .wishlist-page {
+    .wishlist-content {
+      padding: 110px 40px 100px;
+    }
+
     .wishlist-grid {
       grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
+      gap: 32px 16px;
     }
-  }  
+  }
 }
 
 // ================================================
-// 반응형: 950px 이하
+// 반응형: 700px 이하
 // ================================================
 
 @media (max-width: 700px) {
   .wishlist-page {
+    .wishlist-content {
+      padding: 110px 24px 100px;
+    }
+
     .wishlist-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
+      gap: 28px 16px;
     }
-  }  
+  }
 }
-
 
 // ================================================
 // 반응형: 430px 이하
 // ================================================
 
 @media (max-width: 430px) {
-
   body:has(.wishlist-page) header {
     display: none;
   }
 
   .wishlist-page {
-
     .wishlist-mobile-header {
       display: flex;
       justify-content: space-between;
@@ -527,8 +439,7 @@
     }
 
     .wishlist-content {
-      margin: 60px 16px 0 !important;
-      padding: 0 0 100px !important;
+      padding: 60px 16px 100px;
     }
 
     .wishlist-header {
@@ -550,48 +461,24 @@
       row-gap: 24px;
     }
 
-    // 430px 이하 폴더 크기 반응형 (중요!)
     .folder-icon-wrapper {
       width: 100%;
       height: auto;
       aspect-ratio: 220 / 173;
     }
 
-    .folder-card-new {
-      .folder-new-box {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 220 / 173;
-        border: 2px dashed $main1;
-        border-radius: 16px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: background-color 0.2s;
-
-        &:hover {
-          background-color: rgba($main1, 0.1);
-        }
-      }
-
-      .folder-new-text {
-        @include myTitle16(400, center);
-        color: $main1;
-        margin-top: 16px;
-      }
+    .folder-card-new .folder-new-box {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 220 / 173;
     }
 
-    .wishlist-bottom-nav {
-      height: 70px;
-      padding: 15px;
-      justify-content: space-between;
-      gap: clamp(16px, 5vw, 32px);
+    .folder-info {
+      margin-top: 8px;
+    }
 
-      .bottom-nav-item {
-        img {
-          width: 50px;
-        }
-      }
+    .folder-new-text {
+      margin-top: 8px !important;
     }
 
     .popup-container {
@@ -634,14 +521,6 @@
       .popup-save-btn {
         margin-top: 40px;
       }
-    }
-
-    .folder-info {
-      margin-top: 8px;
-    }
-
-    .folder-new-text {
-      margin-top: 8px !important;
     }
   }
 }

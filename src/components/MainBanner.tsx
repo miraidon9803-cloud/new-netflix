@@ -1,6 +1,8 @@
 // src/components/MainBanner.tsx
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import WishlistPopup from './WishlistPopup';
+import type { WishlistContent } from '../store/WishlistStore';
 import './scss/Mainbanner.scss';
 
 const banBG = [
@@ -41,12 +43,29 @@ type Banner = {
   txt: string;
   tmdbId: number;
   mediaType: MediaType;
+  title: string;
+  posterPath?: string | null;
 };
 
-const tmdbMap: Array<{ tmdbId: number; mediaType: MediaType }> = [
-  { tmdbId: 119051, mediaType: 'tv' },
-  { tmdbId: 803796, mediaType: 'movie' },
-  { tmdbId: 228689, mediaType: 'tv' },
+const tmdbMap: Array<{ tmdbId: number; mediaType: MediaType; title: string; posterPath?: string | null }> = [
+  { 
+    tmdbId: 119051, 
+    mediaType: 'tv', 
+    title: '웬즈데이',
+    posterPath: '/images/Mainbanner/웬즈데이사람만.png'
+  },
+  { 
+    tmdbId: 803796, 
+    mediaType: 'movie', 
+    title: '케이트 미들턴: 왕실의 헌신',
+    posterPath: '/images/Mainbanner/케데헌사람만.png'
+  },
+  { 
+    tmdbId: 228689, 
+    mediaType: 'tv', 
+    title: '다이루어질 지니',
+    posterPath: '/images/Mainbanner/다이루어질지니사람만.png'
+  },
 ];
 
 const bannerSet: Banner[] = banBG.map((bg, i) => ({
@@ -61,8 +80,24 @@ const AUTO_DELAY = 4500;
 const MainBanner: React.FC = () => {
   const navigate = useNavigate();
 
+  // 위시리스트 팝업 상태
+  const [showWishlistPopup, setShowWishlistPopup] = useState(false);
+  const [selectedContent, setSelectedContent] = useState<WishlistContent | null>(null);
+
   const goDetail = (mediaType: MediaType, tmdbId: number) => {
     navigate(`/${mediaType}/${tmdbId}`);
+  };
+
+  // 위시리스트 버튼 클릭 핸들러
+  const handleWishlistClick = (banner: Banner) => {
+    const content: WishlistContent = {
+      id: banner.tmdbId,
+      title: banner.title,
+      poster_path: banner.posterPath || null,
+      media_type: banner.mediaType,
+    };
+    setSelectedContent(content);
+    setShowWishlistPopup(true);
   };
 
   const extended = useMemo(() => {
@@ -132,7 +167,11 @@ const MainBanner: React.FC = () => {
                 <span className="play-txt">재생</span>
               </button>
 
-              <button type="button" className="wish">
+              <button 
+                type="button" 
+                className="wish"
+                onClick={() => handleWishlistClick(banner)}
+              >
                 <span className="wish-ico" aria-hidden="true">
                   <img className="wishicon" src="/images/icon/heart.png" alt="" />
                   <img className="wish-hover" src="/images/icon/heart-active.png" alt="" />
@@ -155,7 +194,7 @@ const MainBanner: React.FC = () => {
         ))}
       </div>
 
-      {/* 모바일은 네 기존 그대로(생략 안 하고 유지) */}
+      {/* 모바일 배너 */}
       <div className="mobile-wrap">
         <div className="mobileBG">
           <img src={MobileBG[realIndex]} alt="mobile background" />
@@ -175,11 +214,23 @@ const MainBanner: React.FC = () => {
             재생
           </button>
 
-          <button type="button" className="mwish">
+          <button 
+            type="button" 
+            className="mwish"
+            onClick={() => handleWishlistClick(bannerSet[realIndex])}
+          >
             <img src="/images/icon/mobile_wish.png" alt="wish" />
           </button>
         </div>
       </div>
+
+      {/* 위시리스트 팝업 */}
+      {showWishlistPopup && selectedContent && (
+        <WishlistPopup
+          content={selectedContent}
+          onClose={() => setShowWishlistPopup(false)}
+        />
+      )}
     </div>
   );
 };
