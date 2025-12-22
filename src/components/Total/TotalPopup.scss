@@ -1,7 +1,11 @@
-@use '../../App.scss' as color;
+@use "../../App.scss" as color;
 
-.filter-wrap {
- width: 16.6%;
+/* =========================
+   필터 버튼 래퍼 (TSX: total-wrap)
+   ========================= */
+.total-wrap {
+  // position: absolute;
+  width: 24rem;
   height: 4rem;
   margin-left: auto;
   margin-top: 2rem;
@@ -27,8 +31,10 @@
   }
 }
 
-/* ✅ DIM + BLUR */
-.filter-dim {
+/* =========================
+   DIM + BLUR (TSX: total-dim)
+   ========================= */
+.total-dim {
   position: fixed;
   inset: 0;
   z-index: 3000;
@@ -37,18 +43,18 @@
   align-items: center;
   justify-content: center;
 
-  /* ✅ 어둡게 + 블러가 같이 보이도록 투명도 살짝 낮춤 */
   background: rgba(0, 0, 0, 0.35);
 
-  /* ✅ 뒤 배경 블러 4px */
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 
-  /* ✅ (선택) 렌더 안정 */
   will-change: backdrop-filter;
 }
 
-.filter-popup {
+/* =========================
+   팝업 박스 (TSX: total-popup)
+   ========================= */
+.total-popup {
   width: min(110rem, 92vw);
   max-height: 80vh;
   overflow: auto;
@@ -60,20 +66,32 @@
   color: #fff;
 }
 
-.filter-head {
+/* =========================
+   헤더 (TSX: popup-top / popup-title / popup-close)
+   - 타이틀은 진짜 가운데, X는 오른쪽
+   ========================= */
+.popup-top {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end; /* X를 오른쪽 끝으로 */
   margin-bottom: 2.2rem;
-
-  .filter-title {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 700;
-  }
 }
 
-.filter-close {
+.popup-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  width: 100%;
+  pointer-events: none; /* 타이틀 위 클릭이 X를 방해하지 않게 */
+}
+
+.popup-close {
   background: none;
   border: none;
   color: #fff;
@@ -82,16 +100,23 @@
   cursor: pointer;
 }
 
-.filter-sec {
+/* =========================
+   섹션 (TSX: total-sec / total-sec-title)
+   ========================= */
+.total-sec {
   margin-top: 2.2rem;
 }
 
-.filter-sec-title {
+.total-sec-title {
   font-size: 1.6rem;
   opacity: 0.85;
   margin-bottom: 1.2rem;
+  text-align: start;
 }
 
+/* =========================
+   라디오 (TSX: radio-row / radio-item)
+   ========================= */
 .radio-row {
   display: flex;
   gap: 2rem;
@@ -109,6 +134,9 @@
   }
 }
 
+/* =========================
+   칩 (TSX: chip-grid / chip-row / chip)
+   ========================= */
 .chip-grid,
 .chip-row {
   display: flex;
@@ -133,7 +161,10 @@
   }
 }
 
-.filter-actions {
+/* =========================
+   하단 버튼 (TSX: total-actions)
+   ========================= */
+.total-actions {
   margin-top: 3rem;
   display: flex;
   gap: 1.2rem;

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import FilterPopup from '../components/Total/TotalPopup';
 import './scss/TotalResult.scss';
+import SideNav from '../components/SideNav';
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY as string;
 const BASE = 'https://api.themoviedb.org/3';
@@ -172,6 +173,7 @@ const TotalResult: React.FC = () => {
           ))}
         </ul>
       )}
+      <SideNav/>
     </div>
   );
 };
