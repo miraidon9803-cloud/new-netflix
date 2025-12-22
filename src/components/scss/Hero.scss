@@ -58,7 +58,7 @@
       height: 44px;
 
       background: $main1;
-      border-radius: 8px;
+      border-radius: 0.4rem;
 
       @include myTitle20($fw: 400, $ta: center);
       color: $grey10;

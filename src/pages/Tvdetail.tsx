@@ -14,6 +14,7 @@ import { useRef } from "react";
 import VideoPlayer, { type VideoPlayerHandle } from "../components/VideoPlayer";
 import "./scss/NetDetail.scss";
 import MobileNav from "../components/MobileNav";
+import SideNav from "../components/SideNav";
 
 type Video = {
   id: string;
@@ -362,6 +363,7 @@ const Tvdetail = () => {
         </div>
       </div>
       <MobileNav />
+      <SideNav />
     </div>
   );
 };

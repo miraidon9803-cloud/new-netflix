@@ -89,12 +89,15 @@ const MovieDetail = () => {
   const iframeKey = selectedVideoKey ?? defaultTrailer?.key ?? null;
 
   /* ---------------- meta ---------------- */
-  const directorNames =
+  const directors =
     movieCredits?.crew
       ?.filter((c: any) => c.job === "Director")
-      .map((d: any) => d.name)
       .slice(0, 3)
-      .join(", ") ?? "정보 없음";
+      .map((d: any) => ({
+        id: d.id,
+        name: d.name,
+        profile_path: d.profile_path ?? null,
+      })) ?? [];
 
   const topCast = movieCredits?.cast?.slice(0, 10) ?? [];
   const genres = movieDetail.genres ?? [];
@@ -169,7 +172,7 @@ const MovieDetail = () => {
             voteAverage={movieDetail.vote_average}
             onLike={handleLike}
             onDownload={handleDownload}
-            director={directorNames}
+            directors={directors}
             topCast={topCast}
             genres={genres}
             runtime={movieDetail.runtime}

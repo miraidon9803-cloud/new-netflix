@@ -7,6 +7,7 @@ import "swiper/css/free-mode";
 import "./scss/Payment.scss";
 
 import { useNavigate, Link } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 
 interface PaymentProps {
   onPrev?: () => void;
@@ -14,28 +15,62 @@ interface PaymentProps {
 }
 
 type PayMethod = "naver" | "kakao" | "samsung" | "toss" | "card";
+type MembershipType = "ad-standard" | "standard" | "premium";
+
+interface MembershipInfo {
+  name: string;
+  price: number;
+}
+
+const MEMBERSHIP_MAP: Record<MembershipType, MembershipInfo> = {
+  "ad-standard": { name: "광고형 스탠다드", price: 7000 },
+  standard: { name: "스탠다드", price: 13500 },
+  premium: { name: "프리미엄", price: 17000 },
+};
 
 const Payment: React.FC<PaymentProps> = ({ onPrev, onNext }) => {
   const navigate = useNavigate();
 
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const tempMembership = useAuthStore((s) => s.tempMembership);
 
+  // 결제 수단 (기존 유지)
   const [selected, setSelected] = useState<PayMethod>("naver");
   const handleSelect = (value: PayMethod) => {
-    setSelected((prev) => (prev === value ? ("naver" as PayMethod) : value));
+    setSelected((prev) => (prev === value ? "naver" : value));
   };
 
-  const [selectedMembership, setSelectedMembership] = useState<
-    "ad-standard" | "standard" | "premium"
-  >("ad-standard");
-
-  const handleMembershipSelect = (
-    value: "ad-standard" | "standard" | "premium"
-  ) => {
-    setSelectedMembership(value);
+  // 멤버십
+  // const initialMembership: MembershipType =
+  //   tempMembership?.type ?? "ad-standard";
+  const mapStoreToUiMembership = (
+    type?: "adStandard" | "standard" | "premium"
+  ): MembershipType => {
+    switch (type) {
+      case "adStandard":
+        return "ad-standard";
+      case "standard":
+        return "standard";
+      case "premium":
+        return "premium";
+      default:
+        return "ad-standard";
+    }
   };
 
-  // ✅ 약관 동의 상태 (버튼 활성화용)
+  const initialMembership: MembershipType = mapStoreToUiMembership(
+    tempMembership?.type
+  );
+
+  const [selectedMembership, setSelectedMembership] =
+    useState<MembershipType>(initialMembership);
+
+  const [tempSelectedMembership, setTempSelectedMembership] =
+    useState<MembershipType>(initialMembership);
+
+  // 팝업
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  // 약관
   const [agree1, setAgree1] = useState(false);
   const [agree2, setAgree2] = useState(false);
 
@@ -48,11 +83,10 @@ const Payment: React.FC<PaymentProps> = ({ onPrev, onNext }) => {
 
   const handleSubmit = () => {
     if (!canSubmit) return;
-
-    // ✅ 여기서는 결제 저장/로그인 처리 X
-    // ✅ 다음 단계(Complete)로만 이동
     onNext?.();
   };
+
+  const membership = MEMBERSHIP_MAP[selectedMembership];
 
   return (
     <div className="payment-wrapper">
@@ -90,10 +124,10 @@ const Payment: React.FC<PaymentProps> = ({ onPrev, onNext }) => {
                 slidesPerView="auto"
                 spaceBetween={12}
                 grabCursor
-                modules={[FreeMode]}
                 freeMode
                 mousewheel={{ releaseOnEdges: false }}
                 speed={400}
+                modules={[FreeMode]}
                 className="payment-swiper"
               >
                 <SwiperSlide className="payment-slide">
@@ -170,21 +204,25 @@ const Payment: React.FC<PaymentProps> = ({ onPrev, onNext }) => {
               </Swiper>
             </div>
 
-            {/* 선택된 멤버십 */}
+            {/* 멤버십  */}
             <div className="payment-membership">
               <h2 className="pay-section-title">선택된 멤버십</h2>
 
               <div className="membership-summary">
                 <div className="membership-info">
-                  {/* ✅ 일단 UI만: 실제 값은 store(tempMembership)에서 가져오게 바꾸면 더 정확함 */}
-                  <span className="membership-price">매월 7,000원</span>
-                  <span className="membership-name">광고형 스탠다드</span>
+                  <span className="membership-price">
+                    매월 {membership.price.toLocaleString()}원
+                  </span>
+                  <span className="membership-name">{membership.name}</span>
                 </div>
 
                 <button
                   type="button"
                   className="membership-change-btn"
-                  onClick={() => setIsPopupOpen(true)}
+                  onClick={() => {
+                    setTempSelectedMembership(selectedMembership);
+                    setIsPopupOpen(true);
+                  }}
                 >
                   변경
                 </button>
@@ -211,7 +249,7 @@ const Payment: React.FC<PaymentProps> = ({ onPrev, onNext }) => {
               <label className="agreement-item">
                 <input
                   type="checkbox"
-                  className="agreement-checkbox"
+                  className="agreement-checkbox" // ⭐ 이것도
                   checked={agree2}
                   onChange={(e) => setAgree2(e.target.checked)}
                 />
@@ -223,11 +261,10 @@ const Payment: React.FC<PaymentProps> = ({ onPrev, onNext }) => {
             </div>
           </section>
 
-          {/* 버튼 */}
           <button
             className="payment-submit"
-            onClick={handleSubmit}
             disabled={!canSubmit}
+            onClick={handleSubmit}
           >
             멤버십 시작
           </button>
@@ -263,9 +300,9 @@ const Payment: React.FC<PaymentProps> = ({ onPrev, onNext }) => {
                   <li>
                     <label
                       className={`membership-item ${
-                        selectedMembership === "ad-standard" ? "active" : ""
+                        tempSelectedMembership === "ad-standard" ? "active" : ""
                       }`}
-                      onClick={() => handleMembershipSelect("ad-standard")}
+                      onClick={() => setTempSelectedMembership("ad-standard")}
                     >
                       <span className="membership-name">광고형 스탠다드</span>
                     </label>
@@ -274,9 +311,9 @@ const Payment: React.FC<PaymentProps> = ({ onPrev, onNext }) => {
                   <li>
                     <label
                       className={`membership-item ${
-                        selectedMembership === "standard" ? "active" : ""
+                        tempSelectedMembership === "standard" ? "active" : ""
                       }`}
-                      onClick={() => handleMembershipSelect("standard")}
+                      onClick={() => setTempSelectedMembership("standard")}
                     >
                       <span className="membership-name">스탠다드</span>
                     </label>
@@ -285,9 +322,9 @@ const Payment: React.FC<PaymentProps> = ({ onPrev, onNext }) => {
                   <li>
                     <label
                       className={`membership-item ${
-                        selectedMembership === "premium" ? "active" : ""
+                        tempSelectedMembership === "premium" ? "active" : ""
                       }`}
-                      onClick={() => handleMembershipSelect("premium")}
+                      onClick={() => setTempSelectedMembership("premium")}
                     >
                       <span className="membership-name">프리미엄</span>
                     </label>
@@ -304,7 +341,10 @@ const Payment: React.FC<PaymentProps> = ({ onPrev, onNext }) => {
               <button
                 type="button"
                 className="popup-confirm-btn"
-                onClick={() => setIsPopupOpen(false)}
+                onClick={() => {
+                  setSelectedMembership(tempSelectedMembership); // ⭐ 이 한 줄만 중요
+                  setIsPopupOpen(false);
+                }}
               >
                 선택
               </button>

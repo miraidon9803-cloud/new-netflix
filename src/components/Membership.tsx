@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { MembershipType } from "../types/auth";
 import { useAuthStore } from "../store/authStore";
 import "./scss/Membership.scss";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 interface MembershipProps {
   onPrev?: () => void;
@@ -22,7 +22,7 @@ const Membership: React.FC<MembershipProps> = ({ onPrev, onNext }) => {
     premium: { type: "premium" as const, name: "프리미엄", price: 17000 },
   };
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [selected, setSelected] = useState<MembershipType>("adStandard");
 
   /**  신규 가입 여부: Join에서 tempJoin 저장해둔 경우 */
@@ -41,16 +41,17 @@ const Membership: React.FC<MembershipProps> = ({ onPrev, onNext }) => {
       const plan = MEMBERS[selected];
 
       if (tempJoin) {
-        //  신규 가입: 여기서 finalize(회원가입) 절대 실행하지 않음
-        setTempMembership(plan);
+        setTempMembership({
+          ...plan,
+          // ⭐ Payment가 쓰는 key로 맞춰서 저장
+          type: selected === "adStandard" ? "ad-standard" : selected,
+        });
 
-        //  다음 단계로 이동 (Payment -> Complete)
-        if (onNext) onNext();
-        else navigate("/auth"); // fallback (step 방식이면 보통 onNext 사용)
+        // ✅ 라우팅은 부모가 함
+        onNext?.();
         return;
       }
 
-      //  기존 로그인: 멤버십만 저장/변경
       await saveMembership(plan);
     } catch (e) {
       console.error(e);

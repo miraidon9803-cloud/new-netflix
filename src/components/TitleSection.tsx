@@ -7,6 +7,11 @@ import type { Genre } from "../types/movie";
 const PROFILE_IMG = "https://image.tmdb.org/t/p/w185";
 const FALLBACK_PROFILE = "/images/icon/no_profile.png";
 
+interface Person {
+  id: number;
+  name: string;
+  profile_path: string | null;
+}
 interface TitleSectionProps {
   title: string;
   rating?: string | null;
@@ -23,7 +28,7 @@ interface TitleSectionProps {
   onDownload?: () => void;
 
   /** movie */
-  director?: string;
+  directors?: Person[];
   runtime?: number;
 
   /** tv */
@@ -31,6 +36,7 @@ interface TitleSectionProps {
     name: string;
     profile_path: string | null;
   };
+  creators?: Person[];
 
   /** common */
   topCast?: {
@@ -60,7 +66,7 @@ export const TitleSection = ({
   onLike,
   onDownload,
   creator,
-  director,
+  directors = [],
   runtime,
   topCast = [],
   genres = [],
@@ -191,21 +197,45 @@ export const TitleSection = ({
         {moreOpen && (
           <div className="more-panel">
             {/* 감독 */}
-            {director && (
-              <div className="row">
+            {directors.length > 0 && (
+              <div className="row" style={{ flexDirection: "column" }}>
                 <span className="label">감독</span>
-                <span className="value">{director}</span>
+                <ul className="cast-list">
+                  {directors.map((person) => (
+                    <li key={person.id} className="cast-item">
+                      <div className="cast-img">
+                        <img
+                          src={
+                            person.profile_path
+                              ? `${PROFILE_IMG}${person.profile_path}`
+                              : FALLBACK_PROFILE
+                          }
+                        />
+                      </div>
+                      <p className="cast-name">{person.name}</p>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
 
             {/* 제작자 (TV) */}
             {mediaType === "tv" && creator && (
-              <div className="row">
+              <div className="row" style={{ flexDirection: "column" }}>
                 <span className="label">제작자</span>
-                <span className="value">{creator.name}</span>
+                <ul className="cast-list">
+                  <li className="cast-item">
+                    <div className="cast-img">
+                      <img
+                        src={FALLBACK_PROFILE} // 항상 fallback 이미지
+                        alt={creator.name}
+                      />
+                    </div>
+                    <p className="cast-name">{creator.name}</p>
+                  </li>
+                </ul>
               </div>
             )}
-
             {/* 러닝타임 */}
             {runtime != null && (
               <div className="row">

@@ -7,6 +7,15 @@ import AvatarSelPopup from "./AvatarSelPopup";
 /* ================= 타입 ================= */
 
 type Language =
+  | "Dansk"
+  | "Deutsch"
+  | "English"
+  | "Español"
+  | "Filipino"
+  | "Français"
+  | "Hrvatski"
+  | "Indonesia"
+  | "Italiano"
   | "Magyar"
   | "Nederlands"
   | "Norsk bokmal"
@@ -61,7 +70,7 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
   const [selectedAvatarKey, setSelectedAvatarKey] = useState(profile[0].key);
   const [avatarPopupOpen, setAvatarPopupOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  // const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const [adultOnly, setAdultOnly] = useState(false);
   const [ageLimit, setAgeLimit] = useState(1);
@@ -82,7 +91,7 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
   useEffect(() => {
     if (!open) return;
 
-    setErrorMsg(null);
+    // setErrorMsg(null);
     setAvatarPopupOpen(false);
     setOpenlanguage(false);
 

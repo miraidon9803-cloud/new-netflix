@@ -17,7 +17,7 @@
     // margin-bottom: 40px;
 
     .left-side {
-      // width: 100%;
+      width: 100%; // ✅ 고정 83rem 제거
       max-width: 83rem;
 
       iframe {
@@ -160,6 +160,7 @@
         font-size: 1.6rem;
         color: l.$grey10; // cast-name과 동일 톤
         min-width: 4rem; // "감독" 폭 고정 → 정렬 안정
+        margin-right: 0.8rem;
       }
 
       .value {
@@ -200,7 +201,6 @@
   }
 
   .season-box {
-    width: 58.6rem;
     .detail-tabs {
       margin-bottom: 20px;
       display: flex;
@@ -293,7 +293,6 @@
       line-height: 1.5;
       color: #ccc;
 
-      /* ✅ 2~3줄 말줄임 (넷플릭스 느낌) */
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
@@ -430,13 +429,9 @@
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
-
-          /* 안정성 보강 */
-          word-break: break-word;
-          line-height: 1.4; // 줄 계산 안정
-          max-height: calc(1.4em * 3); // 일부 브라우저 대비
         }
       }
+
       .episode-content {
         position: relative;
         width: 220px;
@@ -484,8 +479,8 @@
 .media-box {
   position: relative;
   width: 100%;
-  height: 41rem;
-  // aspect-ratio: 16 / 9; // ✅ 16:9 고정
+  height: 410px;
+  aspect-ratio: 16 / 9; // ✅ 16:9 고정
   background: #000;
   border-radius: 8px;
   overflow: hidden;
