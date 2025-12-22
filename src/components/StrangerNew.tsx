@@ -1,3 +1,4 @@
+// src/components/StrangerNew.tsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './scss/StrangerNew.scss';
@@ -19,9 +20,13 @@ const StrangerNew: React.FC = () => {
       </div>
 
       <div className="button">
-        <button type="button" onClick={goDetail}>
-          <img src="/images/icon/play.png" alt="play" />
-          재생
+        {/* ✅ MainBanner랑 동일: 아이콘 hover 교체 + hover 보더(#E50914) */}
+        <button type="button" className="play" onClick={goDetail}>
+          <span className="play-ico" aria-hidden="true">
+            <img className="playicon" src="/images/icon/play.png" alt="" />
+            <img className="play-hover" src="/images/icon/play-hover.png" alt="" />
+          </span>
+          <span className="play-txt">재생</span>
         </button>
       </div>
     </div>

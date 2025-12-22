@@ -1,3 +1,4 @@
+// src/components/MovieBanner.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './scss/MovieBanner.scss';
@@ -36,48 +37,39 @@ const MovieBanner: React.FC = () => {
 
     const fetchRandomMovieBanner = async () => {
       try {
-        // ✅ 후보 풀: now_playing + popular
         const [nowRes, popRes] = await Promise.all([
           fetch(`${BASE}/movie/now_playing?api_key=${API_KEY}&language=ko-KR&page=1`),
           fetch(`${BASE}/movie/popular?api_key=${API_KEY}&language=ko-KR&page=1`),
         ]);
 
-        if (!nowRes.ok) throw new Error(`TMDB now_playing error: ${nowRes.status}`);
-        if (!popRes.ok) throw new Error(`TMDB popular error: ${popRes.status}`);
+        if (!nowRes.ok || !popRes.ok) return;
 
         const nowData = (await nowRes.json()) as MovieListResponse;
         const popData = (await popRes.json()) as MovieListResponse;
 
-        // ✅ backdrop 있는 애들만 + 중복 제거
-        const merged = [...(nowData.results ?? []), ...(popData.results ?? [])]
-          .filter((m) => m?.id && m.backdrop_path)
+        const merged = [...nowData.results, ...popData.results]
+          .filter((m) => m.id && m.backdrop_path)
           .reduce<MovieListItem[]>((acc, cur) => {
-            if (acc.some((x) => x.id === cur.id)) return acc;
-            acc.push(cur);
+            if (!acc.some((x) => x.id === cur.id)) acc.push(cur);
             return acc;
           }, []);
 
         if (!mounted || !merged.length) return;
 
         const picked = pickRandom(merged);
-
-        // ✅ 상세 재요청
         const detailRes = await fetch(
           `${BASE}/movie/${picked.id}?api_key=${API_KEY}&language=ko-KR`
         );
-        if (!detailRes.ok) throw new Error(`TMDB detail error: ${detailRes.status}`);
+        if (!detailRes.ok) return;
 
         const detail = (await detailRes.json()) as BannerItem;
-        if (!mounted) return;
-
-        setItem(detail);
-      } catch (err) {
-        console.error('[MovieBanner] error:', err);
+        if (mounted) setItem(detail);
+      } catch (e) {
+        console.error(e);
       }
     };
 
     fetchRandomMovieBanner();
-
     return () => {
       mounted = false;
     };
@@ -85,40 +77,33 @@ const MovieBanner: React.FC = () => {
 
   if (!item) return null;
 
-  const displayTitle = item.title ?? '';
   const imgSrc = item.backdrop_path ? `${IMG_BACKDROP}${item.backdrop_path}` : FALLBACK_BG;
-
-  /** ✅ 재생 버튼 클릭 → Movie 상세 페이지 */
-  const onClickPlay = () => {
-    navigate(`/movie/${item.id}`);
-  };
+  const onClickPlay = () => navigate(`/movie/${item.id}`);
 
   return (
     <section className="movie-banner">
-      <img
-        className="movie-bg"
-        src={imgSrc}
-        alt={displayTitle}
-        draggable={false}
-        onError={(e) => {
-          (e.currentTarget as HTMLImageElement).src = FALLBACK_BG;
-        }}
-      />
+      <img className="movie-bg" src={imgSrc} alt="" draggable={false} />
 
       <div className="movie-banner-inner">
         <div className="movie-bannertxt">
-          <h2>{displayTitle}</h2>
+          <h2>{item.title}</h2>
           <h3>{item.overview}</h3>
         </div>
 
         <div className="movie-banner-btns">
-          <button className="play" type="button" onClick={onClickPlay}>
-            <img src="/images/icon/play.png" alt="play" draggable={false} />
+          <button className="play" onClick={onClickPlay}>
+            <span className="ico">
+              <img className="icon" src="/images/icon/play.png" alt="" />
+              <img className="icon-hover" src="/images/icon/play-hover.png" alt="" />
+            </span>
             재생
           </button>
 
-          <button className="wish" type="button">
-            <img src="/images/icon/heart.png" alt="wishlist" draggable={false} />
+          <button className="wish">
+            <span className="ico">
+              <img className="icon" src="/images/icon/heart.png" alt="" />
+              <img className="icon-hover" src="/images/icon/heart-active.png" alt="" />
+            </span>
             위시리스트
           </button>
         </div>

@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import { useNetflixStore } from "../store/NetflixStore";
 import "./scss/Top10.scss";
 
-// ✅ Swiper
+// Swiper
 import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
 import { FreeMode, Mousewheel } from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/free-mode";
 
 const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 const FALLBACK_POSTER = "/images/icon/no_poster.png";
@@ -50,9 +52,9 @@ const TodayTop10: React.FC = () => {
         className="top10Swiper"
         modules={[FreeMode, Mousewheel]}
         slidesPerView="auto"
-        spaceBetween={24}
         freeMode
         mousewheel={{ forceToAxis: true }}
+        spaceBetween={88} // ✅ 2.4rem 고정
       >
         {netflixTop10.map((item, index) => {
           const badge = getBadgeType(item);
@@ -65,7 +67,11 @@ const TodayTop10: React.FC = () => {
               <div className="top10Item">
                 <span className="rank">{index + 1}</span>
 
-                <Link to={`/tv/${item.id}`} className="posterWrap" aria-label={getTitle(item)}>
+                <Link
+                  to={`/tv/${item.id}`}
+                  className="posterWrap"
+                  aria-label={getTitle(item)}
+                >
                   {badge === "netflix" && (
                     <img
                       className="netflixBadge"
@@ -79,7 +85,7 @@ const TodayTop10: React.FC = () => {
                     <img
                       className="newBadge"
                       src="/images/icon/뉴_뱃지.png"
-                      alt="New (3 months)"
+                      alt="New"
                       draggable={false}
                     />
                   )}
@@ -88,7 +94,7 @@ const TodayTop10: React.FC = () => {
                     <img
                       className="oldBadge"
                       src="/images/icon/곧 종료_뱃지.png"
-                      alt="Old (1 year+)"
+                      alt="Ending Soon"
                       draggable={false}
                     />
                   )}
@@ -99,7 +105,8 @@ const TodayTop10: React.FC = () => {
                     alt={getTitle(item)}
                     draggable={false}
                     onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src = FALLBACK_POSTER;
+                      (e.currentTarget as HTMLImageElement).src =
+                        FALLBACK_POSTER;
                     }}
                   />
                 </Link>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchNetflixOriginalTop10 } from '../../api/TmdbOriginal';
-import './scss/Top10.scss';
+import './scss/originaltop10.scss';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode } from 'swiper/modules';
@@ -35,11 +35,6 @@ const NetflixOriginalTop10: React.FC = () => {
         const top10 = await fetchNetflixOriginalTop10();
         if (!mounted) return;
 
-        console.log(
-          '[NetflixOriginalTop10] top10:',
-          top10.map((t, i) => ({ rank: i + 1, id: t.id, name: t.name }))
-        );
-
         setNetflixTop10(top10 as Top10Item[]);
       } catch (e: any) {
         if (!mounted) return;
@@ -57,7 +52,7 @@ const NetflixOriginalTop10: React.FC = () => {
   const getTitle = (item: Top10Item) => (item.name ?? item.title ?? 'poster') as string;
 
   return (
-    <div className="top10Wrap">
+    <div className="Original-top10Wrap">
       <h2>오늘의 TOP 10 오리지널</h2>
 
       {loading && <p style={{ color: '#fff' }}>로딩중...</p>}
@@ -65,13 +60,12 @@ const NetflixOriginalTop10: React.FC = () => {
 
       {!loading && !error && (
         <Swiper
-          className="top10Swiper"
+          className="Original-top10Swiper"
           modules={[FreeMode]}
           freeMode={{ enabled: true, momentum: true }}
           grabCursor
           slidesPerView="auto"
           watchOverflow
-          // ✅ gap(8.8rem=88px) / 태블릿 6rem=60px / 모바일 3.2rem=32px
           spaceBetween={88}
           breakpoints={{
             0: { spaceBetween: 32 },
@@ -84,14 +78,14 @@ const NetflixOriginalTop10: React.FC = () => {
             const to = `/tv/${item.id}`;
 
             return (
-              <SwiperSlide key={item.id} className="top10Slide">
-                <div className="top10Item">
-                  <span className="rank">{index + 1}</span>
+              <SwiperSlide key={item.id} className="Original-top10Slide">
+                <div className="Original-top10Item">
+                  <span className="Original-rank">{index + 1}</span>
 
-                  <div className="posterWrap">
+                  <div className="Original-posterWrap">
                     <Link to={to} aria-label={getTitle(item)}>
                       <img
-                        className="poster"
+                        className="Original-poster"
                         src={posterSrc}
                         alt={getTitle(item)}
                         draggable={false}

@@ -1,3 +1,4 @@
+// src/components/WalkingDead.tsx
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './scss/Wakingdead.scss';
@@ -34,7 +35,6 @@ const WalkingDead: React.FC = () => {
 
     isDraggingRef.current = true;
     el.classList.add('dragging');
-
     startXRef.current = e.pageX;
     startScrollLeftRef.current = el.scrollLeft;
   };
@@ -62,7 +62,6 @@ const WalkingDead: React.FC = () => {
 
     isDraggingRef.current = true;
     el.classList.add('dragging');
-
     startXRef.current = e.touches[0].pageX;
     startScrollLeftRef.current = el.scrollLeft;
   };
@@ -92,15 +91,20 @@ const WalkingDead: React.FC = () => {
         onMouseLeave={endDrag}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}>
+        onTouchEnd={onTouchEnd}
+      >
         {WalkingDeadList.map((item, i) => (
           <li key={i}>
             {i === 0 && (
-              <button type="button" onClick={() => navigate(`/tv/${WALKING_DEAD_TV_ID}`)}>
-                <img src="/images/icon/play.png" alt="play" draggable={false} />
-                재생
+              <button type="button" className="play" onClick={() => navigate(`/tv/${WALKING_DEAD_TV_ID}`)}>
+                <span className="play-ico" aria-hidden="true">
+                  <img className="playicon" src="/images/icon/play.png" alt="" draggable={false} />
+                  <img className="play-hover" src="/images/icon/play-hover.png" alt="" draggable={false} />
+                </span>
+                <span className="play-txt">재생</span>
               </button>
             )}
+
             <img src={item.src} alt="" draggable={false} />
           </li>
         ))}

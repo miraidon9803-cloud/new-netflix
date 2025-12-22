@@ -1,3 +1,4 @@
+// src/components/SeriesBanner.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './scss/SeriesBanner.scss';
@@ -36,7 +37,6 @@ const SeriesBanner: React.FC = () => {
 
     const fetchRandomSeriesBanner = async () => {
       try {
-        // ✅ airing_today + popular 섞어서 후보 풀 구성
         const [airRes, popRes] = await Promise.all([
           fetch(`${BASE}/tv/airing_today?api_key=${API_KEY}&language=ko-KR&page=1`),
           fetch(`${BASE}/tv/popular?api_key=${API_KEY}&language=ko-KR&page=1`),
@@ -48,7 +48,6 @@ const SeriesBanner: React.FC = () => {
         const airData = (await airRes.json()) as TVListResponse;
         const popData = (await popRes.json()) as TVListResponse;
 
-        // ✅ backdrop 있는 것만 + 중복 제거
         const merged = [...(airData.results ?? []), ...(popData.results ?? [])]
           .filter((t) => t?.id && t.backdrop_path)
           .reduce<TVListItem[]>((acc, cur) => {
@@ -61,7 +60,6 @@ const SeriesBanner: React.FC = () => {
 
         const picked = pickRandom(merged);
 
-        // ✅ 상세 재요청
         const detailRes = await fetch(`${BASE}/tv/${picked.id}?api_key=${API_KEY}&language=ko-KR`);
         if (!detailRes.ok) throw new Error(`TMDB detail error: ${detailRes.status}`);
 
@@ -86,7 +84,6 @@ const SeriesBanner: React.FC = () => {
   const displayTitle = item.name ?? '';
   const imgSrc = item.backdrop_path ? `${IMG_BACKDROP}${item.backdrop_path}` : FALLBACK_BG;
 
-  /** ✅ 재생 버튼 클릭 → TV 상세 페이지 */
   const onClickPlay = () => {
     navigate(`/tv/${item.id}`);
   };
@@ -110,14 +107,22 @@ const SeriesBanner: React.FC = () => {
         </div>
 
         <div className="series-banner-btns">
+          {/* ✅ play: 아이콘 hover 교체 + hover 때만 보더 */}
           <button className="play" type="button" onClick={onClickPlay}>
-            <img src="/images/icon/play.png" alt="play" draggable={false} />
-            재생
+            <span className="play-ico" aria-hidden="true">
+              <img className="playicon" src="/images/icon/play.png" alt="" draggable={false} />
+              <img className="play-hover" src="/images/icon/play-hover.png" alt="" draggable={false} />
+            </span>
+            <span className="play-txt">재생</span>
           </button>
 
+          {/* ✅ wish: 아이콘 hover 교체 + hover 때만 보더 */}
           <button className="wish" type="button">
-            <img src="/images/icon/heart.png" alt="wishlist" draggable={false} />
-            위시리스트
+            <span className="wish-ico" aria-hidden="true">
+              <img className="wishicon" src="/images/icon/heart.png" alt="" draggable={false} />
+              <img className="wish-hover" src="/images/icon/heart-active.png" alt="" draggable={false} />
+            </span>
+            <span className="wish-txt">위시리스트</span>
           </button>
         </div>
       </div>
