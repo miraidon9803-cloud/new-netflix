@@ -1,7 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchRecentTVSeries2025, type TVItem } from '../../api/tmdbSeries';
 import './scss/Series.scss';
+
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/free-mode';
 
 const IMG = 'https://image.tmdb.org/t/p/w342';
 const FALLBACK_POSTER = '/images/icon/no_poster.png';
@@ -10,13 +15,6 @@ const KoreanSeries: React.FC = () => {
   const [list, setList] = useState<TVItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  const scrollRef = useRef<HTMLUListElement>(null);
-
-  // ✅ 드래그 상태
-  const isDraggingRef = useRef(false);
-  const startXRef = useRef(0);
-  const startScrollLeftRef = useRef(0);
 
   useEffect(() => {
     let mounted = true;
@@ -34,7 +32,6 @@ const KoreanSeries: React.FC = () => {
 
         if (!mounted) return;
 
-        // ✅ 포스터 없는 건 제외
         const filtered = (data.results ?? []).filter((tv) => tv.poster_path);
         setList(filtered);
       } catch (e: any) {
@@ -50,59 +47,6 @@ const KoreanSeries: React.FC = () => {
     };
   }, []);
 
-  // ✅ 마우스 드래그
-  const onMouseDown: React.MouseEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    isDraggingRef.current = true;
-    el.classList.add('dragging');
-
-    startXRef.current = e.pageX;
-    startScrollLeftRef.current = el.scrollLeft;
-  };
-
-  const onMouseMove: React.MouseEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el || !isDraggingRef.current) return;
-
-    e.preventDefault();
-    const dx = e.pageX - startXRef.current;
-    el.scrollLeft = startScrollLeftRef.current - dx;
-  };
-
-  const endDrag = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    isDraggingRef.current = false;
-    el.classList.remove('dragging');
-  };
-
-  // ✅ 터치 드래그(모바일)
-  const onTouchStart: React.TouchEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    isDraggingRef.current = true;
-    el.classList.add('dragging');
-
-    startXRef.current = e.touches[0].pageX;
-    startScrollLeftRef.current = el.scrollLeft;
-  };
-
-  const onTouchMove: React.TouchEventHandler<HTMLUListElement> = (e) => {
-    const el = scrollRef.current;
-    if (!el || !isDraggingRef.current) return;
-
-    const dx = e.touches[0].pageX - startXRef.current;
-    el.scrollLeft = startScrollLeftRef.current - dx;
-  };
-
-  const onTouchEnd: React.TouchEventHandler<HTMLUListElement> = () => {
-    endDrag();
-  };
-
   return (
     <section className="series-section">
       <h2 className="series-title">한국 시리즈</h2>
@@ -111,19 +55,15 @@ const KoreanSeries: React.FC = () => {
       {error && <p className="state error">에러: {error}</p>}
 
       {!loading && !error && (
-        <ul
+        <Swiper
           className="series-row"
-          ref={scrollRef}
-          onMouseDown={onMouseDown}
-          onMouseMove={onMouseMove}
-          onMouseUp={endDrag}
-          onMouseLeave={endDrag}
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}>
+          modules={[FreeMode]}
+          freeMode
+          grabCursor
+          slidesPerView="auto"
+          spaceBetween={12}>
           {list.map((tv) => (
-            <li className="series-card" key={tv.id}>
-              {/* ✅ 클릭하면 TV 상세로 이동 */}
+            <SwiperSlide key={tv.id} className="series-card" style={{ width: 'auto' }}>
               <Link to={`/tv/${tv.id}`}>
                 <img
                   className="series-poster"
@@ -136,9 +76,9 @@ const KoreanSeries: React.FC = () => {
                   }}
                 />
               </Link>
-            </li>
+            </SwiperSlide>
           ))}
-        </ul>
+        </Swiper>
       )}
     </section>
   );
