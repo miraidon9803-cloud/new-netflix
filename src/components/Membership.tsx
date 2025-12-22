@@ -44,7 +44,7 @@ const Membership: React.FC<MembershipProps> = ({ onPrev, onNext }) => {
         setTempMembership({
           ...plan,
           // ⭐ Payment가 쓰는 key로 맞춰서 저장
-          type: selected === "adStandard" ? "ad-standard" : selected,
+          type: selected === "adStandard" ? "adStandard" : selected,
         });
 
         // ✅ 라우팅은 부모가 함
