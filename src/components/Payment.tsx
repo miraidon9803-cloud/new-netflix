@@ -3,8 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/free-mode";
-
-// import "./scss/Payment.scss";
+import "./scss/Payment.scss";
 
 import { useNavigate, Link } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
