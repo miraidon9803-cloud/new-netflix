@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, CSSProperties } from "react";
 import { profile } from "../data/profile";
 import { useProfileStore } from "../store/Profile";
 import "./scss/ProfilePopup.scss";
@@ -296,7 +296,7 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
                     </div>
                   )}
                 </div>
-
+                {errorMsg && <div className="error-message">{errorMsg}</div>}
                 {/* ===== 언어 ===== */}
                 <div className="language-method">
                   <p className="Voice-subtitles">기본 음성 및 자막</p>
