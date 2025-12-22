@@ -248,9 +248,9 @@ const WishlistDetail: React.FC = () => {
   // 콘텐츠 정렬
   useEffect(() => {
     let sorted = [...contents];
-    if (sortOrder === "title") {
-      sorted.sort((a, b) => a.title.localeCompare(b.title, "ko"));
-    } else if (sortOrder === "popular") {
+    if (sortOrder === 'title') {
+      sorted.sort((a, b) => a.title.localeCompare(b.title, 'ko'));
+    } else if (sortOrder === 'popular') {
       sorted = [...contents].reverse();
     }
     setSortedContents(sorted);

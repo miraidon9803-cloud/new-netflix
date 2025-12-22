@@ -12,11 +12,11 @@
   background-color: $BG;
   position: relative;
 
-  // 전역 Footer 숨김
-  & ~ footer,
-  & + footer {
-    display: none !important;
-  }
+  // // 전역 Footer 숨김
+  // & ~ footer,
+  // & + footer {
+  //   display: none !important;
+  // }
 
   // ================================================
   // 사이드 네비게이션 (1440px 초과)
@@ -36,11 +36,12 @@
 
   .wishlist-detail-content {
     flex: 1 1 auto;
-    padding: 110px 0px 60px;
+    padding: 110px 0px 120px;
     max-width: 1440px;
     margin: 0 auto;
     box-sizing: border-box;
     min-height: calc(100vh - 250px); // Footer 높이를 고려한 최소 높이
+    width: 100%;
   }
 
   // ================================================
@@ -391,7 +392,7 @@
     // 메인 콘텐츠 조정
     .wishlist-detail-content {
       margin: 0 auto !important;
-      padding: 110px 16px 100px !important;
+      padding: 110px 16px 120px !important;
       max-width: 100%;
     }
 

@@ -13,10 +13,10 @@
   position: relative;
 
   // 전역 Footer 숨김
-  &~footer,
-  &+footer {
-    display: none !important;
-  }
+  // &~footer,
+  // &+footer {
+  //   display: none !important;
+  // }
 
   // ================================================
   // 사이드 네비게이션 (1440px 초과)
@@ -70,7 +70,7 @@
 
   .shorts-content {
     flex: 1 1 auto;    
-    padding: 110px 0px 60px;
+    padding: 110px 0px 120px;
     max-width: 1440px;
     margin: 0 auto;
     box-sizing: border-box;
@@ -432,14 +432,14 @@
   // Footer (1441px 이상에서 표시)
   // ================================================
 
-  .shorts-footer {
-    display: block;
-    width: 100%;
-    max-width: 1570px;
-    margin: 0 auto;
-    padding-left: 130px;
-    box-sizing: border-box;
-  }
+  // .shorts-footer {
+  //   display: block;
+  //   width: 100%;
+  //   max-width: 1570px;
+  //   margin: 0 auto;
+  //   padding-left: 130px;
+  //   box-sizing: border-box;
+  // }
 }
 
 // ================================================
@@ -486,7 +486,7 @@
     // 메인 콘텐츠 조정
     .shorts-content {
       margin: 0 auto !important;
-      padding: 110px 16px 100px !important;
+      padding: 110px 16px 120px !important;
       max-width: 100%;
     }
 

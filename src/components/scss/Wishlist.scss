@@ -13,10 +13,10 @@
   position: relative;
 
   // 전역 Footer 숨김
-  &~footer,
-  &+footer {
-    display: none !important;
-  }
+  // &~footer,
+  // &+footer {
+  //   display: none !important;
+  // }
 
   // ================================================
   // 사이드 네비게이션 (1440px 초과)
@@ -83,7 +83,8 @@
 
   .wishlist-content {
     flex: 1 1 auto;
-    padding: 110px 0px 60px;
+    padding: 110px 0px 120px;
+    width: 100%;
     max-width: 1440px;
     margin: 0 auto;
     box-sizing: border-box;
@@ -97,7 +98,8 @@
   .wishlist-header {
     @include myFlex(10px, space-between, center);
     margin-bottom: 26px;
-    max-width: 1320px;
+    // padding: 0 60px;
+    // max-width: 1440px;
 
     .wishlist-title {
       @include myTitle24(600, left);
@@ -130,7 +132,8 @@
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     row-gap: 40px;
     column-gap: 16px;
-    max-width: 1320px;
+    // padding: 0 60px;
+    // max-width: 1440px;
   }
 
   // ================================================

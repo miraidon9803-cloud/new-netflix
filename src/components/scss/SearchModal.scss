@@ -147,7 +147,7 @@
 
     .search-submit-btn {
       position: absolute;
-      right: 4%;
+      right: 16px;
       top: 50%;
       transform: translateY(-50%);
       background: none;
@@ -437,8 +437,9 @@
 
 @media (min-width: 1441px) {
   .search-popup {
-    .tag-remove-btn {
-      display: none;
+    .tag-remove-btn {      
+      // display: none;
+      margin-left: 16px;
     }
 
     .tag {

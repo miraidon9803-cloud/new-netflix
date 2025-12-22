@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import SideNav from './SideNav';
-import Footer from './Footer';
+// import Footer from './Footer';
 import './scss/Shorts.scss';
+import SearchModal from './SearchModal';
 
 // 영상 데이터 타입
 interface ShortsData {
@@ -196,6 +197,13 @@ const Shorts: React.FC = () => {
   const [isDisliked, setIsDisliked] = useState(false);
   const [isShared, setIsShared] = useState(false);
 
+  // 추가: SearchModal 상태
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  // 추가: 검색 모달 핸들러
+  const handleSearchOpen = () => setIsSearchOpen(true);
+  const handleSearchClose = () => setIsSearchOpen(false);
+
 
   const playerVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -349,7 +357,7 @@ const Shorts: React.FC = () => {
           )}
           <h1 className="shorts-mobile-title">쇼츠</h1>
         </div>
-        <div className="shorts-mobile-icons">
+        {/* <div className="shorts-mobile-icons">
           <button className="icon-btn" aria-label="알림">
             <BellIcon />
           </button>
@@ -359,6 +367,27 @@ const Shorts: React.FC = () => {
           <button className="icon-btn" aria-label="메뉴">
             <HamburgerIcon />
           </button>
+        </div> */}
+        <div className="shorts-mobile-icons">
+          {/*  수정: Link 추가 */}
+          <Link to="/bell" className="icon-btn" aria-label="알림">
+            <BellIcon />
+          </Link>
+
+          {/*  수정: onClick 핸들러 추가 */}
+          <button
+            className="icon-btn"
+            onClick={handleSearchOpen}
+            aria-label="검색"
+            type="button"
+          >
+            <SearchIcon />
+          </button>
+
+          {/*  수정: Link 추가 */}
+          <Link to="/mypage" className="icon-btn" aria-label="메뉴">
+            <HamburgerIcon />
+          </Link>
         </div>
       </header>
 
@@ -552,9 +581,9 @@ const Shorts: React.FC = () => {
       </main>
 
       {/* Footer (1441px 이상에서 표시) */}
-      <div className="shorts-footer">
+      {/* <div className="shorts-footer">
         <Footer />
-      </div>
+      </div> */}
 
       {/* 하단 네비게이션 (1440px 이하에서 표시) */}
       <nav className="shorts-bottom-nav">
@@ -579,6 +608,8 @@ const Shorts: React.FC = () => {
 
         </Link>
       </nav>
+      {/* 추가: SearchModal 렌더링 */}
+      {isSearchOpen && <SearchModal onClose={handleSearchClose} />}
     </div>
   );
 };
