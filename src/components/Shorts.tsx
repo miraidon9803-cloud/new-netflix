@@ -13,6 +13,7 @@ interface ShortsData {
   views: number;
   label?: string;
   hasNetflixBadge?: boolean;
+  url: string;
 }
 
 // 영상 데이터 (public/videos/shorts/ 폴더 기준)
@@ -25,6 +26,7 @@ const shortsData: ShortsData[] = [
     views: 779,
     label: '웬즈데이 시즌2',
     hasNetflixBadge: true,
+    url: 'http://localhost:5173/tv/119051',
   },
   {
     id: 2,
@@ -34,6 +36,7 @@ const shortsData: ShortsData[] = [
     views: 1243,
     label: '',
     hasNetflixBadge: false,
+    url: `http://localhost:5173/tv/66732`
   },
   {
     id: 3,
@@ -43,6 +46,7 @@ const shortsData: ShortsData[] = [
     views: 892,
     label: '다이루어질지니',
     hasNetflixBadge: true,
+    url: 'http://localhost:5173/tv/228689',
   },
   {
     id: 4,
@@ -52,6 +56,7 @@ const shortsData: ShortsData[] = [
     views: 567,
     label: '사마귀',
     hasNetflixBadge: true,
+    url: 'http://localhost:5173/movie/1267319',
   },
   {
     id: 5,
@@ -61,6 +66,7 @@ const shortsData: ShortsData[] = [
     views: 2105,
     label: '크라임씬',
     hasNetflixBadge: true,
+    url: 'http://localhost:5173/tv/298698',
   },
   {
     id: 6,
@@ -70,6 +76,7 @@ const shortsData: ShortsData[] = [
     views: 1876,
     label: '광장',
     hasNetflixBadge: false,
+    url: 'http://localhost:5173/tv/232766',
   },
   {
     id: 7,
@@ -79,6 +86,7 @@ const shortsData: ShortsData[] = [
     views: 3421,
     label: '',
     hasNetflixBadge: false,
+    url: 'http://localhost:5173/movie/1296404',
   },
   {
     id: 8,
@@ -88,6 +96,7 @@ const shortsData: ShortsData[] = [
     views: 5678,
     label: '오징어게임3',
     hasNetflixBadge: true,
+    url: 'http://localhost:5173/tv/93405',
   },
   {
     id: 9,
@@ -97,6 +106,7 @@ const shortsData: ShortsData[] = [
     views: 4532,
     label: '',
     hasNetflixBadge: false,
+    url: 'http://localhost:5173/tv/219246',
   },
 ];
 
@@ -180,6 +190,12 @@ const Shorts: React.FC = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'player'>('grid');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progress, setProgress] = useState(0);
+
+  // 액션 버튼 클릭 상태 (이 부분 추가)
+  const [isLiked, setIsLiked] = useState(false);
+  const [isDisliked, setIsDisliked] = useState(false);
+  const [isShared, setIsShared] = useState(false);
+
 
   const playerVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -292,6 +308,21 @@ const Shorts: React.FC = () => {
   // 영상 종료 시 다음 영상 자동 재생
   const handleVideoEnded = () => {
     goNext();
+  };
+
+  // 액션 버튼 클릭 핸들러 (이 부분 추가)
+  const handleLikeClick = () => {
+    setIsLiked(!isLiked);
+    if (isDisliked) setIsDisliked(false); // 싫어요가 눌려있으면 해제
+  };
+
+  const handleDislikeClick = () => {
+    setIsDisliked(!isDisliked);
+    if (isLiked) setIsLiked(false); // 좋아요가 눌려있으면 해제
+  };
+
+  const handleShareClick = () => {
+    setIsShared(!isShared);
   };
 
   // 이전/다음 인덱스 계산
@@ -433,7 +464,7 @@ const Shorts: React.FC = () => {
                 />
 
                 {/* 액션 버튼들 */}
-                <div className="player-actions">
+                {/* <div className="player-actions">
                   <button className="action-btn">
                     <LikeIcon />
                     <span>1만</span>
@@ -446,10 +477,36 @@ const Shorts: React.FC = () => {
                     <ShareIcon />
                     <span>공유</span>
                   </button>
+                </div> */}
+                <div className="player-actions">
+                  <button className="action-btn" onClick={handleLikeClick}>
+                    {isLiked ? (
+                      <img src="/images/icon/like.png" alt="좋아요" style={{ width: '36px', height: '36px' }} />
+                    ) : (
+                      <LikeIcon />
+                    )}
+                    <span>1만</span>
+                  </button>
+                  <button className="action-btn" onClick={handleDislikeClick}>
+                    {isDisliked ? (
+                      <img src="/images/icon/dislike.png" alt="싫어요" style={{ width: '36px', height: '36px' }} />
+                    ) : (
+                      <DislikeIcon />
+                    )}
+                    <span>싫어요</span>
+                  </button>
+                  <button className="action-btn" onClick={handleShareClick}>
+                    {isShared ? (
+                      <img src="/images/icon/share.png" alt="공유" style={{ width: '36px', height: '36px' }} />
+                    ) : (
+                      <ShareIcon />
+                    )}
+                    <span>공유</span>
+                  </button>
                 </div>
 
                 {/* 하단 정보 */}
-                <div className="player-info">
+                {/* <div className="player-info">
                   <p className="player-title">
                     {sortedData[currentIndex].title} | {sortedData[currentIndex].series}
                   </p>
@@ -457,6 +514,15 @@ const Shorts: React.FC = () => {
                     <PlayIcon />
                     <span>보러가기</span>
                   </button>
+                </div> */}
+                <div className="player-info">
+                  <p className="player-title">
+                    {sortedData[currentIndex].title} | {sortedData[currentIndex].series}
+                  </p>
+                  <Link to={sortedData[currentIndex].url} className="watch-btn">
+                    <PlayIcon />
+                    <span>보러가기</span>
+                  </Link>
                 </div>
 
                 {/* 진행바 */}

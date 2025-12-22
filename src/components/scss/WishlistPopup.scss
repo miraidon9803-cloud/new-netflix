@@ -23,34 +23,35 @@
 
 .wishlist-popup-header {
   display: flex;
-  justify-content: space-between;
+  position: relative;
+  justify-content: center;
   align-items: center;
   margin-bottom: 20px;
 }
 
 .wishlist-popup-title {
   color: #fff;
-  font-size: 18px;
+  font-size: 18px;  
   font-weight: 600;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .wishlist-popup-close {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  
-  &:hover {
-    opacity: 0.8;
-  }
+  position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
 }
 
 .wishlist-popup-folder-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 300px;
+  max-height: 350px;
   overflow-y: auto;
   margin-bottom: 20px;
 }
@@ -59,10 +60,11 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  margin-bottom: 6px;
   padding: 14px 16px;
   background: #2a2a2a;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
 
@@ -74,22 +76,28 @@
   }
 
   &:hover {
-    background: $grey4;
+    background: #333;
   }
+  
+}
 
-  &.selected { 
-    background: $grey4;
-  }
+.wishlist-popup-empty-text {
+  color: #999;
+  font-size: 16px;
+  text-align: center;
+  padding: 60px 0;
+  margin: 0;
 }
 
 .wishlist-popup-save-btn {
   width: 100%;
   padding: 12px;
-  background-color: $sub1;
+  background:$sub1;
   border: none;
   border-radius: 4px;
+  color: #fff;
   color: $grey10;
-  @include myTitle16(500, center);
-  cursor: pointer;
-  
+    @include myTitle16(500, center);
+    cursor: pointer;
+    margin-top: 40px;  
 }

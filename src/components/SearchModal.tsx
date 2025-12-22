@@ -457,7 +457,7 @@ const SearchModal: React.FC<SearchModalProps> = ({ onClose }) => {
             <div className="search-results-section">
               <div className="section-header">
                 <h2 className="section-title">콘텐츠</h2>
-                <span className="results-count">{searchResults.length}건</span>
+                <span className="results-link">바로가기</span>
               </div>
               <div className="results-grid">
                 {searchResults.map((content) => (

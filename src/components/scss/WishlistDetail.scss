@@ -36,10 +36,9 @@
 
   .wishlist-detail-content {
     flex: 1 1 auto;
-    min-width: 0;
-    margin-left: 130px;
-    padding: 42px 60px 60px;
-    max-width: calc(100% - 130px);
+    padding: 110px 0px 60px;
+    max-width: 1440px;
+    margin: 0 auto;
     box-sizing: border-box;
     min-height: calc(100vh - 250px); // Footer 높이를 고려한 최소 높이
   }
@@ -392,7 +391,7 @@
     // 메인 콘텐츠 조정
     .wishlist-detail-content {
       margin: 0 auto !important;
-      padding: 42px 16px 100px !important;
+      padding: 110px 16px 100px !important;
       max-width: 100%;
     }
 

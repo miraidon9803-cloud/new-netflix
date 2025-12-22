@@ -1,132 +1,260 @@
-import { create } from 'zustand';
+import { create } from "zustand";
+import { db } from "../firebase/firebase";
+import {
+  collection,
+  doc,
+  getDocs,
+  setDoc,
+  deleteDoc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  serverTimestamp,
+} from "firebase/firestore";
+import { useAuthStore } from "./authStore";
 
 // 콘텐츠 타입 (TMDB 기반)
 export interface WishlistContent {
   id: number;
   title: string;
   poster_path: string | null;
-  media_type: 'movie' | 'tv';
+  media_type: "movie" | "tv";
 }
 
 // 폴더 데이터 타입
 export interface WishlistFolder {
-  id: number;
+  id: string;
   name: string;
   contents: WishlistContent[];
+  createdAt?: any;
 }
 
 interface WishlistState {
   folders: WishlistFolder[];
+  isLoading: boolean;
   isPopupOpen: boolean;
   currentContent: WishlistContent | null;
-  
-  // Actions
-  loadFolders: () => void;
-  saveFolders: (folders: WishlistFolder[]) => void;
-  addContentToFolder: (folderId: number, content: WishlistContent) => void;
-  removeContentFromFolder: (folderId: number, contentId: number) => void;
-  moveContent: (fromFolderId: number, toFolderId: number, contentId: number) => void;
+
+  loadFolders: () => Promise<void>;
+  createFolder: (name: string) => Promise<void>;
+  deleteFolder: (folderId: string) => Promise<void>;
+  renameFolder: (folderId: string, newName: string) => Promise<void>;
+  addContentToFolder: (
+    folderId: string,
+    content: WishlistContent
+  ) => Promise<void>;
+  removeContentFromFolder: (
+    folderId: string,
+    contentId: number
+  ) => Promise<void>;
+  moveContent: (
+    fromFolderId: string,
+    toFolderId: string,
+    content: WishlistContent
+  ) => Promise<void>;
   openPopup: (content: WishlistContent) => void;
   closePopup: () => void;
 }
 
-const STORAGE_KEY = 'wishlist_folders';
-
-// 초기 폴더 데이터
-const getInitialFolders = (): WishlistFolder[] => [
-  { id: 1, name: '이번 주말용', contents: [] },
-  { id: 2, name: '정주행 미드', contents: [] },
-  { id: 3, name: '심심할 때 보기', contents: [] },
-  { id: 4, name: '코난 극장판', contents: [] },
-  { id: 5, name: '그레이 아나토미', contents: [] },
-];
+const getUserId = (): string | null => {
+  const user = useAuthStore.getState().user;
+  return user?.uid || null;
+};
 
 export const useWishlistStore = create<WishlistState>((set, get) => ({
   folders: [],
+  isLoading: false,
   isPopupOpen: false,
   currentContent: null,
 
-  // localStorage에서 폴더 불러오기
-  loadFolders: () => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          set({ folders: parsed });
-          return;
-        }
-      }
-    } catch (error) {
-      console.error('Failed to load folders:', error);
+  loadFolders: async () => {
+    const userId = getUserId();
+    if (!userId) {
+      set({ folders: [], isLoading: false });
+      return;
     }
-    set({ folders: getInitialFolders() });
-  },
 
-  // localStorage에 폴더 저장
-  saveFolders: (folders) => {
+    set({ isLoading: true });
+
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(folders));
-      set({ folders });
+      const foldersRef = collection(db, "users", userId, "wishlist_folders");
+      const snapshot = await getDocs(foldersRef);
+
+      const folders: WishlistFolder[] = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as WishlistFolder[];
+
+      folders.sort((a, b) => {
+        const aTime = a.createdAt?.toMillis?.() || 0;
+        const bTime = b.createdAt?.toMillis?.() || 0;
+        return bTime - aTime;
+      });
+
+      set({ folders, isLoading: false });
     } catch (error) {
-      console.error('Failed to save folders:', error);
+      console.error("폴더 로드 실패:", error);
+      set({ folders: [], isLoading: false });
     }
   },
 
-  // 폴더에 콘텐츠 추가
-  addContentToFolder: (folderId, content) => {
-    const { folders, saveFolders } = get();
-    const updated = folders.map(folder => {
-      if (folder.id === folderId) {
-        // 중복 체크
-        const exists = folder.contents.some(c => c.id === content.id && c.media_type === content.media_type);
-        if (exists) return folder;
-        return { ...folder, contents: [...folder.contents, content] };
-      }
-      return folder;
-    });
-    saveFolders(updated);
+  createFolder: async (name: string) => {
+    const userId = getUserId();
+    if (!userId) return;
+
+    try {
+      const folderId = `folder_${Date.now()}`;
+      const folderRef = doc(db, "users", userId, "wishlist_folders", folderId);
+
+      const newFolder = {
+        name,
+        contents: [],
+        createdAt: serverTimestamp(),
+      };
+
+      await setDoc(folderRef, newFolder);
+
+      set((state) => ({
+        folders: [{ id: folderId, ...newFolder }, ...state.folders],
+      }));
+    } catch (error) {
+      console.error("폴더 생성 실패:", error);
+    }
   },
 
-  // 폴더에서 콘텐츠 삭제
-  removeContentFromFolder: (folderId, contentId) => {
-    const { folders, saveFolders } = get();
-    const updated = folders.map(folder => {
-      if (folder.id === folderId) {
-        return { ...folder, contents: folder.contents.filter(c => c.id !== contentId) };
-      }
-      return folder;
-    });
-    saveFolders(updated);
+  deleteFolder: async (folderId: string) => {
+    const userId = getUserId();
+    if (!userId) return;
+
+    try {
+      const folderRef = doc(db, "users", userId, "wishlist_folders", folderId);
+      await deleteDoc(folderRef);
+
+      set((state) => ({
+        folders: state.folders.filter((f) => f.id !== folderId),
+      }));
+    } catch (error) {
+      console.error("폴더 삭제 실패:", error);
+    }
   },
 
-  // 콘텐츠 이동
-  moveContent: (fromFolderId, toFolderId, contentId) => {
-    const { folders, saveFolders } = get();
-    let contentToMove: WishlistContent | null = null;
+  renameFolder: async (folderId: string, newName: string) => {
+    const userId = getUserId();
+    if (!userId) return;
 
-    const updated = folders.map(folder => {
-      if (folder.id === fromFolderId) {
-        contentToMove = folder.contents.find(c => c.id === contentId) || null;
-        return { ...folder, contents: folder.contents.filter(c => c.id !== contentId) };
-      }
-      return folder;
-    }).map(folder => {
-      if (folder.id === toFolderId && contentToMove) {
-        return { ...folder, contents: [...folder.contents, contentToMove] };
-      }
-      return folder;
-    });
+    try {
+      const folderRef = doc(db, "users", userId, "wishlist_folders", folderId);
+      await updateDoc(folderRef, { name: newName });
 
-    saveFolders(updated);
+      set((state) => ({
+        folders: state.folders.map((f) =>
+          f.id === folderId ? { ...f, name: newName } : f
+        ),
+      }));
+    } catch (error) {
+      console.error("폴더 이름 변경 실패:", error);
+    }
   },
 
-  // 팝업 열기
+  addContentToFolder: async (folderId: string, content: WishlistContent) => {
+    const userId = getUserId();
+    if (!userId) return;
+
+    try {
+      const folderRef = doc(db, "users", userId, "wishlist_folders", folderId);
+
+      const folder = get().folders.find((f) => f.id === folderId);
+      const exists = folder?.contents.some(
+        (c) => c.id === content.id && c.media_type === content.media_type
+      );
+
+      if (exists) return;
+
+      await updateDoc(folderRef, {
+        contents: arrayUnion(content),
+      });
+
+      set((state) => ({
+        folders: state.folders.map((f) =>
+          f.id === folderId ? { ...f, contents: [...f.contents, content] } : f
+        ),
+      }));
+    } catch (error) {
+      console.error("콘텐츠 추가 실패:", error);
+    }
+  },
+
+  removeContentFromFolder: async (folderId: string, contentId: number) => {
+    const userId = getUserId();
+    if (!userId) return;
+
+    try {
+      const folder = get().folders.find((f) => f.id === folderId);
+      const contentToRemove = folder?.contents.find((c) => c.id === contentId);
+
+      if (!contentToRemove) return;
+
+      const folderRef = doc(db, "users", userId, "wishlist_folders", folderId);
+      await updateDoc(folderRef, {
+        contents: arrayRemove(contentToRemove),
+      });
+
+      set((state) => ({
+        folders: state.folders.map((f) =>
+          f.id === folderId
+            ? { ...f, contents: f.contents.filter((c) => c.id !== contentId) }
+            : f
+        ),
+      }));
+    } catch (error) {
+      console.error("콘텐츠 삭제 실패:", error);
+    }
+  },
+
+  moveContent: async (
+    fromFolderId: string,
+    toFolderId: string,
+    content: WishlistContent
+  ) => {
+    const userId = getUserId();
+    if (!userId) return;
+
+    try {
+      const fromRef = doc(
+        db,
+        "users",
+        userId,
+        "wishlist_folders",
+        fromFolderId
+      );
+      const toRef = doc(db, "users", userId, "wishlist_folders", toFolderId);
+
+      await updateDoc(fromRef, { contents: arrayRemove(content) });
+      await updateDoc(toRef, { contents: arrayUnion(content) });
+
+      set((state) => ({
+        folders: state.folders.map((f) => {
+          if (f.id === fromFolderId) {
+            return {
+              ...f,
+              contents: f.contents.filter((c) => c.id !== content.id),
+            };
+          }
+          if (f.id === toFolderId) {
+            return { ...f, contents: [...f.contents, content] };
+          }
+          return f;
+        }),
+      }));
+    } catch (error) {
+      console.error("콘텐츠 이동 실패:", error);
+    }
+  },
+
   openPopup: (content) => {
     set({ isPopupOpen: true, currentContent: content });
   },
 
-  // 팝업 닫기
   closePopup: () => {
     set({ isPopupOpen: false, currentContent: null });
   },

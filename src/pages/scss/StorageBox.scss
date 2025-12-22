@@ -2,10 +2,11 @@
 
 .storage-inner {
   max-width: 1440px;
-  height: 900px;
-  // height: auto; //
+  // height: 900px;
+  height: auto; //
   margin: 0 auto;
   padding-top: 110px;
+  margin-bottom: 110px;
 
   .storage-tabs {
     display: flex;
@@ -66,13 +67,16 @@
     }
     .storage-content {
       display: flex;
-      justify-content: space-between;
       @include l.myTitle16();
+      text-align: left;
       align-items: center;
-      .del-btn {
-        text-decoration: underline;
-        color: l.$grey8;
-        cursor: pointer;
+      .del-wrap {
+        margin-left: auto;
+        .del-btn {
+          text-decoration: underline;
+          color: l.$grey8;
+          cursor: pointer;
+        }
       }
     }
   }

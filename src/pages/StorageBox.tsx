@@ -37,7 +37,7 @@ const StorageBox = () => {
       onFetchLikes(activeProfileId),
       onFetchDownloads(activeProfileId),
     ]);
-  }, [activeProfileId]);
+  }, [activeProfileId, onFetchWatching, onFetchLikes, onFetchDownloads]);
 
   /* ---------------- 유틸 ---------------- */
   const getThumb = (item: ItemType) =>
@@ -50,12 +50,22 @@ const StorageBox = () => {
     if (item.mediaType === "tv") {
       const season = (item as WatchingItem).season_number ?? "";
       const episode = (item as WatchingItem).episode_number ?? "";
-      if (season && episode) {
+      if (season !== "" && episode !== "") {
         return `/tv/${item.id}?season=${season}&episode=${episode}`;
       }
       return `/tv/${item.id}`;
     }
     return `/movie/${item.id}`;
+  };
+
+  // ✅ 고유 key 만들기 (중복 key 경고 방지)
+  const makeKey = (item: ItemType) => {
+    if (item.mediaType === "tv") {
+      const season = (item as WatchingItem).season_number ?? "x";
+      const episode = (item as WatchingItem).episode_number ?? "x";
+      return `tv-${item.id}-s${season}-e${episode}`;
+    }
+    return `movie-${item.id}`;
   };
 
   /* ---------------- 정렬 ---------------- */
@@ -92,16 +102,15 @@ const StorageBox = () => {
     () => sortItems(downloads),
     [downloads, sortItems]
   );
+
   /* ---------------- 필터 ---------------- */
   const renderFilter = () => (
     <div className="storage-filter-wrap">
-      {/* 필터 버튼 */}
       <p className="filter-btn" onClick={() => setFilterOpen((prev) => !prev)}>
         <span className="label">{sortType}</span>
         <span className="icon">⇅</span>
       </p>
 
-      {/* 드롭다운 : 선택된 값 제외 */}
       {filterOpen && (
         <ul className="storage-filter">
           {SORT_OPTIONS.filter((type) => type !== sortType).map((type) => (
@@ -170,27 +179,46 @@ const StorageBox = () => {
                 <ul className="list">
                   {sortedWatching.map((item) => {
                     const title = item.title || item.name || "제목 없음";
+                    const isTv = item.mediaType === "tv";
+                    const season = (item as WatchingItem).season_number;
+                    const episode = (item as WatchingItem).episode_number;
+
                     return (
-                      <li key={`${item.mediaType}-${item.id}`}>
+                      <li key={makeKey(item)}>
                         <Link to={buildTo(item)}>
-                          <img src={`${IMG}${getThumb(item)}`} alt={title} />
+                          {getThumb(item) ? (
+                            <img src={`${IMG}${getThumb(item)}`} alt={title} />
+                          ) : (
+                            <div className="no-thumb">No Image</div>
+                          )}
                         </Link>
 
                         <div className="storage-content">
-                          <p className="title">{title}</p>
-                          {item.vote_average && (
-                            <p className="rating">
-                              ⭐ {item.vote_average.toFixed(1)}
+                          <div className="info-wrap">
+                            {/* ✅ TV면 시즌/몇화 표시 */}
+                            {isTv && season != null && episode != null && (
+                              <p className="ep">
+                                {title} 시즌 {season} : {episode}화
+                              </p>
+                            )}
+
+                            {item.vote_average != null && (
+                              <p className="rating">
+                                ⭐ {Number(item.vote_average).toFixed(1)}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="del-wrap">
+                            <p
+                              className="del-btn"
+                              onClick={() =>
+                                onRemoveWatching(activeProfileId, item)
+                              }
+                            >
+                              삭제
                             </p>
-                          )}
-                          <p
-                            className="del-btn"
-                            onClick={() =>
-                              onRemoveWatching(activeProfileId, item)
-                            }
-                          >
-                            삭제
-                          </p>
+                          </div>
                         </div>
                       </li>
                     );
@@ -208,23 +236,44 @@ const StorageBox = () => {
                 {renderFilter()}
               </div>
 
-              <ul className="list-good">
-                {sortedLikes.map((item) => (
-                  <li key={item.id}>
-                    <Link to={buildTo(item)}>
-                      <img src={`${IMG}${item.poster_path}`} />
-                    </Link>
-                    <p
-                      className="del-btn"
-                      onClick={() =>
-                        onRemoveLike(activeProfileId, item.id, item.mediaType)
-                      }
-                    >
-                      삭제
-                    </p>
-                  </li>
-                ))}
-              </ul>
+              {sortedLikes.length === 0 ? (
+                <div className="empty-state">
+                  <p>좋아요한 컨텐츠가 없습니다</p>
+                </div>
+              ) : (
+                <ul className="list-good">
+                  {sortedLikes.map((item) => {
+                    const title = item.title || item.name || "제목 없음";
+                    return (
+                      <li key={makeKey(item)}>
+                        <Link to={buildTo(item)}>
+                          {item.poster_path ? (
+                            <img
+                              src={`${IMG}${item.poster_path}`}
+                              alt={title}
+                            />
+                          ) : (
+                            <div className="no-thumb">No Image</div>
+                          )}
+                        </Link>
+
+                        <p
+                          className="del-btn"
+                          onClick={() =>
+                            onRemoveLike(
+                              activeProfileId,
+                              item.id,
+                              item.mediaType
+                            )
+                          }
+                        >
+                          삭제
+                        </p>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </>
           )}
 
@@ -236,21 +285,40 @@ const StorageBox = () => {
                 {renderFilter()}
               </div>
 
-              <ul className="list-good">
-                {sortedDownloads.map((item) => (
-                  <li key={item.id}>
-                    <Link to={buildTo(item)}>
-                      <img src={`${IMG}${item.poster_path}`} />
-                    </Link>
-                    <p
-                      className="del-btn"
-                      onClick={() => onRemoveDownload(activeProfileId, item)}
-                    >
-                      삭제
-                    </p>
-                  </li>
-                ))}
-              </ul>
+              {sortedDownloads.length === 0 ? (
+                <div className="empty-state">
+                  <p>다운로드한 컨텐츠가 없습니다</p>
+                </div>
+              ) : (
+                <ul className="list-good">
+                  {sortedDownloads.map((item) => {
+                    const title = item.title || item.name || "제목 없음";
+                    return (
+                      <li key={makeKey(item)}>
+                        <Link to={buildTo(item)}>
+                          {item.poster_path ? (
+                            <img
+                              src={`${IMG}${item.poster_path}`}
+                              alt={title}
+                            />
+                          ) : (
+                            <div className="no-thumb">No Image</div>
+                          )}
+                        </Link>
+
+                        <p
+                          className="del-btn"
+                          onClick={() =>
+                            onRemoveDownload(activeProfileId, item)
+                          }
+                        >
+                          삭제
+                        </p>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </>
           )}
         </>

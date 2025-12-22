@@ -37,6 +37,16 @@
   .wishlist-mobile-header {
     display: none;
 
+    // .mobile-header-left {
+    //   display: flex;
+    //   align-items: center;
+    //   gap: 12px;
+    // }
+
+    // .mobile-logo {
+    //   height: 24px;
+    // }
+
     .wishlist-mobile-title {
       font-family: 'SUIT';
       font-size: 20px;
@@ -46,16 +56,19 @@
       color: $grey10;
     }
 
-    .wishlist-mobile-icons {
+    .mobile-header-right {
       display: flex;
       gap: 16px;
     }
 
-    .icon-btn {
+    .mobile-header-btn {
       background: none;
       border: none;
       cursor: pointer;
       padding: 0;
+      // display: flex;
+      // align-items: center;
+      // justify-content: center;
 
       img {
         width: 24px;
@@ -70,12 +83,11 @@
 
   .wishlist-content {
     flex: 1 1 auto;
-    min-width: 0;
-    margin-left: 130px;
-    padding: 42px 60px 60px;
-    max-width: calc(100% - 130px);
+    padding: 110px 0px 60px;
+    max-width: 1440px;
+    margin: 0 auto;
     box-sizing: border-box;
-    min-height: calc(100vh - 250px); // Footer 높이를 고려한 최소 높이
+    min-height: calc(100vh - 250px);
   }
 
   // ================================================
@@ -85,7 +97,7 @@
   .wishlist-header {
     @include myFlex(10px, space-between, center);
     margin-bottom: 26px;
-    max-width: 1320px; // 콘텐츠 최대 너비 제한
+    max-width: 1320px;
 
     .wishlist-title {
       @include myTitle24(600, left);
@@ -117,7 +129,8 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     row-gap: 40px;
-    max-width: 1320px; // 그리드도 동일하게 제한
+    column-gap: 16px;
+    max-width: 1320px;
   }
 
   // ================================================
@@ -157,7 +170,6 @@
   // 폴더 정보 (이름 + 드롭다운)
   .folder-info {
     @include myFlex(4px, center, center);
-    // margin-top: 16px;
     width: 100%;
     max-width: 220px;
   }
@@ -247,8 +259,7 @@
     width: 100%;
     max-width: 1570px;
     margin: 0 auto;
-    margin-top: auto; // 콘텐츠가 적어도 Footer를 하단으로
-    // padding-left: 130px;
+    margin-top: auto;
     box-sizing: border-box;
   }
 
@@ -402,39 +413,34 @@
 @media (max-width: 1440px) {
   .wishlist-page {
 
-    // 사이드 네비게이션 숨김
     .wishlist-sidenav {
       display: none;
     }
 
-    // Footer 숨김
     .wishlist-footer {
       display: none;
     }
 
-    // 메인 콘텐츠 조정
     .wishlist-content {
       margin: 0 auto !important;
-      padding: 42px 16px 100px !important;
+      padding: 110px 16px 100px !important;
       max-width: 100%;
     }
 
-    // 그리드 4열
     .wishlist-grid {
       grid-template-columns: repeat(4, 1fr);
       gap: 20px;
     }
 
-    // 폴더 크기 반응형
     .folder-icon-wrapper {
       width: 100%;
-      height: auto;
+      // height: auto;
       aspect-ratio: 220 / 173;
     }
 
     .folder-card-new .folder-new-box {
       width: 100%;
-      height: auto;
+      // height: auto;
       aspect-ratio: 220 / 173;
     }
 
@@ -446,7 +452,6 @@
       @include myTitle14(400, center);
     }
 
-    // 하단 네비게이션 표시
     .wishlist-bottom-nav {
       display: flex;
       justify-content: center;
@@ -466,32 +471,44 @@
 }
 
 // ================================================
-// 반응형: 768px 이하
+// 반응형: 950px 이하
 // ================================================
 
-@media (max-width: 768px) {
+@media (max-width: 950px) {
   .wishlist-page {
-    // 그리드 3열
     .wishlist-grid {
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
     }
-  }
+  }  
 }
+
+// ================================================
+// 반응형: 950px 이하
+// ================================================
+
+@media (max-width: 700px) {
+  .wishlist-page {
+    .wishlist-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+  }  
+}
+
+
 // ================================================
 // 반응형: 430px 이하
 // ================================================
 
 @media (max-width: 430px) {
 
-  // 전역 Header 숨김 (wishlist-page가 있을 때)
   body:has(.wishlist-page) header {
     display: none;
   }
 
   .wishlist-page {
 
-    // 모바일 전용 헤더 표시
     .wishlist-mobile-header {
       display: flex;
       justify-content: space-between;
@@ -506,13 +523,11 @@
       z-index: 100;
     }
 
-    // 메인 콘텐츠 조정
     .wishlist-content {
       margin: 60px 16px 0 !important;
       padding: 0 0 100px !important;
     }
 
-    // 타이틀 숨김 (모바일 헤더에 있으므로)
     .wishlist-header {
       justify-content: flex-end;
       margin-bottom: 20px;
@@ -521,38 +536,48 @@
         display: none;
       }
 
-      // 정렬 버튼 스타일 유지
       .sort-btn {
         @include myTitle16(400, center);
       }
     }
 
-    // 2열 그리드
     .wishlist-grid {
       grid-template-columns: repeat(2, 1fr);
       column-gap: 16px;
       row-gap: 24px;
     }
 
-    // 폴더 크기 반응형
+    // 430px 이하 폴더 크기 반응형 (중요!)
     .folder-icon-wrapper {
       width: 100%;
       height: auto;
       aspect-ratio: 220 / 173;
     }
 
-    .folder-card-new .folder-new-box {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 220 / 173;
+    .folder-card-new {
+      .folder-new-box {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 220 / 173;
+        border: 2px dashed $main1;
+        border-radius: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background-color 0.2s;
+
+        &:hover {
+          background-color: rgba($main1, 0.1);
+        }
+      }
+
+      .folder-new-text {
+        @include myTitle16(400, center);
+        color: $main1;
+        margin-top: 16px;
+      }
     }
 
-    .folder-name {
-      @include myTitle14(400, center);
-      max-width: 120px;
-    }
-
-    // 하단 네비게이션 조정
     .wishlist-bottom-nav {
       height: 70px;
       padding: 15px;
@@ -566,14 +591,12 @@
       }
     }
 
-    // 팝업 모바일 최적화
     .popup-container {
       width: calc(100% - 32px);
       max-width: none;
       padding: 16px;
     }
 
-    // 새로 만들기 팝업
     .popup-header {
       margin-bottom: 0;
     }
@@ -594,7 +617,6 @@
       margin-top: 40px;
     }
 
-    // 폴더 수정 팝업
     .popup-edit {
       width: 100%;
 

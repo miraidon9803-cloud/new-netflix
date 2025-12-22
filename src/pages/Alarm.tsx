@@ -70,13 +70,10 @@ const Alarm = () => {
   const [items, setItems] = useState<AlarmItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ 탭: all / movie / tv
   const [tab, setTab] = useState<TabType>("all");
 
-  // ✅ 알람 토글 상태(로컬 저장)
   const [alarmSet, setAlarmSet] = useState<Set<string>>(() => readAlarmSet());
 
-  // ✅ TV 공개예정 범위: 오늘 ~ 60일 후
   const { from, to } = useMemo(() => {
     const today = new Date();
     const end = new Date();
@@ -177,9 +174,9 @@ const Alarm = () => {
     });
   };
 
-  const goDetail = (item: AlarmItem) => {
-    navigate(`/${item.mediaType}/${item.id}`);
-  };
+  // const goDetail = (item: AlarmItem) => {
+  //   navigate(`/${item.mediaType}/${item.id}`);
+  // };
 
   const goPlay = (item: AlarmItem) => {
     // 상세에서 play=1 쿼리를 감지해서 트레일러 자동재생 같은 UX 만들 수 있어요

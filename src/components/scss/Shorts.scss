@@ -69,11 +69,10 @@
   // ================================================
 
   .shorts-content {
-    flex: 1 1 auto;
-    min-width: 0;
-    margin-left: 130px;
-    padding: 42px 60px 60px;
-    max-width: calc(100% - 130px);
+    flex: 1 1 auto;    
+    padding: 110px 0px 60px;
+    max-width: 1440px;
+    margin: 0 auto;
     box-sizing: border-box;
   }
 
@@ -487,7 +486,7 @@
     // 메인 콘텐츠 조정
     .shorts-content {
       margin: 0 auto !important;
-      padding: 42px 16px 100px !important;
+      padding: 110px 16px 100px !important;
       max-width: 100%;
     }
 
