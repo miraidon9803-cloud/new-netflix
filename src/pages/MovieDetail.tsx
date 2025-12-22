@@ -6,21 +6,12 @@ import { useLikeStore } from "../store/LikeStore";
 import { useDownloadStore } from "../store/DownloadStore";
 import { useProfileStore } from "../store/Profile";
 import { useDetailUIStore } from "../store/useDetailUIStore";
+import type { Video } from "../types/movie";
 
 import VideoPlayer, { type VideoPlayerHandle } from "../components/VideoPlayer";
 import TitleSection from "../components/TitleSection";
-import { TabNavigation } from "../components/TabNavigation";
 
 import "./scss/NetDetail.scss";
-
-type Video = {
-  id: string;
-  key: string;
-  site: string;
-  type: string;
-  official?: boolean;
-  name?: string;
-};
 
 const MovieDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -47,23 +38,21 @@ const MovieDetail = () => {
 
   const {
     selectedVideoKey,
-    activeTab,
     setSelectedVideoKey,
     setPlay,
     refreshPlayer,
     resetPlayer,
-    setActiveTab,
   } = useDetailUIStore();
 
-  // ✅ VideoPlayer fullscreen 제어용 ref
   const playerRef = useRef<VideoPlayerHandle | null>(null);
 
+  /* ---------------- 초기화 ---------------- */
   useEffect(() => {
-    setActiveTab("정보");
     resetPlayer();
     setSelectedVideoKey(null);
-  }, [movieId, setActiveTab, resetPlayer, setSelectedVideoKey]);
+  }, [movieId, resetPlayer, setSelectedVideoKey]);
 
+  /* ---------------- fetch ---------------- */
   useEffect(() => {
     if (!movieId) return;
     fetchMovieDetail(movieId);
@@ -78,42 +67,40 @@ const MovieDetail = () => {
     fetchMovieCredits,
   ]);
 
+  // ✅ 비슷한 콘텐츠는 항상 fetch
   useEffect(() => {
     if (!movieId) return;
-    if (activeTab !== "비슷한콘텐츠") return;
-
     if (movieSimilarId !== movieId) {
       fetchMovieSimilar(movieId);
     }
-  }, [movieId, activeTab, movieSimilarId, fetchMovieSimilar]);
+  }, [movieId, movieSimilarId, fetchMovieSimilar]);
 
   if (!movieId) return <p>잘못된 접근입니다.</p>;
   if (!movieDetail) return <p>작품 불러오는 중..</p>;
 
+  /* ---------------- trailer ---------------- */
   const defaultTrailer: Video | undefined =
-    (videos as Video[]).find(
+    videos.find(
       (v) => v.site === "YouTube" && v.type === "Trailer" && v.official
     ) ??
-    (videos as Video[]).find(
-      (v) => v.site === "YouTube" && v.type === "Trailer"
-    ) ??
-    (videos as Video[]).find((v) => v.site === "YouTube");
+    videos.find((v) => v.site === "YouTube" && v.type === "Trailer") ??
+    videos.find((v) => v.site === "YouTube");
 
   const iframeKey = selectedVideoKey ?? defaultTrailer?.key ?? null;
 
+  /* ---------------- meta ---------------- */
   const directorNames =
     movieCredits?.crew
       ?.filter((c: any) => c.job === "Director")
-      ?.map((d: any) => d.name)
-      ?.slice(0, 3)
-      ?.join(", ") ?? "정보 없음";
+      .map((d: any) => d.name)
+      .slice(0, 3)
+      .join(", ") ?? "정보 없음";
 
   const topCast = movieCredits?.cast?.slice(0, 10) ?? [];
-  const genres = movieDetail?.genres ?? [];
+  const genres = movieDetail.genres ?? [];
 
+  /* ---------------- actions ---------------- */
   const onPlayDefault = async () => {
-    if (!movieDetail) return;
-
     try {
       await onAddWatching({
         profileId: activeProfileId,
@@ -125,60 +112,45 @@ const MovieDetail = () => {
         release_date: movieDetail.release_date,
         runtime: movieDetail.runtime,
       } as any);
-    } catch (e) {
-      console.error("보관함 저장 실패:", e);
-    }
+    } catch {}
 
-    // ✅ 기본 트레일러로 재생
     setSelectedVideoKey(null);
     setPlay(true);
     refreshPlayer();
-
-    // ✅ 재생 누르면 유튜브 풀스크린
     playerRef.current?.enterFullscreen();
   };
 
   const handleLike = async () => {
-    if (!movieDetail || !activeProfileId) return;
-
-    try {
-      await onAddLike({
-        profileId: activeProfileId,
-        id: movieDetail.id,
-        mediaType: "movie",
-        title: movieDetail.title,
-        poster_path: movieDetail.poster_path,
-        backdrop_path: movieDetail.backdrop_path,
-        vote_average: movieDetail.vote_average,
-      } as any);
-    } catch (e) {
-      console.error("좋아요 저장 실패:", e);
-    }
+    if (!activeProfileId) return;
+    await onAddLike({
+      profileId: activeProfileId,
+      id: movieDetail.id,
+      mediaType: "movie",
+      title: movieDetail.title,
+      poster_path: movieDetail.poster_path,
+      backdrop_path: movieDetail.backdrop_path,
+      vote_average: movieDetail.vote_average,
+    } as any);
   };
 
   const handleDownload = async () => {
-    if (!movieDetail || !activeProfileId) return;
-
-    try {
-      await onAddDownload({
-        profileId: activeProfileId,
-        mediaType: "movie",
-        id: movieDetail.id,
-        title: movieDetail.title,
-        poster_path: movieDetail.poster_path,
-        backdrop_path: movieDetail.backdrop_path,
-        runtime: movieDetail.runtime,
-      } as any);
-    } catch (e) {
-      console.error("다운로드 저장 실패:", e);
-    }
+    if (!activeProfileId) return;
+    await onAddDownload({
+      profileId: activeProfileId,
+      mediaType: "movie",
+      id: movieDetail.id,
+      title: movieDetail.title,
+      poster_path: movieDetail.poster_path,
+      backdrop_path: movieDetail.backdrop_path,
+      runtime: movieDetail.runtime,
+    } as any);
   };
 
+  /* ---------------- render ---------------- */
   return (
     <div className="detail-page">
       <div className="detail-inner">
         <div className="left-side">
-          {/* ✅ ref 달기 */}
           <VideoPlayer ref={playerRef} videoKey={iframeKey} />
 
           <TitleSection
@@ -201,54 +173,41 @@ const MovieDetail = () => {
           />
         </div>
 
+        {/* ✅ 비슷한 콘텐츠만 */}
         <div className="season-box">
-          <TabNavigation />
+          <h3 className="section-movie-title">비슷한 콘텐츠</h3>
 
-          {activeTab === "정보" ? (
-            <div className="tab-panel">
-              <p>기본 정보를 확인하세요.</p>
-            </div>
-          ) : activeTab === "비슷한콘텐츠" ? (
-            <div className="tab-panel">
-              {movieSimilar.length === 0 ? (
-                <p>비슷한 콘텐츠가 없습니다.</p>
-              ) : (
-                <ul className="similar-list">
-                  {movieSimilar.slice(0, 7).map((item: any) => {
-                    const thumbnail = item.backdrop_path
-                      ? `https://image.tmdb.org/t/p/w780${item.backdrop_path}`
-                      : null;
-
-                    return (
-                      <li key={item.id} className="similar-item">
-                        <Link to={`/movie/${item.id}`} className="similar-link">
-                          <div className="thumb">
-                            {thumbnail ? (
-                              <img src={thumbnail} alt={item.title} />
-                            ) : (
-                              <div className="no-thumb">NO IMAGE</div>
-                            )}
-                          </div>
-
-                          <div className="info">
-                            <h4 className="title">{item.title}</h4>
-                            <p className="overview">
-                              {item.overview
-                                ? item.overview
-                                : "작품 설명이 제공되지 않습니다."}
-                            </p>
-                          </div>
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </div>
+          {movieSimilar.length === 0 ? (
+            <p>비슷한 콘텐츠가 없습니다.</p>
           ) : (
-            <div className="tab-panel">
-              <p>관련 클립을 준비 중입니다.</p>
-            </div>
+            <ul className="similar-list">
+              {movieSimilar.slice(0, 7).map((item: any) => {
+                const thumbnail = item.backdrop_path
+                  ? `https://image.tmdb.org/t/p/w780${item.backdrop_path}`
+                  : null;
+
+                return (
+                  <li key={item.id} className="similar-item">
+                    <Link to={`/movie/${item.id}`} className="similar-link">
+                      <div className="thumb">
+                        {thumbnail ? (
+                          <img src={thumbnail} alt={item.title} />
+                        ) : (
+                          <div className="no-thumb">NO IMAGE</div>
+                        )}
+                      </div>
+
+                      <div className="info">
+                        <h4 className="title">{item.title}</h4>
+                        <p className="overview">
+                          {item.overview || "작품 설명이 제공되지 않습니다."}
+                        </p>
+                      </div>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           )}
         </div>
       </div>

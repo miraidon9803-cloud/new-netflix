@@ -201,10 +201,16 @@ const Tvdetail = () => {
       setSelectedVideoKey(picked?.key ?? null);
       setPlay(true);
       refreshPlayer();
+
+      // ✅ ✅ 회차 영상 누르면 풀스크린
+      playerRef.current?.enterFullscreen();
     } catch (e) {
       setSelectedVideoKey(null);
       setPlay(true);
       refreshPlayer();
+
+      //  실패해도 풀스크린 (원하시면 이 줄은 빼도 됨)
+      playerRef.current?.enterFullscreen();
     }
   };
 

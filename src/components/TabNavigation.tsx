@@ -1,13 +1,12 @@
 import { useDetailUIStore } from "../store/useDetailUIStore";
 
-type ActiveTab = "회차" | "비슷한콘텐츠" | "관련클립";
+type ActiveTab = "회차" | "비슷한콘텐츠";
 
-const TABS: ActiveTab[] = ["회차", "비슷한콘텐츠", "관련클립"];
+const TABS: ActiveTab[] = ["회차", "비슷한콘텐츠"];
 
 const TAB_LABELS: Record<ActiveTab, string> = {
   회차: "회차",
   비슷한콘텐츠: "비슷한 콘텐츠",
-  관련클립: "관련클립",
 };
 
 export const TabNavigation = () => {
