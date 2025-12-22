@@ -1,29 +1,88 @@
 @use '../../App.scss' as BG;
 
 .OriginalWrap {
-  margin-top: 4rem;
-  background-color: BG.$BG;
+  margin-top: 8rem;
+
   > p {
     font-size: 2.4rem;
     font-weight: 600;
     line-height: 140%;
+    color: #fff;
   }
 
-  .original {
-    display: flex;
+  /* ✅ Swiper 컨테이너 */
+  .originalSwiper {
     margin-top: 1.6rem;
-    overflow-x: auto; // 가로 스크롤 허용
-    overflow-y: hidden;
+    width: 100%;
+  }
 
-    gap: 2.4rem;
-    li {
-      height: 66rem;
-      aspect-ratio: 17/33;
-      transform-origin: center bottom;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-      &:hover {
-        transform: translateY(-0.4rem) scale(1.03);
-      }
+  /* ✅ 슬라이드 폭이 “보이는 개수”를 결정 */
+  .originalSlide {
+    width: 20%; // PC에서 5개 느낌(스크롤하면 더 나옴)
+  }
+
+  .originalLink {
+    display: block;
+    width: 100%;
+    transform-origin: center bottom;
+    transition: transform 0.25s ease;
+  }
+
+  .originalImg {
+    width: 100%;
+    aspect-ratio: 17 / 33;
+    object-fit: cover;
+    display: block;
+    border-radius: 0.8rem;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+
+  /* ✅ hover는 Link에 주는게 안정적 */
+  .originalLink:hover {
+    transform: translateY(-0.4rem) scale(1.03);
+  }
+
+  /* ===========================
+     🟦 태블릿 (≤1440px)
+     =========================== */
+  @media (max-width: 1440px) {
+    margin: 4rem 1.6rem 0;
+
+    > p {
+      font-size: 2rem;
+    }
+
+    .originalSlide {
+      width: 25%; // 4개 정도
+    }
+
+    .originalImg {
+      border-radius: 0.8rem;
+    }
+  }
+
+  /* ===========================
+     🟩 모바일 (≤430px)
+     =========================== */
+  @media (max-width: 430px) {
+    margin: 2.8rem 1.6rem 0;
+
+    > p {
+      font-size: 1.8rem;
+    }
+
+    .originalSlide {
+      width: 40%; // 2~2.5개
+    }
+
+    .originalImg {
+      aspect-ratio: 160 / 309;
+      border-radius: 0.4rem;
+    }
+
+    .originalLink:hover {
+      transform: translateY(-0.2rem) scale(1.01);
     }
   }
 }

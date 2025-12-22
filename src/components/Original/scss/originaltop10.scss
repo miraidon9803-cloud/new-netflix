@@ -1,0 +1,145 @@
+.Original-top10Wrap {
+  position: relative;
+  margin-top: 4rem;
+
+  h2 {
+    color: #fff;
+    font-size: 2.4rem;
+    font-weight: 600;
+    line-height: 140%;
+    letter-spacing: -0.06rem;
+    margin-bottom: 1.6rem;
+  }
+
+  .Original-top10Swiper {
+    padding: 0 0 0 8rem;
+    overflow: visible;
+
+    cursor: grab;
+    user-select: none;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .Original-top10Swiper .swiper-wrapper {
+    overflow: visible;
+  }
+
+  .Original-top10Slide {
+    width: auto;
+    overflow: visible;
+  }
+
+  .Original-top10Item {
+    position: relative;
+    flex: 0 0 auto;
+    padding-bottom: 1.2rem;
+    overflow: visible;
+  }
+
+  .Original-rank {
+    position: absolute;
+    bottom: -0.2rem;
+    left: -32%;
+    z-index: 1;
+
+    font-family: 'Esamanru';
+    font-size: 12rem;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: -0.32rem;
+
+    pointer-events: none;
+  }
+
+  .Original-posterWrap {
+    position: relative;
+    z-index: 3;
+    display: block;
+    width: 22rem;
+
+    transform-origin: center bottom;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .Original-posterWrap a {
+    display: block;
+  }
+
+  .Original-poster {
+    width: 100%;
+    aspect-ratio: 11 / 16;
+    border-radius: 0.8rem;
+    box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.6);
+    display: block;
+
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+
+  .Original-top10Item:hover .Original-posterWrap {
+    transform: translateY(-0.4rem) scale(1.03);
+  }
+
+  /* 🟦 태블릿 */
+  @media (max-width: 1440px) {
+    margin: 4rem 1.6rem 0;
+
+    h2 {
+      font-size: 2rem;
+    }
+
+    .Original-top10Swiper {
+      padding-left: 1.6rem;
+    }
+
+    .Original-posterWrap {
+      width: 17.2rem;
+    }
+
+    .Original-poster {
+      aspect-ratio: 172 / 244;
+    }
+
+    .Original-rank {
+      font-size: 10.8rem;
+      left: -30%;
+    }
+  }
+
+  /* 🟩 모바일 */
+  @media (max-width: 430px) {
+    margin: 2.8rem 1.6rem 0;
+
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .Original-top10Swiper {
+      padding-left: 1.6rem;
+    }
+
+    .Original-posterWrap {
+      width: 40vw;
+      max-width: 16rem;
+    }
+
+    .Original-poster {
+      aspect-ratio: 104 / 152;
+      border-radius: 0.4rem;
+    }
+
+    .Original-rank {
+      font-size: 6.4rem;
+      left: -22%;
+      bottom: -0.05rem;
+    }
+
+    .Original-top10Item:hover .Original-posterWrap {
+      transform: translateY(-0.2rem) scale(1.01);
+    }
+  }
+}

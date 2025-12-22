@@ -1,66 +1,62 @@
-// src/components/VerticalRolling.tsx
+// src/components/ChoiceContentBG.tsx
 import React, { useEffect, useMemo, useState } from 'react';
 import './scss/ChoiceContentBG.scss';
 
-interface TvItem {
+type TvItem = {
   id: number;
-  name: string;
+  name?: string;
   poster_path: string | null;
-}
+};
 
-const ChoiceContentBG = () => {
-  const [shows, setShows] = useState<TvItem[]>([]);
+const IMG = 'https://image.tmdb.org/t/p/w500';
+
+const ChoiceContentBG: React.FC = () => {
+  const [items, setItems] = useState<TvItem[]>([]);
 
   useEffect(() => {
     const fetchTv = async () => {
       try {
         const res = await fetch(
-          `https://api.themoviedb.org/3/tv/popular?language=en-US&page=1&api_key=${
+          `https://api.themoviedb.org/3/tv/popular?language=ko-KR&page=1&api_key=${
             import.meta.env.VITE_TMDB_API_KEY
           }`
         );
         const data = await res.json();
-        setShows((data.results || []).filter((v: TvItem) => v.poster_path));
+        const filtered = (data.results || []).filter((v: TvItem) => v.poster_path);
+        setItems(filtered);
       } catch (e) {
         console.error(e);
       }
     };
-
     fetchTv();
   }, []);
 
-  const IMG = 'https://image.tmdb.org/t/p/w500';
-
-  // 👉 4줄로 나누기
+  // ✅ 4컬럼에 라운드로빈 분배(균등하게 섞임)
   const columns = useMemo(() => {
-    const perCol = 5;
-    const result: TvItem[][] = [];
-    for (let i = 0; i < shows.length; i += perCol) {
-      result.push(shows.slice(i, i + perCol));
-    }
-    return result.slice(0, 4);
-  }, [shows]);
+    const cols: TvItem[][] = [[], [], [], []];
+    items.forEach((it, i) => cols[i % 4].push(it));
+    return cols;
+  }, [items]);
 
-  if (!columns.length) return null;
+  if (!items.length) return null;
 
   return (
-    <div className="vertical-rolling-wrap">
+    <section className="choice-rolling" aria-label="rolling posters">
       {columns.map((col, colIdx) => {
-        // 무한루프용 2배
-        const loop = [...col, ...col];
+        const loop = [...col, ...col]; // 무한루프용 2배
         return (
           <div className="v-column" key={colIdx}>
             <div className={`v-column-inner col-${colIdx}`}>
               {loop.map((item, i) => (
                 <div className="v-card" key={`${item.id}-${i}`}>
-                  <img src={`${IMG}${item.poster_path}`} alt={item.name} />
+                  <img src={`${IMG}${item.poster_path}`} alt={item.name ?? 'poster'} />
                 </div>
               ))}
             </div>
           </div>
         );
       })}
-    </div>
+    </section>
   );
 };
 

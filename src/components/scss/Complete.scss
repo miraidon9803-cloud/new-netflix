@@ -1,0 +1,156 @@
+@use "../../App.scss" as *;
+
+.complete-wrapper {
+  .complete-page {
+    position: relative;
+    background-color: $BG;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* 배경 */
+  .complete-bg {
+    position: fixed;
+    inset: 0;
+    background: url("/images/payment/Login_bg.png") no-repeat center / cover;
+    z-index: 0;
+  }
+
+  .complete-header {
+    padding-top: 50px;
+    margin-bottom: 56px;
+  }
+
+  /* 중앙 콘텐츠 */
+  .complete-container {
+    position: relative;
+    z-index: 2;
+
+    padding-bottom: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background-color: rgba(44, 44, 44, 0.5);
+    width: 1196px;
+    height: 700px;
+    margin-top: 110px;
+    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    border: 1px solid #8a8a8a;
+  }
+
+  /* 상단 영역 */
+  .complete-header {
+    margin-bottom: 56px;
+
+    .complete-title-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      height: 48px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .complete-back-btn {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+
+    background: none;
+    border: none;
+    padding: 0;
+
+    cursor: pointer;
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .complete-title {
+    @include myTitle24(200);
+    color: $grey10;
+    text-align: center;
+  }
+
+  .complete-desc {
+    margin-top: 12px;
+    line-height: 1.6;
+    color: $grey8;
+    @include myTitle16(100);
+  }
+
+  /* 로고 */
+  .complete-logo img {
+    width: 27.4rem;
+    height: 27.4rem;
+    margin-bottom: 66px;
+  }
+
+  /* 버튼 */
+  .complete-btn {
+    width: 100%;
+    max-width: 360px;
+    height: 48px;
+
+    margin-top: 48px;
+
+    background-color: #e50914;
+    border: none;
+    border-radius: 4px;
+
+    color: $grey10;
+    @include myTitle16(300);
+
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #f6121d;
+    }
+  }
+}
+
+/* 모바일 */
+@media (max-width: 480px) {
+  .complete-container {
+    padding-top: 0px;
+  }
+
+  .complete-logo img {
+    width: 20rem;
+    height: 20rem;
+  }
+
+  .complete-header {
+    margin-bottom: 72px;
+  }
+
+  .complete-desc {
+    font-size: 14px;
+    margin-top: 28px;
+  }
+
+  .complete-desc span {
+    display: block;
+  }
+
+  .complete-desc span + span {
+    margin-top: 8px;
+  }
+
+  .complete-title {
+    padding: 0 80px;
+  }
+
+  .complete-btn {
+    margin-top: 40px;
+  }
+}

@@ -11,7 +11,7 @@ interface MenuItem {
 
 const mainMenu: MenuItem[] = [
   { id: 1, title: "시리즈", path: "/series" },
-  { id: 2, title: "영화", path: "/movies" },
+  { id: 2, title: "영화", path: "/Movie" },
   { id: 3, title: "오리지널", path: "/original" },
 ];
 
@@ -27,10 +27,24 @@ const Header = () => {
 
   const hideHeaderUI = isLand || isAuth;
 
+  const ALARM_LS_KEY = "alarm_watchlist_v1";
+
+  const getAlarmCount = () => {
+    try {
+      const raw = localStorage.getItem(ALARM_LS_KEY);
+      if (!raw) return 0;
+      const arr = JSON.parse(raw) as string[];
+      return arr.length;
+    } catch {
+      return 0;
+    }
+  };
+  const [alarmCount] = useState<number>(getAlarmCount());
+
   return (
     <>
-      <header>
-        <div className="inner">
+      <header className="site-header">
+        <div className="header-inner">
           <div className="header-left">
             <h1 className="logo">
               <Link to="/">
@@ -52,9 +66,15 @@ const Header = () => {
           {!hideHeaderUI && (
             <div className="header-right">
               <ul>
-                <li>
-                  <Link to="/bell">
+                <li className="bell-wrap">
+                  <Link to="/bell" className="bell-link">
                     <img src="/images/bell-btn.png" alt="bell" />
+
+                    {alarmCount > 0 && (
+                      <span className="alarm-badge">
+                        {alarmCount > 99 ? "99+" : alarmCount}
+                      </span>
+                    )}
                   </Link>
                 </li>
 

@@ -1,0 +1,136 @@
+/* Alarm.scss */
+@use "../../App.scss" as l;
+.alram-inner {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 110px;
+  // background: l.$BG;
+
+  .alram-wrap {
+    width: 144rem;
+    margin: 0 auto;
+
+    // padding: 20px;
+    .alram-title {
+      @include l.myTitle24();
+      text-align: left;
+      margin-top: 40px;
+    }
+  }
+
+  /* =========================
+   Tabs
+========================= */
+  .alram-tabs {
+    // margin-top: 24px;
+    padding-top: 24px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    cursor: pointer;
+  }
+
+  .alram-tab {
+    padding: 12px 24px;
+    &.active {
+      border-bottom: 2px solid l.$grey10;
+    }
+  }
+
+  /* =========================
+   Content
+========================= */
+  .alram-content {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .alram-loading,
+  .alram-empty {
+    padding: 18px 6px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+  }
+
+  /* =========================
+   Banner Card (screenshot style)
+========================= */
+  .alram-card {
+    // width: 100%;
+    display: grid;
+    grid-template-columns: 46.4rem 1fr;
+    gap: 24px;
+  }
+
+  /* left poster */
+  .alram-poster {
+    width: 46.4rem;
+    height: 26rem;
+    // border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+
+      // display: block;
+    }
+  }
+
+  .alram-no-image {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    font-size: 13px;
+  }
+
+  /* right info */
+  .alram-info {
+    display: flex;
+    flex-direction: column;
+    // justify-content:
+    .alram-subtitle {
+      @include l.myTitle20();
+      text-align: left;
+    }
+  }
+
+  .alram-release {
+    @include l.myTitle20();
+    color: l.$grey10;
+  }
+
+  /* description: 2~3줄 */
+  .alram-overview {
+    @include l.myTitle16();
+    text-align: left;
+    color: l.$grey7;
+    margin-top: 8px;
+    line-height: 1.5;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 95.2rem;
+  }
+
+  .alram-actions {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .alram-btn {
+    @include l.myTitle20();
+    display: flex;
+    gap: 12px;
+    padding: 8px 16px;
+    cursor: pointer;
+    background: l.$grey2;
+  }
+}

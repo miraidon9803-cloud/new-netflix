@@ -1,0 +1,116 @@
+/* src/components/scss/OriginalBanner.scss */
+.original-banner {
+  position: relative;
+  height: 70rem;
+  margin-top: 8rem;
+
+  .original-bg {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 0.4rem;
+    object-fit: cover;
+    display: block;
+  }
+
+  .original-banner-inner {
+    position: absolute;
+    bottom: 4.5%;
+    left: 4.8%;
+    width: 34%;
+
+    .original-bannertxt {
+      color: #fff;
+
+      h2 {
+        font-size: 3.2rem;
+        font-weight: 600;
+      }
+
+      h3 {
+        margin: 2.4rem 0;
+        font-size: 1.6rem;
+        line-height: 140%;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    }
+
+    .original-banner-btns {
+      display: flex;
+
+      button {
+        width: 48%;
+        height: 4rem;
+        border: none;
+        border-radius: 0.4rem;
+        cursor: pointer;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+
+        
+      }
+
+      .play {
+        margin-right: 1.2rem;
+        background: #fff;
+
+        .play-ico {
+          position: relative;
+          width: 2rem;
+          height: 2rem;
+
+          img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+
+          .play-hover {
+            opacity: 0;
+          }
+        }
+
+        &:hover {
+          .playicon { opacity: 0; }
+          .play-hover { opacity: 1; }
+        }
+      }
+
+      .wish {
+        background: rgba(255, 255, 255, 0.6);
+
+        .wish-ico {
+          position: relative;
+          width: 2rem;
+          height: 2rem;
+
+          img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+
+          .wish-hover {
+            opacity: 0;
+          }
+          
+        }
+
+        &:hover {
+          .wishicon { opacity: 0; }
+          .wish-hover { opacity: 1; }
+        }
+      }
+    }
+  }
+}

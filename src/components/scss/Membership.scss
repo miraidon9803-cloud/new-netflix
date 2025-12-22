@@ -2,23 +2,57 @@
 
 .inner-membership {
   width: 100%;
-  height: 100vh;
+  padding: 11rem 0 12rem;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   background: url("/images/login-bg.png") center/cover no-repeat;
+
   .membership-wrap {
     display: flex;
     width: 100%;
     max-width: 119.8rem;
     height: 82.8rem;
     background-color: rgba(44, 44, 44, 0.5);
+    border: 1px solid #8a8a8a;
+    border-radius: 1.6rem;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
+    .signtitle-wrap {
+      position: relative;
+      max-width: 35.8rem;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-left: 1.6rem;
+    }
+
+    .prev-btn {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+
+      display: inline-flex;
+      align-items: center;
+
+      height: 1em;
+
+      cursor: pointer;
+
+      img {
+        width: 24px;
+        height: 24px;
+        display: block;
+      }
+    }
+
+    /* 🔹 TITLE (기존 그대로) */
     .title {
-      margin: 40px 0 40px 0;
+      margin: 40px 0;
       @include l.myTitle24();
       color: l.$grey10;
     }
@@ -27,112 +61,112 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      //   background-color: red;
-      //   padding: 30px;
       gap: 12px;
       width: 115.6rem;
       height: 55.6rem;
     }
+  }
 
-    /* 왼쪽 옵션 목록 */
-    .option-list {
-      @include l.myTitle16();
-      color: l.$grey8;
-      width: 12rem;
-      height: 49.6rem;
-      text-align: left;
-      margin-top: 60px;
+  /* 왼쪽 옵션 목록 */
+  .option-list {
+    @include l.myTitle16();
+    color: l.$grey8;
+    width: 12rem;
+    height: 49.6rem;
+    text-align: left;
+    margin-top: 60px;
+  }
+
+  .option-list li {
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #333;
+    color: l.$grey10;
+    height: 6.2rem;
+
+    &:last-child {
+      border-bottom: none;
     }
+  }
 
-    .option-list li {
-      text-align: center;
-      padding: 20px 0;
-      border-bottom: 1px solid #333;
-      color: l.$grey10;
-      height: 6.2rem;
-      &:last-child {
-        border-bottom: none;
+  /* 카드 영역 */
+  .card-wrap {
+    display: flex;
+    gap: 1.2rem;
+
+    .card {
+      // border-radius: 8px;
+      width: 30rem;
+      height: 55.6rem;
+      // border: 2px solid #444;
+      background: rgba(159, 159, 159, 0.4);
+      border-radius: 4px 4px 8px 8px;
+
+      &.active {
+        box-shadow: 0 0 15px 0 rgba(229, 9, 20, 0.5);
       }
-    }
 
-    /* 카드 영역 */
-    .card-wrap {
-      display: flex;
-      gap: 20px;
-
-      .card {
-        // border-radius: 8px;
-        width: 30rem;
-        height: 55.6rem;
-        // border: 2px solid #444;
-        background: rgba(159, 159, 159, 0.4);
-        border-radius: 4px 4px 8px 8px;
+      .card-title {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: l.$grey3;
+        padding: 12px 24px;
+        // border-radius: 4px 4px 0 0;
+        @include l.myTitle16();
+        color: l.$grey10;
+        //   width: 30rem;
+        height: 6rem;
+        border-radius: 4px 4px 0 0;
 
         &.active {
-          box-shadow: 0 0 15px 0 rgba(229, 9, 20, 0.5);
+          background: linear-gradient(92deg, #e50914 0%, #7f050b 100%);
         }
+      }
 
-        .card-title {
+      ul {
+        padding: 0 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 30rem;
+        height: 49.6rem;
+        border-radius: 0 0 8px 8px;
+        background: rgba(159, 159, 159, 0.4);
+
+        li {
           display: flex;
+          padding: 20px 0px;
           justify-content: center;
           align-items: center;
-          background: l.$grey3;
-          padding: 12px 24px;
-          // border-radius: 4px 4px 0 0;
-          @include l.myTitle16();
+          gap: 10px;
+          align-self: stretch;
+          border-bottom: 1px solid l.$grey7;
           color: l.$grey10;
-          //   width: 30rem;
-          height: 6rem;
-          border-radius: 4px 4px 0 0;
-          &.active {
-            background: linear-gradient(92deg, #e50914 0%, #7f050b 100%);
-          }
-        }
+          height: 6.2rem;
 
-        ul {
-          padding: 0 12px;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          width: 30rem;
-          height: 49.6rem;
-          border-radius: 0 0 8px 8px;
-          background: rgba(159, 159, 159, 0.4);
-
-          li {
-            display: flex;
-            padding: 20px 0px;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            align-self: stretch;
-            border-bottom: 1px solid l.$grey7;
-            color: l.$grey10;
-            height: 6.2rem;
-
-            &:last-child {
-              border-bottom: none;
-            }
+          &:last-child {
+            border-bottom: none;
           }
         }
       }
     }
+  }
 
-    /* 다음 버튼 */
-    .next-btn {
-      margin-top: 60px;
-      background: l.$sub1;
-      width: 35.8rem;
-      height: 4.8rem;
-      border: none;
-      padding: 12px;
-      @include l.myTitle16();
-      color: l.$grey10;
-      border-radius: 4px;
-    }
+  /* 다음 버튼 */
+  .next-btn {
+    margin: 6rem 0 4rem;
+    background: l.$sub1;
+    width: 35.8rem;
+    height: 4.8rem;
+    border: none;
+    padding: 12px;
+    @include l.myTitle16();
+    color: l.$grey10;
+    border-radius: 4px;
+  }
 
-    .next-btn:hover {
-      background: #b70710;
-    }
+  .next-btn:hover {
+    background: #b70710;
   }
 }

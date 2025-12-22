@@ -1,0 +1,63 @@
+@use "../../App.scss" as *;
+.Exploration-wrap {
+  padding-top: 11rem;
+  padding-bottom: 12rem;
+  background: $grey1;
+  height: 872px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: black;
+  background-image: url("/images/Exp_background.png");
+
+  background-repeat: no-repeat;
+  background-size: 70%;
+  background-position: center 180%;
+}
+.Exp-textbox {
+  margin-top: 10rem;
+  h2 {
+    color: $grey10;
+  }
+  p {
+    margin-top: 1.6rem;
+    font-size: 1.6rem;
+    color: $grey8;
+  }
+}
+
+.imgbox {
+  max-width: 22rem;
+  width: 100%;
+  margin-top: 4rem;
+}
+
+
+.Exp-btn{
+  max-width: 24rem;
+    width: 100%;
+  background: $grey10;
+  padding: 0.85rem;
+    margin-top: 4rem;
+    border-radius: 0.4rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    color: $main1;
+    border: 1px solid $main1;
+  }
+
+  &:active {
+    background-color: $main1;
+    color: $grey10;
+  }
+
+  a {
+    @include myTitle16($fw: 500, $ta: center);
+  }
+}

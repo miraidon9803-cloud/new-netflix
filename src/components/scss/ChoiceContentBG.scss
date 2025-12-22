@@ -1,58 +1,60 @@
-/* src/components/scss/VerticalRolling.scss */
+/* src/components/scss/ChoiceContentBG.scss */
 
-/* 배너(1440x600) 안에서만 꽉 차도록 */
-.vertical-rolling-wrap {
+.choice-rolling {
+  --gapX: 1.2rem;
+  --gapY: 1rem;
+
   position: relative;
-  // margin-top: 8rem;
   display: flex;
-  gap: 1.2rem;
-  width: 144rem; // 1440px
-  height: 60rem; // 600px
-  // margin: 0 auto; // 가운데 정렬
-  overflow: hidden; // 바깥으로 안 나가게 차단
-  // border: 1px solid white;
+  gap: var(--gapX);
 
-  /* 세로 한 줄 */
+  width: 100%;
+  max-width: 144rem;
+  margin: 0 auto;
+
+  /* ✅ PC 기본 높이 */
+  height: 60rem;
+  overflow: hidden;
+  align-items: stretch;
+
   .v-column {
     flex: 1 1 0;
+    min-width: 0;
     height: 100%;
-    overflow: hidden; // ❗ 줄 단위로도 한 번 더 차단
-    /* 실제 움직이는 컨테이너 */
-    .v-column-inner {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      /* 카드 */
-      .v-card {
-        flex: 0 0 auto;
-        border-radius: 0.6rem;
-        overflow: hidden;
-        > img {
-          display: block;
-          width: 34.2rem; // rem 단위
-          aspect-ratio: 11/16; // 비율 고정
-          height: auto;
-          object-fit: cover;
-          border-radius: 0.8rem;
-          filter: brightness(0.9);
-          transition: transform 0.25s ease, filter 0.25s ease;
-        }
-      }
+    overflow: hidden;
+  }
+
+  .v-column-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gapY);
+    will-change: transform;
+  }
+
+  .v-card {
+    flex: 0 0 auto;
+
+    > img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 11 / 16;
+      object-fit: cover;
+      border-radius: 0.8rem;
+      filter: brightness(0.9);
     }
   }
 }
 
-/* ── 무한 세로 롤링 ── */
-
+/* ✅ 무한 롤링 */
 @keyframes v-scroll-up {
   0% {
     transform: translateY(0);
   }
   100% {
     transform: translateY(-50%);
-  } // 2배 중 절반
+  }
 }
-
 @keyframes v-scroll-down {
   0% {
     transform: translateY(-50%);
@@ -62,16 +64,34 @@
   }
 }
 
-/* 4줄 각각 방향 / 속도 다르게 */
-.col-0 {
+/* 4줄 방향/속도 */
+.choice-rolling .col-0 {
   animation: v-scroll-up 45s linear infinite;
 }
-.col-1 {
+.choice-rolling .col-1 {
   animation: v-scroll-down 48s linear infinite;
 }
-.col-2 {
+.choice-rolling .col-2 {
   animation: v-scroll-up 40s linear infinite;
 }
-.col-3 {
+.choice-rolling .col-3 {
   animation: v-scroll-down 43s linear infinite;
 }
+
+/* =========================
+   태블릿: 양쪽 1.6rem, 줄어들면 같이 줄어듦
+   ========================= */
+@media (max-width: 1440px) {
+  .choice-rolling {
+    width: calc(100% - 3.2rem);
+    margin: 0 1.6rem;
+
+    /* 화면 작아지면 높이도 같이 내려가게 */
+    height: 52rem;
+    padding-bottom: 15rem;
+  }
+}
+
+/* =========================
+   ✅ 모바일: 기존 BG 아예 숨김
+   ========================= */

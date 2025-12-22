@@ -1,97 +1,135 @@
 import React, { useEffect, useRef } from 'react';
 import { useNetflixStore } from '../store/NetflixStore';
+import { Link } from 'react-router-dom';
 import './scss/MovieTop10.scss';
 
 const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
+const FALLBACK_POSTER = '/images/icon/no_poster.png';
 
-const MovieTop10 = () => {
-  const { movieTop10, onFetchMovieTop10 } = useNetflixStore();
+type MovieItem = {
+  id: number;
+  poster_path: string | null;
+  title?: string | null;
+  name?: string | null;
+  isNetflixOriginal?: boolean;
+};
+
+const MovieTop10: React.FC = () => {
+  const { movieTop10, onFetchMovieTop10 } = useNetflixStore() as {
+    movieTop10: MovieItem[];
+    onFetchMovieTop10: () => void;
+  };
 
   useEffect(() => {
     onFetchMovieTop10();
-  }, []);
+  }, [onFetchMovieTop10]);
 
-  // 가로 스크롤용 refs
   const scrollRef = useRef<HTMLUListElement>(null);
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const startScrollLeft = useRef(0);
 
-  // 휠 → 가로 스크롤 + 끝에서는 페이지 스크롤 허용
-  useEffect(() => {
+  // ✅ 드래그 상태
+  const isDraggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const startScrollLeftRef = useRef(0);
+
+  const getTitle = (item: MovieItem) => (item.title ?? item.name ?? 'movie') as string;
+
+  // ✅ 마우스 드래그
+  const onMouseDown: React.MouseEventHandler<HTMLUListElement> = (e) => {
     const el = scrollRef.current;
     if (!el) return;
 
-    const onWheel = (e: WheelEvent) => {
-      const atLeftEnd = el.scrollLeft === 0;
-      const atRightEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
+    isDraggingRef.current = true;
+    el.classList.add('dragging');
 
-      // 양 끝에서는 페이지 스크롤 허용
-      if ((atLeftEnd && e.deltaY < 0) || (atRightEnd && e.deltaY > 0)) {
-        return;
-      }
+    startXRef.current = e.pageX;
+    startScrollLeftRef.current = el.scrollLeft;
+  };
 
-      // 가로 스크롤 강제
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault(); // 세로 스크롤 차단
-        e.stopPropagation();
-        el.scrollLeft += e.deltaY;
-      }
-    };
-
-    el.addEventListener('wheel', onWheel, { passive: false });
-    return () => el.removeEventListener('wheel', onWheel);
-  }, []);
-
-  // 드래그 시작
-  const handleMouseDown = (e: React.MouseEvent<HTMLUListElement>) => {
+  const onMouseMove: React.MouseEventHandler<HTMLUListElement> = (e) => {
     const el = scrollRef.current;
-    if (!el) return;
+    if (!el || !isDraggingRef.current) return;
 
     e.preventDefault();
-    isDragging.current = true;
-
-    startX.current = e.clientX;
-    startScrollLeft.current = el.scrollLeft;
-
-    el.classList.add('is-dragging');
+    const dx = e.pageX - startXRef.current;
+    el.scrollLeft = startScrollLeftRef.current - dx;
   };
 
-  // 드래그 중
-  const handleMouseMove = (e: React.MouseEvent<HTMLUListElement>) => {
-    const el = scrollRef.current;
-    if (!el || !isDragging.current) return;
-
-    const dx = e.clientX - startX.current;
-    el.scrollLeft = startScrollLeft.current - dx;
-  };
-
-  // 드래그 종료
-  const stopDragging = () => {
+  const endDrag = () => {
     const el = scrollRef.current;
     if (!el) return;
 
-    isDragging.current = false;
-    el.classList.remove('is-dragging');
+    isDraggingRef.current = false;
+    el.classList.remove('dragging');
   };
 
+  // ✅ 터치 드래그
+  const onTouchStart: React.TouchEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    isDraggingRef.current = true;
+    el.classList.add('dragging');
+
+    startXRef.current = e.touches[0].pageX;
+    startScrollLeftRef.current = el.scrollLeft;
+  };
+
+  const onTouchMove: React.TouchEventHandler<HTMLUListElement> = (e) => {
+    const el = scrollRef.current;
+    if (!el || !isDraggingRef.current) return;
+
+    const dx = e.touches[0].pageX - startXRef.current;
+    el.scrollLeft = startScrollLeftRef.current - dx;
+  };
+
+  const onTouchEnd: React.TouchEventHandler<HTMLUListElement> = () => endDrag();
+
   return (
-    <div className="top10Wrap">
+    <div className="movie10Wrap">
       <h2>오늘의 TOP 10 영화</h2>
 
       <ul
-        className="top10List"
+        className="movie10List"
         ref={scrollRef}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={stopDragging}
-        onMouseLeave={stopDragging}>
-        {movieTop10.map((item, index) => (
-          <li key={item.id} className="top10Item">
-            <span className="rank">{index + 1}</span>
-            <img src={`${IMG_BASE}${item.poster_path}`} alt={item.name} />
-          </li>
-        ))}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={endDrag}
+        onMouseLeave={endDrag}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
+        {movieTop10.map((item, index) => {
+          const posterSrc = item.poster_path ? `${IMG_BASE}${item.poster_path}` : FALLBACK_POSTER;
+
+          return (
+            <li key={item.id} className="movie10Item">
+              {/* ✅ Link는 “포스터 영역”만 감싸는 게 안정적 */}
+              <span className="rank">{index + 1}</span>
+
+              <Link to={`/movie/${item.id}`} className="posterWrap" aria-label={getTitle(item)}>
+                {item.isNetflixOriginal && (
+                  <img
+                    className="netflixBadge"
+                    src="/images/icon/오리지널_뱃지.png"
+                    alt="Netflix Original"
+                    draggable={false}
+                  />
+                )}
+
+                <img
+                  className="poster"
+                  src={posterSrc}
+                  alt={getTitle(item)}
+                  draggable={false}
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = FALLBACK_POSTER;
+                  }}
+                />
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

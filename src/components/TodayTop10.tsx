@@ -1,97 +1,120 @@
-import React, { useEffect, useRef } from 'react';
-import { useNetflixStore } from '../store/NetflixStore';
-import './scss/Top10.scss';
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useNetflixStore } from "../store/NetflixStore";
+import "./scss/Top10.scss";
 
-const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
+// Swiper
+import { Swiper, SwiperSlide } from "swiper/react";
+import { FreeMode, Mousewheel } from "swiper/modules";
 
-const TodayTop10 = () => {
-  const { netflixTop10, onFetchNetflixTop10 } = useNetflixStore();
+import "swiper/css";
+import "swiper/css/free-mode";
+
+const IMG_BASE = "https://image.tmdb.org/t/p/w500";
+const FALLBACK_POSTER = "/images/icon/no_poster.png";
+
+type Top10Item = {
+  id: number;
+  poster_path: string | null;
+  name?: string | null;
+  title?: string | null;
+
+  isNetflixOriginal?: boolean;
+  isNew3Months?: boolean;
+  isOld1Year?: boolean;
+};
+
+const TodayTop10: React.FC = () => {
+  const { netflixTop10, onFetchNetflixTop10 } = useNetflixStore() as {
+    netflixTop10: Top10Item[];
+    onFetchNetflixTop10: () => void;
+  };
 
   useEffect(() => {
     onFetchNetflixTop10();
-  }, []);
+  }, [onFetchNetflixTop10]);
 
-  // 가로 스크롤용 refs
-  const scrollRef = useRef<HTMLUListElement>(null);
-  const isDragging = useRef(false);
-  const startX = useRef(0);
-  const startScrollLeft = useRef(0);
+  const getTitle = (item: Top10Item) =>
+    (item.name ?? item.title ?? "poster") as string;
 
-  // 휠 → 가로 스크롤 + 끝에서는 페이지 스크롤 허용
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const onWheel = (e: WheelEvent) => {
-      const atLeftEnd = el.scrollLeft === 0;
-      const atRightEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
-
-      // 양 끝에서 더 가려고 하면 → 페이지 스크롤 허용
-      if ((atLeftEnd && e.deltaY < 0) || (atRightEnd && e.deltaY > 0)) {
-        return;
-      }
-
-      // 그 외에는 가로 스크롤 강제
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        e.stopPropagation();
-        el.scrollLeft += e.deltaY;
-      }
-    };
-
-    el.addEventListener('wheel', onWheel, { passive: false });
-    return () => el.removeEventListener('wheel', onWheel);
-  }, []);
-
-  // 드래그 시작
-  const handleMouseDown = (e: React.MouseEvent<HTMLUListElement>) => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    e.preventDefault(); // 텍스트 선택 방지
-
-    isDragging.current = true;
-    startX.current = e.clientX;
-    startScrollLeft.current = el.scrollLeft;
-    el.classList.add('is-dragging');
-  };
-
-  // 드래그 중
-  const handleMouseMove = (e: React.MouseEvent<HTMLUListElement>) => {
-    const el = scrollRef.current;
-    if (!el || !isDragging.current) return;
-
-    const dx = e.clientX - startX.current;
-    el.scrollLeft = startScrollLeft.current - dx;
-  };
-
-  // 드래그 종료
-  const stopDragging = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    isDragging.current = false;
-    el.classList.remove('is-dragging');
+  const getBadgeType = (item: Top10Item): "netflix" | "new" | "old" | null => {
+    if (item.isNetflixOriginal) return "netflix";
+    if (item.isNew3Months) return "new";
+    if (item.isOld1Year) return "old";
+    return null;
   };
 
   return (
     <div className="top10Wrap">
       <h2>오늘의 TOP 10 시리즈</h2>
 
-      <ul
-        className="top10List"
-        ref={scrollRef}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={stopDragging}
-        onMouseLeave={stopDragging}>
-        {netflixTop10.map((item, index) => (
-          <li key={item.id} className="top10Item">
-            <span className="rank">{index + 1}</span>
-            <img src={`${IMG_BASE}${item.poster_path}`} alt={item.name} />
-          </li>
-        ))}
-      </ul>
+      <Swiper
+        className="top10Swiper"
+        modules={[FreeMode, Mousewheel]}
+        slidesPerView="auto"
+        freeMode
+        mousewheel={{ forceToAxis: true }}
+        spaceBetween={50} // ✅ 2.4rem 고정
+      >
+        {netflixTop10.map((item, index) => {
+          const badge = getBadgeType(item);
+          const posterSrc = item.poster_path
+            ? `${IMG_BASE}${item.poster_path}`
+            : FALLBACK_POSTER;
+
+          return (
+            <SwiperSlide key={item.id} className="top10Slide">
+              <div className="top10Item">
+                <span className="rank">{index + 1}</span>
+
+                <Link
+                  to={`/tv/${item.id}`}
+                  className="posterWrap"
+                  aria-label={getTitle(item)}
+                >
+                  {badge === "netflix" && (
+                    <img
+                      className="netflixBadge"
+                      src="/images/icon/오리지널_뱃지.png"
+                      alt="Netflix Original"
+                      draggable={false}
+                    />
+                  )}
+
+                  {badge === "new" && (
+                    <img
+                      className="newBadge"
+                      src="/images/icon/뉴_뱃지.png"
+                      alt="New"
+                      draggable={false}
+                    />
+                  )}
+
+                  {badge === "old" && (
+                    <img
+                      className="oldBadge"
+                      src="/images/icon/곧 종료_뱃지.png"
+                      alt="Ending Soon"
+                      draggable={false}
+                    />
+                  )}
+
+                  <img
+                    className="poster"
+                    src={posterSrc}
+                    alt={getTitle(item)}
+                    draggable={false}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src =
+                        FALLBACK_POSTER;
+                    }}
+                  />
+                </Link>
+              </div>
+            </SwiperSlide>
+          );
+        })}
+      </Swiper>
     </div>
   );
 };

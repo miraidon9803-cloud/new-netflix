@@ -12,6 +12,7 @@
   "dependencies": {
     "axios": "^1.13.2",
     "firebase": "^12.6.0",
+    "modal": "^0.6.0",
     "react": "^19.2.0",
     "react-countup": "^6.5.3",
     "react-dom": "^19.2.0",

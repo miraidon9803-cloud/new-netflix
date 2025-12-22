@@ -1,59 +1,89 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { useNetflixStore } from '../store/NetflixStore';
 import './scss/TrandingSeries.scss';
+import { Link } from 'react-router-dom';
+
+// ✅ Swiper
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import { FreeMode, Mousewheel } from 'swiper/modules';
 
 const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
+const FALLBACK_POSTER = '/images/icon/no_poster.png';
 
-const TrandingSeries = () => {
-  const { SeriesTop10, onFetchSeriesTop10 } = useNetflixStore();
+type MediaType = 'tv' | 'movie';
 
-  const scrollRef = useRef<HTMLUListElement>(null);
+type MediaItem = {
+  id: number;
+  poster_path: string | null;
+  name?: string | null;
+  title?: string | null;
+  media_type?: MediaType;
+  isNetflixOriginal?: boolean;
+};
+
+const TrandingSeries: React.FC = () => {
+  const { SeriesTop10, onFetchSeriesTop10 } = useNetflixStore() as {
+    SeriesTop10: MediaItem[];
+    onFetchSeriesTop10: () => void;
+  };
 
   useEffect(() => {
     onFetchSeriesTop10();
-  }, []);
+  }, [onFetchSeriesTop10]);
 
-  // 리스트 위 휠 = 가로 스크롤 / 페이지 세로 스크롤 막기
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
+  const getTitle = (item: MediaItem) => (item.name ?? item.title ?? 'title') as string;
 
-    const onWheel = (e: WheelEvent) => {
-      const el = scrollRef.current;
-      if (!el) return;
-
-      const atLeftEnd = el.scrollLeft === 0;
-      const atRightEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
-
-      // 스크롤이 양 끝일 때 → 기본 동작 허용 (페이지 스크롤)
-      if ((atLeftEnd && e.deltaY < 0) || (atRightEnd && e.deltaY > 0)) {
-        return; // preventDefault() 안함
-      }
-
-      // 그 외엔 가로 스크롤 처리
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        e.stopPropagation();
-        el.scrollLeft += e.deltaY;
-      }
-    };
-
-    el.addEventListener('wheel', onWheel, { passive: false });
-
-    return () => el.removeEventListener('wheel', onWheel);
-  }, []);
+  const getType = (item: MediaItem): MediaType => {
+    if (item.media_type === 'tv' || item.media_type === 'movie') return item.media_type;
+    if (item.name) return 'tv';
+    return 'movie';
+  };
 
   return (
     <div className="seriesTopWrap">
-      <p>급상승 시리즈</p>
+      <p>급상승</p>
 
-      <ul className="seriesTopList" ref={scrollRef}>
-        {SeriesTop10.map((movie, id) => (
-          <li key={movie.id} className="seriesItem">
-            <img src={`${IMG_BASE}${movie.poster_path}`} alt={movie.title} />
-          </li>
-        ))}
-      </ul>
+      <Swiper
+        className="seriesTopSwiper"
+        modules={[FreeMode, Mousewheel]}
+        slidesPerView="auto"
+        spaceBetween={24}
+        freeMode
+        mousewheel={{ forceToAxis: true }}
+      >
+        {SeriesTop10.map((item) => {
+          const posterSrc = item.poster_path ? `${IMG_BASE}${item.poster_path}` : FALLBACK_POSTER;
+          const type = getType(item);
+
+          return (
+            <SwiperSlide key={`${type}-${item.id}`} className="seriesTopSlide">
+              <Link to={`/${type}/${item.id}`} className="seriesItem" aria-label={getTitle(item)}>
+                <div className="posterWrap">
+                  {item.isNetflixOriginal && (
+                    <img
+                      className="netflixBadge"
+                      src="/images/icon/오리지널_뱃지.png"
+                      alt="Netflix Original"
+                      draggable={false}
+                    />
+                  )}
+
+                  <img
+                    className="poster"
+                    src={posterSrc}
+                    alt={getTitle(item)}
+                    draggable={false}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = FALLBACK_POSTER;
+                    }}
+                  />
+                </div>
+              </Link>
+            </SwiperSlide>
+          );
+        })}
+      </Swiper>
     </div>
   );
 };

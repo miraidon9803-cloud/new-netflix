@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import "./scss/MypageMain.scss";
 import Acount from "../components/Acount";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AppPopup from "../components/AppPopup";
 import MemberPopup from "../components/MemberPopup";
 import { useProfileStore } from "../store/Profile";
@@ -10,6 +10,7 @@ import ProfilePopup from "../components/ProfilePopup";
 
 import AvatarSelPopup from "../components/AvatarSelPopup";
 import { profile } from "../data/profile";
+import CSpopup from "../components/CSpopup";
 
 const MypageMain = () => {
   const user = useAuthStore((s) => s.user);
@@ -26,14 +27,19 @@ const MypageMain = () => {
   const [showAccount, setShowAccount] = useState(false);
   const [showApp, setShowApp] = useState(false);
   const [showMember, setShowMember] = useState(false);
+  const [showCs, setShowCs] = useState(false);
 
   const [openProfilePopup, setOpenProfilePopup] = useState(false);
-
   const [avatarPopupOpen, setAvatarPopupOpen] = useState(false);
 
   const [selectedAvatarKey, setSelectedAvatarKey] = useState(
     activeProfile?.avatarKey ?? profile?.[0]?.key ?? ""
   );
+
+  // ✅ (선택) activeProfile 바뀌면 selectedAvatarKey도 맞춰주기
+  useEffect(() => {
+    setSelectedAvatarKey(activeProfile?.avatarKey ?? profile?.[0]?.key ?? "");
+  }, [activeProfile?.avatarKey]);
 
   if (!activeProfile) return null;
 
@@ -44,11 +50,11 @@ const MypageMain = () => {
 
   return (
     <div className="inner-mypageMain">
-      <div className="mypageMain-wrap">
-        <div className="title">
-          <h1>나의 넷플릭스</h1>
-        </div>
+      <div className="mypageMain-title">
+        <h1>나의 넷플릭스</h1>
+      </div>
 
+      <div className="mypageMain-wrap">
         <div className="main-content">
           <div className="content-left">
             <div>
@@ -57,7 +63,13 @@ const MypageMain = () => {
             <p className="nickname">{activeProfile.title}</p>
 
             <Link to="profile">
-              <p className="profile-change">프로필변경</p>
+              <p className="profile-change">
+                <img
+                  src="/images/icon/MypageMain-Exchange.png"
+                  alt="프로필변경"
+                />
+                <span>프로필변경</span>
+              </p>
             </Link>
           </div>
 
@@ -78,10 +90,66 @@ const MypageMain = () => {
             </div>
 
             <ul className="profile-section">
-              <li onClick={() => setAvatarPopupOpen(true)}>현재 프로필 관리</li>
-              <li onClick={() => setShowAccount((v) => !v)}>계정</li>
-              <li onClick={() => setShowApp((v) => !v)}>앱 설정</li>
-              <li>고객센터</li>
+              <li onClick={() => setOpenProfilePopup(true)}>
+                <span className="item-left">
+                  <img
+                    src="/images/icon/MypageMain-profile.png"
+                    alt="현재 프로필 관리"
+                  />
+                  <span>현재 프로필 관리</span>
+                </span>
+
+                <img
+                  className="item-arrow"
+                  src="/images/icon/MypageMain-Arrow.png"
+                  alt=""
+                />
+              </li>
+
+              <li onClick={() => setShowAccount((v) => !v)}>
+                <span className="item-left">
+                  <img src="/images/icon/MypageMain-user.png" alt="계정" />
+                  <span>계정</span>
+                </span>
+
+                <img
+                  className="item-arrow"
+                  src="/images/icon/MypageMain-Arrow.png"
+                  alt=""
+                />
+              </li>
+
+              <li onClick={() => setShowApp((v) => !v)}>
+                <span className="item-left">
+                  <img
+                    src="/images/icon/MypageMain-settings.png"
+                    alt="앱 설정"
+                  />
+                  <span>앱 설정</span>
+                </span>
+
+                <img
+                  className="item-arrow"
+                  src="/images/icon/MypageMain-Arrow.png"
+                  alt=""
+                />
+              </li>
+
+              <li onClick={() => setShowCs((v) => !v)}>
+                <span className="item-left">
+                  <img
+                    src="/images/icon/MypageMain-service.png"
+                    alt="고객센터"
+                  />
+                  <span>고객센터</span>
+                </span>
+
+                <img
+                  className="item-arrow"
+                  src="/images/icon/MypageMain-Arrow.png"
+                  alt=""
+                />
+              </li>
             </ul>
 
             <AvatarSelPopup
@@ -114,6 +182,7 @@ const MypageMain = () => {
             {showAccount && <Acount onClose={() => setShowAccount(false)} />}
             {showApp && <AppPopup onClose={() => setShowApp(false)} />}
             {showMember && <MemberPopup onClose={() => setShowMember(false)} />}
+            {showCs && <CSpopup onClose={() => setShowCs(false)} />}
 
             <button onClick={handleLogout} className="logout-btn">
               로그아웃

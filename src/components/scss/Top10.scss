@@ -1,108 +1,190 @@
+/* src/components/scss/Top10.scss */
+
 .top10Wrap {
   position: relative;
-  margin-top: 8rem;
+  margin-top: 4rem;
 
   h2 {
     color: #fff;
     font-size: 2.4rem;
     font-weight: 600;
+    line-height: 140%;
+    letter-spacing: -0.06rem;
     margin-bottom: 1.6rem;
   }
 
-  .top10List {
-    display: flex;
-    gap: 2rem;
-    overflow-x: auto;
-    overflow-y: visible;
-    padding-left: 6rem;
+  /* =========================
+     Swiper
+     ========================= */
+  .top10Swiper {
+    padding-left: 8rem;
+    overflow: visible;
+    cursor: grab;
+    user-select: none;
 
-    .top10Item {
-      flex: 0 0 20%; // 📌 PC: 5개 보이게(폭에 맞춰 자동 줄어듦)
-      scroll-snap-align: start;
-      position: relative;
-      padding-bottom: 1.2rem;
+    &:active {
+      cursor: grabbing;
+    }
 
-      img {
-        width: 100%;
-        aspect-ratio: 11/16;
-        border-radius: 0.8rem;
-        box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.6);
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
-      }
+    /* swiper 내부 */
+    .swiper-wrapper {
+      overflow: visible;
+    }
 
-      &:hover img {
-        transform: translateY(-0.4rem) scale(1.03);
-      }
+    .top10Slide {
+      width: auto;
+      overflow: visible;
 
-      .rank {
-        position: absolute;
-        bottom: 0;
-        left: -28%;
-        font-size: 10rem;
-        font-family: 'Esamanru';
-        color: #fff;
-        z-index: 2;
-        opacity: 0.9;
-      }
+      /* =========================
+         Item
+         ========================= */
+      .top10Item {
+        position: relative;
+        flex: 0 0 auto;
+        padding-bottom: 1.2rem;
 
-      &::before {
-        content: '';
-        position: absolute;
-        top: -1.2rem;
-        bottom: 0;
-        left: 20%;
-        right: 20%;
-        background: rgba(255, 255, 255, 0.06);
-        border-radius: 0.8rem;
-        z-index: 0;
+        /* 랭크 숫자 */
+        .rank {
+          position: absolute;
+          bottom: -0.2rem;
+          left: -28%;
+          z-index: 1;
+
+          font-family: "Esamanru";
+          font-size: 12rem;
+          font-weight: 500;
+          color: #fff;
+          letter-spacing: -0.32rem;
+
+          pointer-events: none;
+        }
+
+        /* 포스터 링크 래퍼 */
+        .posterWrap {
+          position: relative;
+          z-index: 3;
+          display: block;
+          width: 22rem;
+
+          transform-origin: center bottom;
+          transition: transform 0.25s ease;
+
+          /* 뱃지 (우상단 고정) */
+          .netflixBadge,
+          .newBadge,
+          .oldBadge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 5;
+
+            width: 4rem;
+            height: auto;
+
+            pointer-events: none;
+            user-select: none;
+          }
+
+          /* 포스터 */
+          .poster {
+            width: 100%;
+            aspect-ratio: 11 / 16;
+            border-radius: 0.8rem;
+            box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.6);
+            display: block;
+            user-select: none;
+          }
+        }
+
+        /* hover */
+        &:hover {
+          .posterWrap {
+            transform: translateY(-0.4rem) scale(1.03);
+          }
+        }
       }
     }
   }
 
-  /* ===========================
-     🟦 태블릿 (≤1440px)
-     =========================== */
+  /* =========================
+     태블릿 ≤1440px
+     ========================= */
   @media (max-width: 1440px) {
-    margin-top: 4rem;
+    margin: 4rem 1.6rem 0;
 
-    .top10List {
-      gap: 1.6rem;
-      padding-left: 1.6rem;
+    h2 {
+      font-size: 2rem;
     }
 
-    .top10Item {
-      flex: 0 0 25%; // 태블릿: 4개 보이게
-      img {
-        aspect-ratio: 172 / 244;
-        border-radius: 0.4rem;
-      }
-      .rank {
-        font-size: 8rem;
-        left: -22%;
+    .top10Swiper {
+      padding-left: 1.6rem;
+
+      .top10Slide {
+        .top10Item {
+          .posterWrap {
+            width: 17.2rem;
+
+            .netflixBadge,
+            .newBadge,
+            .oldBadge {
+              width: 4.8rem;
+            }
+          }
+
+          .rank {
+            font-size: 10.8rem;
+            left: -30%;
+          }
+        }
       }
     }
   }
 
-  /* ===========================
-     🟩 모바일 (≤430px)
-     =========================== */
+  /* =========================
+     모바일 ≤430px
+     ========================= */
   @media (max-width: 430px) {
-    margin-top: 2.8rem;
+    margin: 2.8rem 1.6rem 0;
 
-    .top10List {
-      gap: 1.2rem;
-      padding-left: 1.6rem;
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.2rem;
     }
 
-    .top10Item {
-      flex: 0 0 40%; // 모바일: 2.5개 보임
-      img {
-        aspect-ratio: 104 / 151;
-        border-radius: 0.4rem;
-      }
-      .rank {
-        font-size: 5.6rem;
-        left: -14%;
+    .top10Swiper {
+      padding-left: 2.6rem;
+
+      .top10Slide {
+        .top10Item {
+          .posterWrap {
+            width: 40vw;
+            max-width: 16rem;
+
+            .poster {
+              aspect-ratio: 104 / 152;
+              border-radius: 0.4rem;
+            }
+
+            /* ✅ 모바일 뱃지 크기: 3rem */
+            .netflixBadge,
+            .newBadge,
+            .oldBadge {
+              width: 3rem;
+            }
+          }
+
+          .rank {
+            font-size: 6.4rem;
+            left: -22%;
+            bottom: -0.05rem;
+          }
+
+          &:hover {
+            .posterWrap {
+              transform: translateY(-0.2rem) scale(1.01);
+            }
+          }
+        }
       }
     }
   }

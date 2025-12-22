@@ -20,6 +20,14 @@ export type UserProfile = {
   avatarKey: string; // 아바타 키
   poster: string; // 이미지 경로(/images/...)
   createdAt?: unknown; // serverTimestamp
+  updatedAt?: unknown;
+
+  // 확장 필드(선택)
+  adultOnly?: boolean;
+  ageLimit?: number;
+  profileLock?: boolean;
+  language?: string;
+  pin?: string;
 };
 
 type CreateProfileInput = {
@@ -37,6 +45,9 @@ type CreateProfileInput = {
 interface ProfileState {
   profiles: UserProfile[];
   activeProfileId: string | null;
+
+  // ✅ 새로고침 튕김 방지용(서버/스토리지 복원 끝날 때까지 Gate에서 대기)
+  profilesLoading: boolean;
 
   // helpers
   getActiveProfile: () => UserProfile | null;
@@ -60,8 +71,10 @@ export const useProfileStore = create<ProfileState>()(
     (set, get) => ({
       profiles: [],
       activeProfileId: null,
+      profilesLoading: false,
 
-      resetProfiles: () => set({ profiles: [], activeProfileId: null }),
+      resetProfiles: () =>
+        set({ profiles: [], activeProfileId: null, profilesLoading: false }),
 
       getActiveProfile: () => {
         const { profiles, activeProfileId } = get();
@@ -72,42 +85,63 @@ export const useProfileStore = create<ProfileState>()(
       loadProfiles: async () => {
         const currentUser = auth.currentUser;
 
-        if (!currentUser) {
-          set({ profiles: [], activeProfileId: null });
-          return;
-        }
+        // ✅ 로딩 시작
+        set({ profilesLoading: true });
 
-        // 1) profiles 가져오기 (생성순)
-        const colRef = collection(db, "users", currentUser.uid, "profiles");
-        const q = query(colRef, orderBy("createdAt", "asc"));
-        const snap = await getDocs(q);
+        try {
+          if (!currentUser) {
+            set({
+              profiles: [],
+              activeProfileId: null,
+              profilesLoading: false,
+            });
+            return;
+          }
 
-        const profiles: UserProfile[] = snap.docs.map((d) => {
-          const data = d.data() as Omit<UserProfile, "id">;
-          return { id: d.id, ...data };
-        });
+          // 1) profiles 가져오기 (생성순)
+          const colRef = collection(db, "users", currentUser.uid, "profiles");
+          const q = query(colRef, orderBy("createdAt", "asc"));
+          const snap = await getDocs(q);
 
-        // 2) activeProfileId 가져오기 (users/{uid} 문서)
-        const userSnap = await getDoc(doc(db, "users", currentUser.uid));
-        const activeProfileId = userSnap.exists()
-          ? (userSnap.data() as any).activeProfileId ?? null
-          : null;
+          const profiles: UserProfile[] = snap.docs.map((d) => {
+            const data = d.data() as Omit<UserProfile, "id">;
+            return { id: d.id, ...data };
+          });
 
-        // 3) activeProfileId가 더 이상 존재하지 않으면 보정
-        const isValid =
-          activeProfileId && profiles.some((p) => p.id === activeProfileId);
+          // 2) activeProfileId 가져오기 (users/{uid} 문서)
+          const userSnap = await getDoc(doc(db, "users", currentUser.uid));
+          const serverActive: string | null = userSnap.exists()
+            ? (userSnap.data() as any).activeProfileId ?? null
+            : null;
 
-        const nextActive = isValid ? activeProfileId : profiles[0]?.id ?? null;
+          // 3) localStorage에 저장된 activeProfileId (persist 복원 값)
+          const localActive = get().activeProfileId;
 
-        set({ profiles, activeProfileId: nextActive });
+          // 우선순위: 서버 active → 로컬 active → 첫 프로필
+          const candidate = serverActive ?? localActive ?? null;
 
-        // 보정이 일어났다면 서버에도 반영(선택)
-        if (nextActive !== activeProfileId) {
-          await setDoc(
-            doc(db, "users", currentUser.uid),
-            { activeProfileId: nextActive },
-            { merge: true }
-          );
+          const isValid = candidate && profiles.some((p) => p.id === candidate);
+
+          const nextActive = isValid ? candidate : profiles[0]?.id ?? null;
+
+          set({
+            profiles,
+            activeProfileId: nextActive,
+            profilesLoading: false,
+          });
+
+          // 4) 보정이 일어났으면 서버(users/{uid})에도 반영(선택)
+          // - 서버에 값이 없거나 잘못된 값이면 정리
+          if (nextActive !== serverActive) {
+            await setDoc(
+              doc(db, "users", currentUser.uid),
+              { activeProfileId: nextActive },
+              { merge: true }
+            );
+          }
+        } catch (e) {
+          console.error("loadProfiles 실패:", e);
+          set({ profilesLoading: false });
         }
       },
 
@@ -117,19 +151,18 @@ export const useProfileStore = create<ProfileState>()(
 
         const nowProfiles = get().profiles;
 
-        // 로컬 state 기준으로 제한
         if (nowProfiles.length >= MAX_PROFILES) {
           throw new Error("프로필은 최대 5개까지 만들 수 있어요.");
         }
 
+        // Firestore doc id 생성(브라우저 지원 OK)
         const id = crypto.randomUUID();
         const profileRef = doc(db, "users", currentUser.uid, "profiles", id);
 
         const payload = {
-          title: input.title,
-          avatarKey: input.avatarKey,
-          poster: input.poster,
+          ...input,
           createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
         };
 
         await setDoc(profileRef, payload);
@@ -138,10 +171,15 @@ export const useProfileStore = create<ProfileState>()(
 
         const nextProfiles: UserProfile[] = [
           ...nowProfiles,
-          { id, ...input, createdAt: payload.createdAt },
+          {
+            id,
+            ...input,
+            createdAt: payload.createdAt,
+            updatedAt: payload.updatedAt,
+          },
         ];
 
-        // 첫 프로필 생성 시 자동 선택(원하시면 제거 가능)
+        // 첫 프로필 생성 시 자동 선택
         const nextActive = prevActive ?? id;
 
         set({
@@ -195,16 +233,13 @@ export const useProfileStore = create<ProfileState>()(
         // Firestore update(merge)
         await setDoc(
           doc(db, "users", currentUser.uid, "profiles", profileId),
-          {
-            ...input,
-            updatedAt: serverTimestamp(),
-          },
+          { ...input, updatedAt: serverTimestamp() },
           { merge: true }
         );
 
         // state 반영
         const nextProfiles = get().profiles.map((p) =>
-          p.id === profileId ? ({ ...p, ...input } as any) : p
+          p.id === profileId ? ({ ...p, ...input } as UserProfile) : p
         );
 
         set({ profiles: nextProfiles });
@@ -226,13 +261,12 @@ export const useProfileStore = create<ProfileState>()(
         set({ activeProfileId: profileId });
       },
     }),
-
     {
       name: "profile-store",
       storage: createJSONStorage(() => localStorage),
-      // 전부 저장해도 되지만, 원하시면 activeProfileId만 저장하도록 줄일 수도 있어요.
+
+      // ✅ 진짜 필요한 것만 저장(계정 꼬임 방지)
       partialize: (state) => ({
-        profiles: state.profiles,
         activeProfileId: state.activeProfileId,
       }),
     }

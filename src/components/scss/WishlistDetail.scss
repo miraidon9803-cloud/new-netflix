@@ -1,0 +1,556 @@
+@use '../../App.scss' as *;
+
+// ================================================
+// WishlistDetail 페이지 스타일
+// 네스팅 구조로 클래스 충돌 방지
+// ================================================
+
+.wishlist-detail-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: $BG;
+  position: relative;
+
+  // // 전역 Footer 숨김
+  // & ~ footer,
+  // & + footer {
+  //   display: none !important;
+  // }
+
+  // ================================================
+  // 사이드 네비게이션 (1440px 초과)
+  // ================================================
+
+  .wishlist-detail-sidenav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    z-index: 100;
+  }
+
+  // ================================================
+  // 메인 콘텐츠 영역
+  // ================================================
+
+  .wishlist-detail-content {
+    flex: 1 1 auto;
+    padding: 110px 0px 120px;
+    max-width: 1440px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    min-height: calc(100vh - 250px); // Footer 높이를 고려한 최소 높이
+    width: 100%;
+  }
+
+  // ================================================
+  // Footer (1441px 이상에서 표시)
+  // ================================================
+
+  .wishlist-detail-footer {
+    display: block;
+    width: 100%;
+    max-width: 1570px;
+    margin: 0 auto;
+    margin-top: auto; // 콘텐츠가 적어도 Footer를 하단으로
+    box-sizing: border-box;
+  }
+
+  // ================================================
+  // 헤더 영역 (백버튼 + 타이틀 + 정렬버튼)
+  // ================================================
+
+  .wishlist-detail-header {
+    @include myFlex(10px, space-between, center);
+    margin-bottom: 26px;
+
+    .header-left {
+      @include myFlex(16px, flex-start, center);
+    }
+
+    .wishlist-detail-back-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wishlist-detail-title {
+      @include myTitle24(600, left);
+      color: $grey10;
+    }
+
+    .sort-btn {
+      @include myFlex(8px, center, center);
+      @include myTitle16(400, center);
+      font-family: 'SUIT', sans-serif;
+      color: $grey10;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .sort-icon-wrapper {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+    }
+  }
+
+  // ================================================
+  // 콘텐츠 그리드 (1441px+: 6열)
+  // ================================================
+
+  .wishlist-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    column-gap: 24px;
+    row-gap: 40px;
+  }
+
+  // ================================================
+  // 콘텐츠 카드
+  // ================================================
+
+  .wishlist-detail-card {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+
+    // 플레이스홀더 카드 (빈 공간 채우기)
+    &.placeholder {
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  // 콘텐츠 이미지 래퍼
+  .wishlist-detail-image-wrapper {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: $grey2;
+
+    .content-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  // 콘텐츠 정보 (제목 + 드롭다운)
+  .wishlist-detail-info {
+    @include myFlex(4px, center, center);
+    margin-top: 16px;
+    width: 100%;
+
+    .wishlist-detail-card-title {
+      @include myTitle16(400, left);
+      display: flex;
+      color: $grey10;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .content-dropdown {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+  }
+
+  // ================================================
+  // 하단 네비게이션 (기본: 숨김)
+  // ================================================
+
+  .wishlist-detail-bottom-nav {
+    display: none;
+
+    .bottom-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: $grey6;
+      text-decoration: none;
+      transition: color 0.3s;
+
+      img {
+        width: 100%;
+        opacity: 0.6;
+        transition: opacity 0.3s;
+      }
+
+      &.active {
+        color: $grey10;
+
+        img {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  // ================================================
+  // 팝업 스타일
+  // ================================================
+
+  .popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .popup-container {
+    position: relative;
+    width: 406px;
+    background-color: $grey2;
+    border-radius: 16px;
+    padding: 24px;
+    box-sizing: border-box;
+  }
+
+  .popup-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-bottom: 32px;
+  }
+
+  .popup-title {
+    @include myTitle20(500, center);
+    color: $grey10;
+  }
+
+  .popup-close {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  
+  .popup-content-edit {
+    width: 406px;
+    // height: 308px;
+    display: flex;
+    flex-direction: column;
+
+    .popup-content {
+      flex: 1;
+    }
+
+    .popup-save-btn {
+      margin-top: auto;
+    }
+  }
+
+  // 액션 버튼 (이동, 휴지통)
+  .popup-action-btn {
+    display: flex;
+    width: 100%;
+    margin: 16px 0;
+    padding: 12px 18px;
+    align-items: center;
+    gap: 10px;
+    background: $grey3;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: $grey10;
+    @include myTitle16(400, left);
+    margin-bottom: 0;    
+
+    &:last-child {
+      margin-bottom: 40px;
+      
+    }
+
+    svg {
+      flex-shrink: 0;
+    }
+  }
+
+  // 저장 버튼
+  .popup-save-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: $sub1;
+    border: none;
+    border-radius: 4px;
+    color: $grey10;
+    @include myTitle16(500, center);
+    cursor: pointer;
+    margin-top: 40px;
+  }
+
+  // 이동 팝업 (가변 높이)
+  .popup-move {
+    width: 406px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .popup-folder-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .popup-folder-item {
+    display: flex;
+    width: 100%;
+    margin: 8px 0;
+    padding: 12px 18px;
+    align-items: center;
+    gap: 12px;
+    background: $grey3;
+    border: none;
+    cursor: pointer;
+    color: $grey10;
+    @include myTitle16(400, left);
+    transition: background-color 0.2s;
+    border-radius: 4px;
+    
+
+    &:hover {
+      background: $grey4;
+    }
+
+    &.selected {
+      background: $grey4;
+    }
+
+    .folder-name {
+      flex: 1;
+    }
+
+    svg:last-child {
+      margin-left: auto;
+    }
+  }
+
+  // 빈 폴더 메시지
+  .empty-folder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    color: $grey6;
+    @include myTitle16(400, center);
+  }
+}
+
+// ================================================
+// 반응형: 1440px 이하
+// ================================================
+
+@media (max-width: 1440px) {
+  .wishlist-detail-page {
+    // 사이드 네비게이션 숨김
+    .wishlist-detail-sidenav {
+      display: none;
+    }
+
+    // Footer 숨김
+    .wishlist-detail-footer {
+      display: none;
+    }
+
+    // 메인 콘텐츠 조정
+    .wishlist-detail-content {
+      margin: 0 auto !important;
+      padding: 110px 16px 120px !important;
+      max-width: 100%;
+    }
+
+    // 그리드 5열
+    .wishlist-detail-grid {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 24px;
+    }
+
+    // 콘텐츠 정보
+    .wishlist-detail-info {
+      margin-top: 12px;
+    }
+
+    .wishlist-detail-header .wishlist-detail-title {
+      @include myTitle16(400, left);
+    }
+
+    // 하단 네비게이션 표시
+    .wishlist-detail-bottom-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 44px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: rgba(23, 23, 24, 0.60);
+      backdrop-filter: blur(15px);
+      z-index: 100;
+      padding-bottom: 30px;
+    }
+  }
+}
+
+// ================================================
+// 반응형: 1024px 이하
+// ================================================
+
+@media (max-width: 1024px) {
+  .wishlist-detail-page {
+    // 그리드 4열
+    .wishlist-detail-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+  }
+}
+
+// ================================================
+// 반응형: 768px 이하
+// ================================================
+
+@media (max-width: 768px) {
+  .wishlist-detail-page {
+    // 그리드 3열
+    .wishlist-detail-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+  }
+}
+
+// ================================================
+// 반응형: 430px 이하
+// ================================================
+
+@media (max-width: 430px) {
+  // 전역 Header 숨김 (wishlist-detail-page가 있을 때)
+  body:has(.wishlist-detail-page) header {
+    display: none;
+  }
+
+  .wishlist-detail-page {
+    // 메인 콘텐츠 조정
+    .wishlist-detail-content {
+      padding: 20px 16px 100px !important;
+    }
+
+    // 헤더
+    .wishlist-detail-header {
+      margin-bottom: 20px;
+
+      .header-left {
+        gap: 12px;
+      }
+
+      .wishlist-detail-title {
+        @include myTitle20(500, left);
+      }
+    }
+
+    // 그리드 3열, gap 16px
+    .wishlist-detail-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    // 콘텐츠 이미지
+    .wishlist-detail-image-wrapper {
+      border-radius: 4px;
+    }
+
+    // 콘텐츠 정보
+    .wishlist-detail-info {
+      margin-top: 8px;
+
+      .wishlist-detail-card-title {
+        @include myTitle14(400, left);
+      }
+
+      .content-dropdown {
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+
+    // 하단 네비게이션 조정
+    .wishlist-detail-bottom-nav {
+      height: 70px;
+      padding: 15px;
+      justify-content: space-between;
+      gap: clamp(16px, 5vw, 32px);
+
+      .bottom-nav-item {
+        img {
+          width: 50px;
+        }
+      }
+    }
+
+    // 팝업 반응형
+    .popup-container {
+      width: calc(100% - 32px);
+      max-width: 406px;
+      padding: 16px;
+    }
+
+    .popup-content-edit {
+      width: 100%;
+      height: auto;
+      min-height: 280px;
+    }
+
+    .popup-move {
+      width: 100%;
+    }
+
+    .popup-header {
+      margin-bottom: 24px;
+    }
+
+    .popup-save-btn {
+      margin-top: 32px;
+    }
+  }
+}

@@ -1,28 +1,145 @@
+/* src/components/scss/SFNFantasy.scss */
+
 .sfTopWrap {
-  margin-top: 4rem;
+  margin-top: 8rem;
 
   p {
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 1.6rem;
+    color: #fff;
   }
 
-  .sfTopList {
-    display: flex;
-    gap: 2.4rem;
-    overflow-x: auto;
+  /* =========================
+     Swiper
+     ========================= */
+  .sfTopSwiper {
+    width: 100%;
+    overflow: hidden;
 
-    .sfItem {
-      position: relative;
-      flex: 0 0 auto;
-      img {
-        width: 22rem;
-        aspect-ratio: 11/16;
-        border-radius: 0.8rem;
-        transform-origin: center bottom;
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    .swiper-wrapper {
+      overflow: visible;
+    }
+
+    .sfTopSlide {
+      width: 22rem; /* PC 카드 폭 */
+      flex-shrink: 0;
+      overflow: visible;
+
+      /* ✅ Link 자체를 카드로 */
+      .sfItem {
+        display: block;
+        color: inherit;
+        text-decoration: none;
+
+        .posterWrap {
+          position: relative;
+          width: 100%;
+          transform-origin: center bottom;
+          transition: transform 0.25s ease;
+
+          /* ✅ 배지 공통: 우상단 고정 */
+          .netflixBadge,
+          .newBadge,
+          .oldBadge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 5;
+            width: 4rem; /* PC */
+            height: auto;
+            pointer-events: none;
+            user-select: none;
+          }
+
+          .poster {
+            width: 100%;
+            aspect-ratio: 11 / 16;
+            border-radius: 0.8rem;
+            display: block;
+            object-fit: cover;
+            -webkit-user-drag: none;
+            user-select: none;
+          }
+        }
+
+        /* hover */
         &:hover {
-          transform: translateY(-0.4rem) scale(1.03);
+          .posterWrap {
+            transform: translateY(-0.4rem) scale(1.03);
+          }
+        }
+      }
+    }
+  }
+
+  /* =========================
+     🟦 태블릿 (≤1440px)
+     ========================= */
+  @media (max-width: 1440px) {
+    margin: 4rem 1.6rem 0;
+
+    p {
+      font-size: 2rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .sfTopSwiper {
+      .sfTopSlide {
+        width: 17.2rem;
+
+        .sfItem {
+          .posterWrap {
+            .netflixBadge,
+            .newBadge,
+            .oldBadge {
+              width: 2.8rem;
+            }
+
+            .poster {
+              aspect-ratio: 172 / 244;
+              border-radius: 0.8rem;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /* =========================
+     🟩 모바일 (≤430px)
+     ========================= */
+  @media (max-width: 430px) {
+    margin: 2.8rem 1.6rem 0;
+
+    p {
+      font-size: 1.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .sfTopSwiper {
+      .sfTopSlide {
+        width: 40%; /* ✅ 2.5개 보이기 */
+
+        .sfItem {
+          .posterWrap {
+            .netflixBadge,
+            .newBadge,
+            .oldBadge {
+              width: 2.2rem;
+            }
+
+            .poster {
+              aspect-ratio: 104 / 152;
+              border-radius: 0.4rem;
+            }
+          }
+
+          &:hover {
+            .posterWrap {
+              transform: translateY(-0.2rem) scale(1.01);
+            }
+          }
         }
       }
     }

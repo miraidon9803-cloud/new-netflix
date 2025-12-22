@@ -1,49 +1,122 @@
+/* src/components/scss/Wakingdead.scss */
 .walking {
+  margin-top: 8rem;
+
   > p {
     font-size: 2.4rem;
     font-weight: 600;
     line-height: 140%;
     margin-bottom: 1.6rem;
   }
-  margin-top: 4rem;
+
   ul {
     display: flex;
     gap: 2.4rem;
-    overflow-x: auto; // 🔥 가로 스크롤 허용
+    overflow-x: auto;
     overflow-y: hidden;
+
     li {
       flex: 0 0 auto;
     }
+
+    /* ✅ 첫 번째 카드(메인) 위에 재생 버튼 */
     li:first-child {
       position: relative;
       transform: none !important;
-      button {
+
+      .play {
         position: absolute;
-        left: 1.6rem; // ← 왼쪽에서 1.6rem
-        bottom: 1.6rem; // ← 아래에서 1.6rem
+        left: 1.6rem;
+        bottom: 1.6rem;
+
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 0.6rem;
 
+        width: 51%;
+        height: 4rem;
+
         padding: 0.8rem 1.6rem;
+        border-radius: 0.4rem;
         cursor: pointer;
+
+        /* ✅ hover 보더 공간 미리 확보 → 흔들림 방지 */
+        border: 1px solid transparent;
+
+        transition: border-color 0.15s ease;
+
+        &:hover {
+          border-color: #e50914;
+        }
+
+        /* ✅ 아이콘 hover 교체(같은 위치) + 크기 고정 */
+        .play-ico {
+          position: relative;
+          width: 2rem;
+          height: 2rem;
+          flex: 0 0 2rem;
+
+          img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            transition: opacity 0.15s ease;
+            pointer-events: none; // ✅ 드래그/클릭 간섭 방지
+          }
+
+          .playicon {
+            opacity: 1;
+          }
+          .play-hover {
+            opacity: 0;
+          }
+        }
+
+        &:hover {
+          .play-ico {
+            .playicon {
+              opacity: 0;
+            }
+            .play-hover {
+              opacity: 1;
+            }
+          }
+        }
       }
     }
+
+    /* 기존 카드 hover 모션 유지 */
     li:nth-child(odd) {
       transform: translateY(12.4rem);
       transform-origin: center bottom;
       transition: transform 0.25s ease, box-shadow 0.25s ease;
+
       &:hover {
         transform: translateY(12rem) scale(1.03);
-      } // 원하는 만큼 조절 가능
+      }
     }
+
     li:nth-child(even) {
       transform-origin: center bottom;
       transition: transform 0.25s ease, box-shadow 0.25s ease;
+
       &:hover {
         transform: translateY(1rem) scale(1.03);
       }
     }
+  }
+
+  @media (max-width: 1440px) {
+    > p {
+      font-size: 2rem;
+    }
+  }
+
+  @media (max-width: 430px) {
+    display: none;
   }
 }

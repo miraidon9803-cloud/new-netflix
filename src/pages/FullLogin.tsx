@@ -2,16 +2,16 @@ import React, { useState } from "react";
 import Login from "../components/Login";
 import Join from "../components/Join";
 import Membership from "../components/Membership";
+import Payment from "../components/Payment";
+import Complete from "../components/Complete";
 
-// Login, Join, Membership 컴포넌트에서 받을 props 타입 정의
 interface StepProps {
   onNext?: () => void;
   onPrev?: () => void;
 }
 
 const FullLogin: React.FC<StepProps> = () => {
-  // 1 = 로그인, 2 = 회원가입, 3 = 멤버십
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
   return (
     <div>
@@ -21,7 +21,15 @@ const FullLogin: React.FC<StepProps> = () => {
         <Join onNext={() => setStep(3)} onPrev={() => setStep(1)} />
       )}
 
-      {step === 3 && <Membership onPrev={() => setStep(2)} />}
+      {step === 3 && (
+        <Membership onPrev={() => setStep(2)} onNext={() => setStep(4)} />
+      )}
+
+      {step === 4 && (
+        <Payment onPrev={() => setStep(3)} onNext={() => setStep(5)} />
+      )}
+
+      {step === 5 && <Complete onPrev={() => setStep(4)} />}
     </div>
   );
 };

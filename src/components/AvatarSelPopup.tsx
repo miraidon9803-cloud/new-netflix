@@ -16,35 +16,55 @@ const AvatarSelPopup: React.FC<AvatarPickerPopupProps> = ({
 }) => {
   if (!open) return null;
 
+  const groupedProfiles = profile.reduce<Record<string, typeof profile>>(
+    (acc, item) => {
+      if (!acc[item.name]) acc[item.name] = [];
+      acc[item.name].push(item);
+      return acc;
+    },
+    {}
+  );
+
   return (
     <div className="avatar-dim" onClick={onClose}>
       <div className="avatar-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="avatar-header">
-          <h3>아바타 선택</h3>
-          <button className="close-btn" onClick={onClose}>
-            ✕
-          </button>
-        </div>
+        <div className="avatar-wrap">
+          {/* HEADER */}
+          <div className="avatar-header">
+            <p className="avatar-create">프로필 생성</p>
+            <button className="close" onClick={onClose} aria-label="닫기">
+              <img src="/images/icon/AvatarSelPopup-close.png" alt="닫기버튼" />
+            </button>
+          </div>
 
-        {/* ✅ SCSS의 Scroll Area 클래스 적용 */}
-        <div className="avatar-content">
-          <p className="avatar-section-title">프로필을 선택하세요</p>
+          {/* BODY */}
+          <div className="avatar-content">
+            {Object.entries(groupedProfiles).map(([groupName, items]) => (
+              <div key={groupName} className="avatar-section">
+                {/* 🔹 섹션 타이틀 */}
+                <p className="avatar-section-title">{groupName}</p>
 
-          {/* ✅ grid는 ul에 붙어야 4열 적용됩니다 */}
-          <ul className="avatar-grid">
-            {profile.map((item) => (
-              <li
-                key={item.key}
-                className="avatar-item"
-                onClick={() => onSelect(item.key)} // ✅ 클릭한 key로 선택
-              >
-                {/* (선택) 키/타이틀 표시하고 싶으면 */}
-                {/* <p className="avatar-key">{item.title}</p> */}
+                <ul className="avatar-grid">
+                  {items.map((item) => {
+                    const isSelected = item.key === selectedKey;
 
-                <img src={item.poster} alt={item.title} />
-              </li>
+                    return (
+                      <li
+                        key={item.key}
+                        className={`avatar-item ${isSelected ? "active" : ""}`}
+                        onClick={() => {
+                          onSelect(item.key);
+                          onClose();
+                        }}
+                      >
+                        <img src={item.poster} alt={item.title} />
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       </div>
     </div>

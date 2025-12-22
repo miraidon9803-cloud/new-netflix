@@ -1,8 +1,22 @@
 @use "../../App.scss" as *;
 
 .coverflow {
-  margin-top: 150px;
+  margin-top: 8rem;
   text-align: center;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+
+  .coverflow_inner {
+  width: 1440px;
+   margin: 0 auto; 
+}
+
+.coverflow_full {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  overflow: visible;
+}
 
   /* 타이틀 */
   .coverflow_title {
@@ -25,33 +39,39 @@
   .coverflow_swiper {
     width: 100%;
     padding: 80px 0;
+    overflow: visible;
+  }
+
+  .swiper-wrapper {
+    overflow: visible;
   }
 
   /* 슬라이드 */
   .coverflow_slide {
-    width: 240px !important;
-    height: 360px;
+    width: 33rem;
+    height: 48rem;
+    overflow: visible;
     transition: transform 0.4s ease, filter 0.4s ease, opacity 0.4s ease;
 
     img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      border-radius: 16px;
+      border-radius: 8px;
       display: block;
     }
 
     /* 기본 흐림 */
     filter: blur(1.5px);
     opacity: 0.5;
-    transform: scale(0.85);
+    // transform: scale(0.85);
   }
 
   /* 중앙 슬라이드 강조 */
   .swiper-slide-active {
     filter: blur(0);
     opacity: 1;
-    transform: scale(1.1);
+    // transform: scale(1.1);
     z-index: 2;
   }
 
@@ -60,36 +80,68 @@
   .swiper-slide-next {
     filter: blur(0.8px);
     opacity: 0.7;
-    transform: scale(0.95);
+    // transform: scale(0.95);
   }
 
   /* Hover 효과 */
   .coverflow_slide:hover {
     transform: scale(1.05);
   }
-
-  /* 통계 영역 */
+    /* 통계 영역 */
   .coverflow_stats {
+    // position: relative;
+    width: 100%;
+    height: 160px;
+    margin-top: 15rem;
     display: flex;
-    justify-content: center;
-    gap: 140px;
-    margin-top: 80px;
+    flex-direction: column;
+    gap:7rem;
   }
 
+  /* 공통 stat 스타일 */
   .stat {
-    text-align: center;
+    // position: absolute;
     color: $grey10;
+    width: 1440px;
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;
+  }
 
-    strong {
-      font-size: 36px;
-      font-weight: 700;
-      display: block;
-      margin-bottom: 8px;
-    }
+  /* 숫자 */
+.stat_number,
+.stat_number span {
+  font-size: 6.4rem;
+  font-weight: 700;
+  line-height: 1;
+}
 
-    span {
-      font-size: 14px;
-      opacity: 0.7;
-    }
+/* 텍스트 (숫자 제외) */
+.stat .stat_label {
+  font-size: 4rem;
+  color: $grey10;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+  /* 좌측 상단 */
+  .stat-left {
+    top: 0;
+    left: 8rem;
+  }
+
+  /* 우측 상단 */
+  .stat-right {
+    // top: 0;
+    // right: 5rem;
+    justify-content: end;
+  }
+
+  /* 중앙 하단 */
+  .stat-center {
+    // left: 50%;
+    // bottom: 0;
+    // transform: translateX(-50%);
+    justify-content: center;
   }
 }

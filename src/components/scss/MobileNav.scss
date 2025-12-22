@@ -1,0 +1,78 @@
+.mobilenav {
+  display: none; // 기본: PC 숨김
+}
+
+/* =========================
+   태블릿 + 모바일 (≤1440px)
+   ========================= */
+@media (max-width: 1440px) {
+  .mobilenav {
+    display: flex;
+    justify-content: center; // 🔥 네비 전체를 화면 중앙
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: translateZ(0);
+    will-change: transform;
+    z-index: 1000;
+    background: rgba(23, 23, 24, 0.6);
+     backdrop-filter: blur(15px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 2.4rem;
+    .nav {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0.8rem 0;
+      a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+
+        text-decoration: none;
+        color: #8a8a8a;
+        img {
+          width: 2.4rem;
+          aspect-ratio: 1/1;
+          height: auto;
+          display: block;
+        }
+        p {
+          font-size: 1rem;
+          font-weight: 400;
+          line-height: 140%;
+          text-align: center;
+          color:#8a8a8a ;
+          margin: 0;
+        }
+        /*  액티브 상태 */
+        a.active p {
+          color: #fff;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+/* =========================
+   모바일 (≤430px) 미세조정
+   ========================= */
+@media (max-width: 430px) {
+  .mobilenav .nav {
+    max-width: 100%;
+  }
+
+  .mobilenav .nav a img {
+    width: 2.2rem;
+  }
+
+  .mobilenav .nav a p {
+    font-size: 1rem;
+  }
+}

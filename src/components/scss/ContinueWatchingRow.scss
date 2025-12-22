@@ -1,0 +1,217 @@
+/* src/components/scss/ContinueWatchingRow.scss */
+@use "../../App.scss" as Color;
+
+.cwWrap {
+  margin-top: 4rem;
+}
+
+.cwTitle {
+  color: #fff;
+  font-size: 2.4rem;
+  font-weight: 600;
+  line-height: 140%;
+  letter-spacing: -0.06rem;
+  margin-bottom: 1.6rem;
+}
+
+.cwList {
+  display: flex;
+  gap: 2.4rem;
+  overflow-x: auto;
+  padding-right: 1.6rem;
+
+  user-select: none;
+  -webkit-user-select: none;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.cwItem {
+  flex: 0 0 auto;
+}
+
+.cwCard {
+  position: relative;
+  display: block;
+  width: 38rem;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.8rem;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.25);
+
+  transform-origin: center bottom;
+  transition: transform 0.25s ease;
+}
+
+.cwThumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 살짝 어둡게 (텍스트 가독성) */
+.cwCard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.25) 0%,
+    rgba(0, 0, 0, 0.15) 55%,
+    rgba(0, 0, 0, 0.65) 100%
+  );
+}
+
+.cwPlay {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -54%);
+  z-index: 5;
+
+  width: 5.2rem;
+  height: 5.2rem;
+  border-radius: 999px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.cwMenu {
+  position: absolute;
+  right: 1.2rem;
+  top: 1.2rem;
+  z-index: 6;
+
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 0.6rem;
+  border: none;
+
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  cursor: pointer;
+}
+
+.cwMeta {
+  position: absolute;
+  left: 1.2rem;
+  bottom: 1.2rem;
+  z-index: 6;
+
+  color: #fff;
+  max-width: calc(100% - 2.4rem);
+}
+
+.cwName {
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 140%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cwEp {
+  margin-top: 0.4rem;
+  font-size: 1.2rem;
+  opacity: 0.85;
+}
+
+.cwProgress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 7;
+
+  height: 0.5rem;
+  background: rgba(255, 255, 255, 0.22);
+
+  span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: #e50914;
+  }
+}
+
+.cwItem:hover .cwCard {
+  transform: translateY(-0.4rem) scale(1.02);
+}
+
+/* ===================
+   🟦 태블릿 ≤1440px
+   =================== */
+@media (max-width: 1440px) {
+  .cwWrap {
+    margin: 4rem 1.6rem 0;
+  }
+
+  .cwTitle {
+    font-size: 2rem;
+  }
+
+  .cwList {
+    padding-left: 1.6rem;
+    gap: 1.8rem;
+  }
+
+  .cwCard {
+    width: 34rem;
+  }
+}
+
+/* ===================
+   🟩 모바일 ≤430px
+   =================== */
+@media (max-width: 430px) {
+  .cwWrap {
+    margin: 2.8rem 1.6rem 0;
+  }
+
+  .cwTitle {
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .cwList {
+    padding-left: 1.6rem;
+    gap: 1.2rem;
+  }
+
+  .cwCard {
+    width: 78vw;
+    max-width: 34rem;
+    border-radius: 0.6rem;
+  }
+
+  .cwPlay {
+    width: 4.6rem;
+    height: 4.6rem;
+    font-size: 2.1rem;
+  }
+
+  .cwMenu {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .cwProgress {
+    height: 0.45rem;
+  }
+}

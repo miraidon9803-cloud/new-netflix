@@ -42,13 +42,13 @@
 //   }
 // }
 // Footer.scss
-@use '../../App.scss' as *;
+@use "../../App.scss" as *;
 footer {
   height: 20.8rem;
   background: $BG;
   color: $grey10;
   padding: 4rem 24rem;
-  margin-top: 12rem;
+  // margin-top: 12rem;
 
   .footer-wrap {
     .inner {

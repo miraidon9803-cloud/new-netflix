@@ -32,25 +32,25 @@ export const profile: Profile[] = [
   },
 
   {
-    key: "웬즈데이",
+    key: "웬즈데이1",
     title: "웬즈데이1",
     name: "웬즈데이",
     poster: "/images/profile/웬즈데이1.png",
   },
   {
-    key: "웬즈데이",
+    key: "웬즈데이2",
     title: "웬즈데이2",
     name: "웬즈데이",
     poster: "/images/profile/웬즈데이2.png",
   },
   {
-    key: "웬즈데이",
+    key: "웬즈데이3",
     title: "웬즈데이3",
     name: "웬즈데이",
     poster: "/images/profile/웬즈데이3.png",
   },
   {
-    key: "웬즈데이",
+    key: "웬즈데이4",
     title: "웬즈데이4",
     name: "웬즈데이",
     poster: "/images/profile/웬즈데이4.png",
@@ -82,44 +82,44 @@ export const profile: Profile[] = [
   },
 
   {
-    key: "퀸즈 갬빗",
+    key: "퀸즈 갬빗1",
     title: "퀸즈갬빗1",
     name: "퀸즈 갬빗",
     poster: "/images/profile/퀸즈갬빗1.png",
   },
   {
-    key: "퀸즈 갬빗",
+    key: "퀸즈 갬빗2",
     title: "퀸즈갬빗2",
     name: "퀸즈 갬빗",
     poster: "/images/profile/퀸즈갬빗2.png",
   },
   {
-    key: "퀸즈 갬빗",
+    key: "퀸즈 갬빗3",
     title: "퀸즈갬빗3",
     name: "퀸즈 갬빗",
     poster: "/images/profile/퀸즈갬빗3.png",
   },
 
   {
-    key: "기본프로필",
+    key: "기본프로필1",
     title: "기본1",
     name: "기본 프로필",
     poster: "/images/profile/default1.png",
   },
   {
-    key: "기본프로필",
+    key: "기본프로필2",
     title: "기본2",
     name: "기본 프로필",
     poster: "/images/profile/default2.png",
   },
   {
-    key: "기본프로필",
+    key: "기본프로필3",
     title: "기본3",
     name: "기본 프로필",
     poster: "/images/profile/default3.png",
   },
   {
-    key: "기본프로필",
+    key: "기본프로필4",
     title: "기본4",
     name: "기본 프로필",
     poster: "/images/profile/default4.png",

@@ -1,0 +1,24 @@
+.series-section {
+  margin-top: 8rem;
+  h2 {
+    font-size: 2.4rem;
+    font-weight: 600;
+    line-height: 140%;
+    color: #fff;
+  }
+  .series-row {
+    display: flex;
+    margin-top: 1.6rem;
+    overflow-x: auto;
+    .series-card {
+      // border: 1px solid yellow;
+      flex: 0 0 16.5%;
+      .series-poster {
+        // border: 1px solid white;
+        width: 22rem;
+        aspect-ratio: 220/320;
+        border-radius: 0.8rem;
+      }
+    }
+  }
+}

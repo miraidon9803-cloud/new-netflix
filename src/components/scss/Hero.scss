@@ -1,59 +1,17 @@
-//   @use "../../App.scss" as *;
-
-//   .hero {
-//       position: relative;
-
-//       .hero_inner {
-//         margin-top: 100px;
-//           display: flex;
-//           flex-direction: column;
-//           align-items: center;
-
-//           .Netflix_logo {
-//               max-width: 697px;
-//               width: 100%;
-//           }
-//       }
-//   }
-// .hero_N_star {
-//   margin-top: 8rem;
-
-//   display: flex;
-//   flex-direction: column;
-//   align-items: center; // ⭐ 버튼을 문구 기준으로 가운데
-
-//   .hero_desc {
-//     @include myTitle24($fw: 500);
-//     text-align: center;
-//   }
-
-//   .N_star_btn a {
-//     margin-top: 2.4rem;
-//     display: inline-flex;
-//     justify-content: center;
-//     align-items: center;
-
-//     width: 244px;
-//     height: 44px;
-//     background: $main1;
-//     border-radius: 8px;
-
-//     @include myTitle20($fw: 400, $ta: center);
-//     color: $grey10;
-//   }
-// }
 @use "../../App.scss" as *;
 
 /* HERO*/
 .hero {
   position: relative; 
   width: 100%;
-  min-height: 80vh;
+  // min-height: 80vh;
+    min-height: 100vh;
 
   display: flex;
   justify-content: center;
     
-  overflow: visible; 
+  // overflow: visible; 
+    overflow: hidden;
 }
 
 /* HERO INNER*/
@@ -100,7 +58,7 @@
       height: 44px;
 
       background: $main1;
-      border-radius: 8px;
+      border-radius: 0.4rem;
 
       @include myTitle20($fw: 400, $ta: center);
       color: $grey10;
@@ -113,7 +71,8 @@
 .Netflix_logo_Big {
   position: absolute;
   left: 50%;
-  bottom: -30rem;        
+  // bottom: -30rem;    
+  bottom: -20rem;     
   transform: translateX(-50%);
   z-index: 0;
   pointer-events: none;

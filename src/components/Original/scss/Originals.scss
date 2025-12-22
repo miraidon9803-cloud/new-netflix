@@ -1,0 +1,33 @@
+.originals {
+  margin-top: 8rem;
+
+  h2 {
+    font-size: 2.4rem;
+    font-weight: 600;
+    line-height: 140%;
+    color: #fff;
+  }
+
+  .originals-list {
+    margin-top: 1.6rem;
+
+    /* 🔥 핵심 변경 */
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.6rem;
+
+    /* 가로 스크롤 제거 */
+    overflow: visible;
+  }
+
+  .originals-item {
+    width: 100%;
+
+    .original-poster {
+      width: 100%;
+      aspect-ratio: 220 / 320;
+      border-radius: 0.8rem;
+      display: block;
+    }
+  }
+}

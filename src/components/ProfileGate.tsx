@@ -1,19 +1,47 @@
-import { Navigate, useLocation } from "react-router-dom";
+// src/components/ProfileGate.tsx
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useAuthStore } from "../store/authStore";
 import { useProfileStore } from "../store/Profile";
 
-export default function ProfileGate({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const ProfileGate = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const user = useAuthStore((s) => s.user);
+  const loading = useAuthStore((s) => s.loading);
+
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
-  const { pathname } = useLocation();
+  const profilesLoading = useProfileStore((s) => s.profilesLoading);
 
-  // 프로필 선택 페이지는 예외
-  if (pathname === "/profiles") return <>{children}</>;
+  useEffect(() => {
+    if (loading) return;
+    if (!user) return;
+    if (profilesLoading) return;
 
-  // activeProfile 없으면 무조건 프로필 선택으로
-  if (!activeProfileId) return <Navigate to="/profiles" replace />;
+    if (
+      location.pathname === "/profile" ||
+      location.pathname === "/mypage/profile"
+    ) {
+      return;
+    }
 
-  return <>{children}</>;
-}
+    if (!activeProfileId) {
+      navigate("/mypage/profile", {
+        replace: true,
+        state: { from: location.pathname },
+      });
+    }
+  }, [
+    loading,
+    user,
+    profilesLoading,
+    activeProfileId,
+    location.pathname,
+    navigate,
+  ]);
+
+  return <Outlet />;
+};
+
+export default ProfileGate;

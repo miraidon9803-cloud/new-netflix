@@ -1,4 +1,8 @@
+// src/components/MainBanner.tsx
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import WishlistPopup from './WishlistPopup';
+import type { WishlistContent } from '../store/WishlistStore';
 import './scss/Mainbanner.scss';
 
 const banBG = [
@@ -19,44 +23,97 @@ const banTXT = [
   '/images/Mainbanner/다이루어질지니TEXT.png',
 ];
 
-//모바일 배너이미지
 const MobileBG = [
   '/images/Mainbanner/모바일웬즈데이배너배경.png',
   '/images/Mainbanner/모바일케데헌배경.png',
   '/images/Mainbanner/모바일다이루어질지니배경.png',
 ];
+
 const MobileBan = [
   '/images/Mainbanner/모바일웬즈데이배너.png',
   '/images/Mainbanner/모바일케데헌배너.png',
   '/images/Mainbanner/모바일다이루어질지니배너.png',
 ];
 
-const bannerSet = banBG.map((bg, i) => ({
+type MediaType = 'movie' | 'tv';
+
+type Banner = {
+  bg: string;
+  mid: string;
+  txt: string;
+  tmdbId: number;
+  mediaType: MediaType;
+  title: string;
+  posterPath?: string | null;
+};
+
+const tmdbMap: Array<{ tmdbId: number; mediaType: MediaType; title: string; posterPath?: string | null }> = [
+  { 
+    tmdbId: 119051, 
+    mediaType: 'tv', 
+    title: '웬즈데이',
+    posterPath: '/images/Mainbanner/웬즈데이사람만.png'
+  },
+  { 
+    tmdbId: 803796, 
+    mediaType: 'movie', 
+    title: '케이트 미들턴: 왕실의 헌신',
+    posterPath: '/images/Mainbanner/케데헌사람만.png'
+  },
+  { 
+    tmdbId: 228689, 
+    mediaType: 'tv', 
+    title: '다이루어질 지니',
+    posterPath: '/images/Mainbanner/다이루어질지니사람만.png'
+  },
+];
+
+const bannerSet: Banner[] = banBG.map((bg, i) => ({
   bg,
   mid: banMid[i],
   txt: banTXT[i],
+  ...tmdbMap[i],
 }));
 
 const AUTO_DELAY = 4500;
 
-const MainBanner = () => {
-  // 앞뒤로 복제한 확장 슬라이드
+const MainBanner: React.FC = () => {
+  const navigate = useNavigate();
+
+  // 위시리스트 팝업 상태
+  const [showWishlistPopup, setShowWishlistPopup] = useState(false);
+  const [selectedContent, setSelectedContent] = useState<WishlistContent | null>(null);
+
+  const goDetail = (mediaType: MediaType, tmdbId: number) => {
+    navigate(`/${mediaType}/${tmdbId}`);
+  };
+
+  // 위시리스트 버튼 클릭 핸들러
+  const handleWishlistClick = (banner: Banner) => {
+    const content: WishlistContent = {
+      id: banner.tmdbId,
+      title: banner.title,
+      poster_path: banner.posterPath || null,
+      media_type: banner.mediaType,
+    };
+    setSelectedContent(content);
+    setShowWishlistPopup(true);
+  };
+
   const extended = useMemo(() => {
     const first = bannerSet[0];
     const last = bannerSet[bannerSet.length - 1];
     return [last, ...bannerSet, first];
   }, []);
 
-  // index = 1부터 시작 → 원래 0번째 슬라이드
   const [index, setIndex] = useState(1);
   const [noTransition, setNoTransition] = useState(false);
 
-  // 현재 실제 슬라이드 인덱스 (0 ~ bannerSet.length - 1)
-  const realIndex = useMemo(() => {
-    return (index - 1 + bannerSet.length) % bannerSet.length;
-  }, [index]);
+  const realIndex = useMemo(
+    () => (index - 1 + bannerSet.length) % bannerSet.length,
+    [index]
+  );
 
-  // 자동 슬라이드
   useEffect(() => {
     const timer = setInterval(() => {
       setNoTransition(false);
@@ -66,23 +123,18 @@ const MainBanner = () => {
     return () => clearInterval(timer);
   }, []);
 
-  // 무한 루프 순간 이동 처리
   const handleTransitionEnd = () => {
     if (index === extended.length - 1) {
-      // 마지막 복제 → 첫번째 슬라이드 위치로 순간이동
       setNoTransition(true);
       setIndex(1);
     } else if (index === 0) {
-      // 첫 복제 → 마지막 실제 슬라이드로 순간이동
       setNoTransition(true);
       setIndex(extended.length - 2);
     }
   };
 
-  // ✅ 도트 클릭 시 해당 슬라이드로 이동
   const handleDotClick = (target: number) => {
     setNoTransition(false);
-    // extended에서 실제 슬라이드의 위치는 +1
     setIndex(target + 1);
   };
 
@@ -91,7 +143,8 @@ const MainBanner = () => {
       <div
         className={`banner-track ${noTransition ? 'no-transition' : ''}`}
         style={{ transform: `translateX(-${index * 100}%)` }}
-        onTransitionEnd={handleTransitionEnd}>
+        onTransitionEnd={handleTransitionEnd}
+      >
         {extended.map((banner, i) => (
           <div className="banner-item" key={i}>
             <div className="banner-layer">
@@ -102,48 +155,84 @@ const MainBanner = () => {
             <div className="btns-text">
               <img className="banTxt" src={banner.txt} alt="" />
 
-              <button className="play">
-                <img src="/images/icon/play.png" alt="" /> 재생
+              <div className="btns">
+                <button
+                type="button"
+                className="play"
+                onClick={() => goDetail(banner.mediaType, banner.tmdbId)}>
+                <span className="play-ico" aria-hidden="true">
+                  <img className="playicon" src="/images/icon/play.png" alt="" />
+                  <img className="play-hover" src="/images/icon/play-hover.png" alt="" />
+                </span>
+                <span className="play-txt">재생</span>
               </button>
 
-              <button className="wish">
-                <img src="/images/icon/heart.png" alt="" /> 위시리스트
+              <button 
+                type="button" 
+                className="wish"
+                onClick={() => handleWishlistClick(banner)}
+              >
+                <span className="wish-ico" aria-hidden="true">
+                  <img className="wishicon" src="/images/icon/heart.png" alt="" />
+                  <img className="wish-hover" src="/images/icon/heart-active.png" alt="" />
+                </span>
+                <span className="wish-txt">위시리스트</span>
               </button>
+              </div>
+              
             </div>
           </div>
         ))}
       </div>
-      {/* ✅ 페이지네이션 도트 */}
+
       <div className="banner-dots">
         {bannerSet.map((_, i) => (
           <button
             key={i}
             type="button"
             className={`dot ${realIndex === i ? 'active' : ''}`}
-            onClick={() => handleDotClick(i)}>
-            {/* 점 내용은 비워두고, CSS로 동그라미 표현 */}
-          </button>
+            onClick={() => handleDotClick(i)}
+          />
         ))}
       </div>
+
+      {/* 모바일 배너 */}
       <div className="mobile-wrap">
         <div className="mobileBG">
-          {/* 첫 번째: 모바일 배경 */}
           <img src={MobileBG[realIndex]} alt="mobile background" />
         </div>
+
         <div className="mobileimg">
-          {/* 두 번째: 모바일 배너 */}
           <img src={MobileBan[realIndex]} alt="mobile banner" />
         </div>
+
         <div className="mobilebtn">
-          <button>
+          <button
+            type="button"
+            className="mplay"
+            onClick={() => goDetail(bannerSet[realIndex].mediaType, bannerSet[realIndex].tmdbId)}
+          >
             <img src="/images/icon/play.png" alt="play" />
             재생
           </button>
-          <button>
+
+          <button 
+            type="button" 
+            className="mwish"
+            onClick={() => handleWishlistClick(bannerSet[realIndex])}
+          >
             <img src="/images/icon/mobile_wish.png" alt="wish" />
           </button>
         </div>
       </div>
+
+      {/* 위시리스트 팝업 */}
+      {showWishlistPopup && selectedContent && (
+        <WishlistPopup
+          content={selectedContent}
+          onClose={() => setShowWishlistPopup(false)}
+        />
+      )}
     </div>
   );
 };

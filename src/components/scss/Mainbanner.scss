@@ -1,4 +1,5 @@
-@use '../../App.scss' as Color;
+/* src/components/scss/Mainbanner.scss */
+@use "../../App.scss" as Color;
 
 .wrap {
   position: relative;
@@ -10,7 +11,7 @@
   .banner-track {
     display: flex;
     height: 100%;
-    transition: transform 0.6s ease;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 
     &.no-transition {
       transition: none;
@@ -55,28 +56,127 @@
           left: 0;
         }
 
-        .play {
+        /* ✅ 버튼들 묶음(새로 만든 .btns 기준) */
+        .btns {
           position: absolute;
-          bottom: 4.5%;
           left: 5.5%;
-          width: 24rem;
-          height: 4rem;
-          border: none;
+          bottom: 10%;
+          display: flex;
+          align-items: center;
+          gap: 1.2rem; /* ✅ 버튼 사이 간격 */
+          z-index: 31;
         }
 
-        .wish {
-          position: absolute;
-          bottom: 4.5%;
-          left: 23.5%;
+        /* ✅ 공통 버튼 스타일 (기존 absolute/left 전부 제거) */
+        .btns > button {
+          position: static;
+          bottom: auto;
+          left: auto;
+
           width: 24rem;
           height: 4rem;
-          background: rgba(255, 255, 255, 0.6);
+          border-radius: 0.4rem;
           border: none;
+          cursor: pointer;
+
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.8rem;
+        }
+
+        /* ✅ PLAY */
+        .play {
+          background: #fff;
+          color: #111;
+
+          &:hover {
+            border: 1px solid #e50914;
+            color: #e50914;
+          }
+
+          .play-ico {
+            position: relative;
+            width: 2rem;
+            height: 2rem;
+            flex: 0 0 2rem;
+
+            img {
+              position: absolute;
+              inset: 0;
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+              object-position: center;
+              transition: opacity 0.15s ease;
+              pointer-events: none;
+            }
+
+            .playicon {
+              opacity: 1;
+            }
+            .play-hover {
+              opacity: 0;
+            }
+          }
+
+          &:hover {
+            .play-ico {
+              .playicon {
+                opacity: 0;
+              }
+              .play-hover {
+                opacity: 1;
+              }
+            }
+          }
+        }
+
+        /* ✅ WISH */
+        .wish {
+          background: rgba(255, 255, 255, 0.6);
+          color: #111;
+
+          .wish-ico {
+            position: relative;
+            width: 2rem;
+            height: 2rem;
+            flex: 0 0 2rem;
+
+            img {
+              position: absolute;
+              inset: 0;
+              width: 100%;
+              height: 100%;
+              object-fit: contain;
+              object-position: center;
+              transition: opacity 0.15s ease;
+              pointer-events: none;
+            }
+
+            .wishicon {
+              opacity: 1;
+            }
+            .wish-hover {
+              opacity: 0;
+            }
+          }
+
+          &:hover {
+            .wish-ico {
+              .wishicon {
+                opacity: 0;
+              }
+              .wish-hover {
+                opacity: 1;
+              }
+            }
+          }
         }
       }
     }
 
-    /* 개별 배너 위치 조정은 그대로 유지 */
+    /* 개별 배너 위치 조정(네 기존 유지) */
     .banner-item:first-child .banMid {
       left: 46%;
       aspect-ratio: 638/777;
@@ -101,114 +201,158 @@
     }
   }
 
-  /* 하단 점(페이지네이션) */
   .banner-dots {
     position: absolute;
     left: 50%;
-    bottom: 24px;
+    bottom: 2.4rem;
     transform: translateX(-50%);
     display: flex;
-    gap: 8px;
+    gap: 0.8rem;
     z-index: 40;
 
     .dot {
-      width: 8px;
-      height: 8px;
+      width: 0.8rem;
+      height: 0.8rem;
       border-radius: 50%;
+      border: none;
       background: rgba(255, 255, 255, 0.4);
-      opacity: 0.7;
+      opacity: 0.9;
       transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
 
       &.active {
-        background: #fff;
+        background-color: Color.$main1;
         opacity: 1;
-        transform: scale(1.4);
+        transform: scale(1.2);
       }
     }
   }
+
   .mobile-wrap {
     display: none;
   }
 
-  /* ===========================
-     🟦 태블릿 (max-width: 1440px)
-     =========================== */
+  /* ✅ 1440 이하 */
   @media (max-width: 1440px) {
+    max-width: 100%;
     height: 600px;
 
     .banner-track {
+      margin-top: 7rem;
+
       .banner-item {
-        .banner-layer .banMid {
-          width: 100%;
-          height: auto;
+        .banner-layer {
+          .banMid {
+            height: auto;
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+          }
         }
 
         .btns-text {
           .banTxt {
-            transform: scale(0.95);
-            bottom: 14%;
+            transform: scale(0.85);
+            transform-origin: left bottom;
+            bottom: 15%;
+            max-width: 70%;
           }
 
-          .play,
-          .wish {
-            width: 200px;
-            height: 36px;
-          }
-
-          .wish {
-            left: 300px;
+          /* ✅ 버튼 크기만 줄이고, 위치는 .btns가 담당 */
+          .btns > button {
+            width: 18rem;
+            height: 3.4rem;
           }
         }
       }
     }
 
     .banner-dots {
-      bottom: 20px;
+      bottom: 2rem;
     }
   }
 
-  /* ===========================
-     🟩 모바일 (max-width: 430px)
-     =========================== */
-  @media (max-width: 430px) {
+  /* ✅ 모바일(430.98 이하) */
+  @media (max-width: 430.98px) {
     max-width: 100%;
-    height: auto;
+    height: 150vw;
+    overflow: hidden;
+    position: relative;
+
     .mobile-wrap {
       position: relative;
-      top: -154px;
+      height: 100%;
+      margin-top: 0;
       display: block;
 
-      // position: relative;
-      border: 1px solid yellow;
       .mobileBG {
         width: 100%;
-
+        height: 100%;
         margin: 0 auto;
-        border: 1px solid red;
+
         img {
           width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
         }
       }
+
       .mobileimg {
-        // display: none;
         position: absolute;
         left: 4.1%;
-        top: 154px;
+        top: 4.4rem;
         width: 91.8%;
         aspect-ratio: 179/248;
-        border: solid green;
+        margin: 0;
+
         img {
           width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
         }
       }
+
       .mobilebtn {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 12%;
+        z-index: 60;
+
         button {
-          width: 18rem;
-          height: 4rem;
-          margin-left: 1.2rem;
+          position: absolute;
+          width: 38%;
+          height: 3.6rem;
+          left: 24%;
+          bottom: 0;
+          border: none;
+          border-radius: 0.4rem;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.6rem;
+          cursor: pointer;
+          text-decoration: none;
+        }
+
+        button:last-child {
+          width: 4rem;
+          height: 3.6rem;
+          left: 66%;
+          background: rgba(255, 255, 255, 0.6);
         }
       }
     }
+
+    .banner-dots {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 4%;
+      z-index: 70;
+    }
+
     .banner-track {
       display: none;
     }

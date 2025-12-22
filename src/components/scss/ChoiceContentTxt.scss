@@ -1,15 +1,13 @@
-@use '../../App.scss' as color;
+@use "../../App.scss" as color;
+
 /* ⭐ 여기서 크기를 "딱" 1440 x 600 으로 고정 */
 .rolling-banner-wrap {
   position: relative;
-  margin-top: 8rem;
+  margin: 8rem 0 12rem 0;
   width: 144rem; // 1440px
   height: 60rem; // 600px
-  // margin: 0 auto;
   overflow: hidden; // ❗ 이 부모에서 최종적으로 잘라버림
   border-radius: 0.8rem;
-  // 배너 영역 확인하고 싶으면 아래 잠깐 켜보기
-  // outline: 1px solid magenta;
 
   /* 배경 롤링은 배너 박스 전체를 덮음 */
   .rolling-bg {
@@ -19,6 +17,7 @@
     opacity: 0.35;
     pointer-events: none;
   }
+
   /* 중앙 글 + 버튼 */
   .rolling-overlay {
     position: absolute;
@@ -49,27 +48,69 @@
       margin-bottom: 1.6rem;
     }
 
-    .cta {
-      margin-top: 5.3rem;
-      padding: 0.8rem 1.6rem;
-      font-size: 1.6rem;
-      font-weight: 500;
-      line-height: 140%;
-      border-radius: 0.4rem;
-      border: none;
-      background: rgba(255, 255, 255, 0.9);
-      color: #000;
-      cursor: pointer;
+    > a {
+      width: 16%;
       align-items: center;
-      justify-content: center;
-      transition: 0.2s ease;
-      > img {
-        margin-left: 1.2rem;
+      .cta {
+        margin-top: 5.3rem;
+        padding: 0.8rem 1.6rem;
+        font-size: 1.6rem;
+        font-weight: 500;
+        line-height: 140%;
+        border-radius: 0.4rem;
+        border: none;
+        background: rgba(255, 255, 255, 0.9);
+        color: #000;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s ease;
+
+        > img {
+          margin-left: 1.2rem;
+        }
+
+        &:hover {
+          background: #fff;
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+}
+
+/* ✅ 태블릿: 가로 꽉 차게 */
+@media (max-width: 1440px) {
+  .rolling-banner-wrap {
+    width: calc(100% - 3.2rem);
+    margin: 4rem 1.6rem 0;
+  }
+}
+
+/* ✅ 모바일: 높이 조금 줄이고 글자도 축소(선택이지만 추천) */
+@media (max-width: 430px) {
+  .rolling-banner-wrap {
+    width: calc(100% - 3.2rem);
+    margin: 2.8rem 1.6rem 0;
+    height: 48rem; /* 모바일에서 너무 크면 줄여 */
+    border-radius: 0.6rem;
+
+    .rolling-overlay {
+      padding: 0 1.6rem;
+
+      .title {
+        font-size: 1.8rem;
       }
 
-      &:hover {
-        background: #fff;
-        transform: translateY(-1px);
+      .subtitle {
+        font-size: 1.3rem;
+      }
+      > a {
+        width: 32%;
+        .cta {
+          margin-top: 2.4rem;
+          font-size: 1.4rem;
+        }
       }
     }
   }

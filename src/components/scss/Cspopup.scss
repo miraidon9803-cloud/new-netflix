@@ -1,0 +1,146 @@
+@use "../../App.scss" as l;
+
+.cs-wrap {
+  padding-top: 110px;
+  margin-top: 40px;
+  margin-bottom: 120px;
+  .cs-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.75);
+    .inner {
+      width: 1000px;
+      height: 700px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      background: l.$grey2;
+      border-radius: 8px;
+      padding: 24px 24px;
+      .first-wrap {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .top-wrap {
+          // background-color: pink;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 32px;
+          width: 100%;
+          .cs-title {
+            @include l.myTitle20();
+            color: l.$grey10;
+          }
+          .close-btn {
+            position: absolute;
+            right: 0px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+          }
+        }
+        .middle-wrap {
+          width: 358px;
+          display: flex;
+          gap: 12px;
+          .right-wrap {
+            width: 296px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            h2 {
+              @include l.myTitle16();
+              text-align: start;
+              color: l.$grey10;
+              font-weight: 600;
+            }
+            .text-box {
+              @include l.myTitle16();
+              text-align: start;
+              color: l.$grey10;
+              display: flex;
+              padding: 8px;
+              gap: 10px;
+              border-radius: 4px;
+              background-color: l.$grey4;
+            }
+            .fast-btn {
+              display: flex;
+              flex-wrap: wrap;
+              gap: 8px;
+              align-items: flex-start;
+              p {
+                display: inline-flex;
+                @include l.myTitle16();
+                text-align: start;
+                color: l.$grey10;
+                padding: 8px 16px;
+                border-radius: 40px;
+                border: 1px solid l.$grey6;
+                &:hover {
+                  background-color: rgba(255, 255, 255, 0.3);
+                }
+              }
+            }
+            .time {
+              p {
+                @include l.myTitle16();
+                font-size: 14px;
+                color: l.$grey8;
+                text-align: start;
+              }
+            }
+          }
+        }
+      }
+
+      .bottom-wrap {
+        width: 358px;
+        display: flex;
+        gap: 4px;
+        input {
+          all: unset;
+          width: 294px;
+          height: 22px;
+          border-radius: 4px;
+          background-color: l.$grey4;
+          color: l.$grey8;
+          transition: background-color 0.3s;
+          padding: 8px 12px;
+
+          &:focus {
+            background-color: l.$grey6;
+            color: l.$grey10;
+            outline: none;
+          }
+        }
+
+        button {
+          width: 60px;
+          height: 38px;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+          border: none;
+          @include l.myTitle16();
+          &:hover {
+            background-color: l.$main1;
+            color: l.$grey10;
+          }
+        }
+      }
+    }
+  }
+}
