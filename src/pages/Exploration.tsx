@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import "./scss/Exploration.scss";
+import MobileNav from "../components/MobileNav";
 
 const Exploration = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const Exploration = () => {
       >
         이야기 고르기
       </button>
+      <MobileNav/>
     </section>
   );
 };

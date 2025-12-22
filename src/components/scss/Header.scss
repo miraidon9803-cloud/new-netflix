@@ -3,28 +3,39 @@
 .site-header {
   background: rgba(23, 23, 24, 0.6);
   backdrop-filter: blur(15px);
+
   position: fixed;
   top: 0;
-  z-index: 2000;
+  left: 0; // ✅ 추가
+  right: 0; // ✅ 추가
   width: 100%;
   height: 7rem;
+  z-index: 2000;
+
   display: flex;
   justify-content: center;
   align-items: center;
 
+  // border: 1px solid white;
+
   .header-inner {
+    // ✅ 핵심: fixed 제거 (안쪽은 고정하지 말고 부모 기준으로 줄어들게)
+    position: relative; // 또는 그냥 삭제해도 됨
+    width: 100%; // ✅ 화면 줄면 같이 줄어듦
+    max-width: 1440px; // ✅ PC에선 1440까지만
+    padding: 0 12px;
+    margin: 0 auto; // ✅ 가운데 고정
+
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 1464px;
-    padding: 0 12px;
-    margin: 0 auto;
-    position: fixed;
+
+    // border: 1px solid yellow;
 
     .header-left {
       display: flex;
       align-items: center;
-      gap: 48px;
+      gap: 4.8rem;
 
       .logo img {
         display: block;
@@ -39,6 +50,10 @@
         .main-text {
           @include myTitle16();
           color: $grey10;
+          > a {
+            font-size: 2rem;
+            font-weight: 600;
+          }
         }
       }
     }
@@ -61,15 +76,13 @@
             align-items: center;
           }
 
-          // ✅ 벨 아이콘(li)에 붙인 class 기준으로 뱃지 고정
           &.bell-wrap {
             .bell-link {
-              position: relative; // 기준점
+              position: relative;
               display: inline-flex;
               align-items: center;
             }
 
-            // 아이콘 크기 지정(원하는 값으로 조절)
             img {
               width: 28px;
               height: 28px;
@@ -111,23 +124,47 @@
               opacity: 0.7;
             }
           }
-
-          // ✅ 여기서 img를 100%로 잡아버리면 깨질 수 있어서 제거/완화
-          // img { width: 100%; height: 100%; }  <- 이건 빼는 걸 추천
         }
       }
     }
   }
 }
 
+/* ✅ 네 미디어쿼리도 선택자 정리 (지금 header .inner 이런 구조가 실제 클래스랑 다름) */
 @media (max-width: 1440px) {
-  header {
-    .inner {
+  .site-header {
+    .header-inner {
       .header-left {
         .main-menu {
           .main-text {
             @include myTitle20();
           }
+        }
+      }
+    }
+  }
+}
+@media (max-width: 430px) {
+  .site-header {
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(15px);
+    height: 3.6rem;
+    .header-inner {
+      .header-left {
+        h1 {
+          display: none;
+        }
+        .main-menu {
+          gap: 1.2rem;
+
+          .main-text {
+           
+          }
+        }
+      }
+      .header-right {
+        > ul {
+          gap: 1.2rem;
         }
       }
     }

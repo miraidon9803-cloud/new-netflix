@@ -8,10 +8,10 @@ const MobileNav: React.FC = () => {
   return (
     <div className="mobilenav">
       <div className="nav">
-        <Link to="/" className={pathname === "/" ? "active" : ""}>
+        <Link to="/exploration" className={pathname === "/" ? "active" : ""}>
           <img
             src={
-              pathname === "/"
+              pathname === "/exploration"
                 ? "/images/icon/모바일바로가기-active.png"
                 : "/images/icon/모바일바로가기.png"
             }
@@ -32,10 +32,10 @@ const MobileNav: React.FC = () => {
           <p>쇼츠</p>
         </Link>
 
-        <Link to="/" className={pathname === "/" ? "active" : ""}>
+        <Link to="/main" className={pathname === "/main" ? "active" : ""}>
           <img
             src={
-              pathname === "/"
+              pathname === "/main"
                 ? "/images/icon/모바일홈-active.png"
                 : "/images/icon/모바일홈.png"
             }
@@ -61,11 +61,11 @@ const MobileNav: React.FC = () => {
 
         <Link
           to="/storagebox"
-          className={pathname === "/library" ? "active" : ""}
+          className={pathname === "/storagebox" ? "active" : ""}
         >
           <img
             src={
-              pathname === "/library"
+              pathname === "/storagebox"
                 ? "/images/icon/모바일보관함-active.png"
                 : "/images/icon/모바일보관함.png"
             }

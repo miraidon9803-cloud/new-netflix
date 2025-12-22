@@ -53,9 +53,7 @@
         justify-content: center;
         gap: 0.8rem;
 
-        &:hover {
-          border: 1px solid #E50914; // ✅ 버튼에만 보더
-        }
+        
       }
 
       .play {
@@ -105,6 +103,7 @@
           .wish-hover {
             opacity: 0;
           }
+          
         }
 
         &:hover {
