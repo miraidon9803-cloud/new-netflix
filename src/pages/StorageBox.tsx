@@ -106,7 +106,10 @@ const StorageBox = () => {
   /* ---------------- 필터 ---------------- */
   const renderFilter = () => (
     <div className="storage-filter-wrap">
-      <p className="filter-btn" onClick={() => setFilterOpen((prev) => !prev)}>
+      <p
+        className={`filter-btn ${filterOpen ? "active" : ""}`}
+        onClick={() => setFilterOpen((prev) => !prev)}
+      >
         <span className="label">{sortType}</span>
         <span className="icon">⇅</span>
       </p>
