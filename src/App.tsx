@@ -30,9 +30,10 @@ import OriginalFilterResult from "./pages/OriginalFilterResult";
 import TotalResult from "./pages/TotalResult";
 import ExplorationPage from "./pages/ExplorationPage";
 import Exploration from "./pages/Exploration";
-import Tvdetail from "./pages/Tvdetail";
+
 import Alarm from "./pages/Alarm";
 import IntroPage from "./pages/IntroPage";
+import Tvdetail from "./pages/Tvdetail";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
