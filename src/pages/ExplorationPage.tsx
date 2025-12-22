@@ -3,6 +3,7 @@ import Step1 from "../components/Step1";
 import Step2 from "../components/Step2";
 import Step3 from "../components/Step3";
 import Result from "../components/Result";
+import SideNav from "../components/SideNav";
 
 /* step 타입 */
 type Step = 1 | 2 | 3 | 4;
@@ -18,6 +19,7 @@ const ExplorationPage = () => {
 
   return (
     <main className="exploration-page">
+      <SideNav />
       {/* STEP 1 */}
       {step === 1 && (
         <Step1

@@ -17,18 +17,35 @@ const Login: React.FC<LoginProps> = ({ onNext }) => {
 
   const navigate = useNavigate();
 
+  const goIntro = () => {
+    // ✅ 로그인 성공 후 인트로 페이지로 이동
+    navigate("/intro", { replace: true });
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!email || !password) {
       setError("이메일과 비밀번호를 입력해주세요.");
       return;
     }
 
     try {
-      await onLogin(email, password);
       setError("");
-    } catch {
+      await onLogin(email, password);
+      goIntro();
+    } catch (err) {
       setError("로그인 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleSocialLogin = async (loginFn: () => Promise<void>) => {
+    try {
+      setError("");
+      await loginFn();
+      goIntro();
+    } catch (err) {
+      setError("소셜 로그인 중 오류가 발생했습니다.");
     }
   };
 
@@ -81,10 +98,8 @@ const Login: React.FC<LoginProps> = ({ onNext }) => {
               <button
                 type="button"
                 className="google-btn"
-                onClick={async () => {
-                  await onGoogleLogin();
-                  navigate("/mypage/profile", { replace: true });
-                }}
+                onClick={() => handleSocialLogin(onGoogleLogin)}
+                disabled={loading}
               >
                 <span className="social-inner">
                   <img src="/images/google.png" alt="" />
@@ -95,12 +110,9 @@ const Login: React.FC<LoginProps> = ({ onNext }) => {
               <button
                 type="button"
                 className="kakao-btn"
-                onClick={async () => {
-                  await onKakaoLogin();
-                  navigate("/mypage/profile", { replace: true });
-                }}
+                onClick={() => handleSocialLogin(onKakaoLogin)}
+                disabled={loading}
               >
-                {" "}
                 <span className="social-inner">
                   <img src="/images/kakao.png" alt="" />
                   <p>카카오 로그인</p>

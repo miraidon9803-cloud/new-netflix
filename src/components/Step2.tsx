@@ -6,6 +6,7 @@ import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 // import "swiper/css/effect-coverflow";
 import "./scss/Step2.scss";
+import SideNav from "./SideNav";
 
 type FlowValue = "light" | "medium" | "immersive" | "binge";
 
@@ -67,6 +68,7 @@ const Step2 = ({ onNext }: Step2Props) => {
 
   return (
     <section className="step2_section">
+      <SideNav />
       <div className="step2_textbox">
         <p className="step2_small">2단계</p>
         <h2 className="step2_title">오늘은 어느 정도의 몰입을 원하시나요?</h2>

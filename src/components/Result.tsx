@@ -5,6 +5,7 @@ import { fetch2025Movies, fetch2025Tv } from "../api/tmdb";
 import { getMood, getFlow, getTone } from "../utils/tmdbRules";
 
 import "./scss/Result.scss";
+import SideNav from "./SideNav";
 
 /* 결과 카드 타입 */
 interface ResultCard {
@@ -100,6 +101,7 @@ const Result = ({ mood, flow, tone }: ResultProps) => {
 
   return (
     <section className="result_section">
+      <SideNav />
       <div className="result_header">
         <h2 className="result_title">
           지금의 당신에게 어울리는 이야기들이에요

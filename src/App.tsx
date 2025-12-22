@@ -32,6 +32,7 @@ import ExplorationPage from "./pages/ExplorationPage";
 import Exploration from "./pages/Exploration";
 import Tvdetail from "./pages/Tvdetail";
 import Alarm from "./pages/Alarm";
+import IntroPage from "./pages/IntroPage";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -39,6 +40,8 @@ function App() {
   const onboardingDone = useAuthStore((s) => s.onboardingDone);
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
 
+  // ✅ 로그인 후 기본 목적지
+  // (인트로/프로필은 Gate가 자동으로 처리하므로 최종 목적지만 지정)
   const afterLoginPath = !onboardingDone
     ? "/auth"
     : activeProfileId
@@ -53,26 +56,26 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        {/* 첫 진입 */}
         <Route
           index
           element={<Navigate to={isLogin ? afterLoginPath : "/land"} replace />}
         />
 
-        {/* land / auth */}
+        {/* 🔓 비로그인 전용 */}
         <Route element={<GuestOnly redirectTo={afterLoginPath} />}>
           <Route path="land" element={<Landing />} />
           <Route path="auth" element={<FullLogin />} />
         </Route>
 
-        {/* 로그인만 필요 */}
+        {/* 🔐 로그인 필수 (AuthGate가 인트로 강제) */}
         <Route element={<AuthGate />}>
-          <Route path="profile" element={<ProfileSelect />} />
-          <Route path="mypage/profile" element={<ProfileSelect />} />
-        </Route>
+          {/* ✅ 인트로 페이지 (프로필 불필요) */}
+          <Route path="intro" element={<IntroPage />} />
 
-        {/* 로그인 + 프로필 선택 완료 */}
-        <Route element={<AuthGate />}>
+          {/* ✅ 프로필 선택 페이지 (하나로 통일) */}
+          <Route path="mypage/profile" element={<ProfileSelect />} />
+
+          {/* ✅ 프로필 필수 페이지들 */}
           <Route element={<ProfileGate />}>
             <Route path="main" element={<Main />} />
             <Route path="mypage" element={<MypageMain />} />
@@ -86,7 +89,6 @@ function App() {
             <Route path="movie/filter" element={<MovieFilterResult />} />
             <Route path="Original" element={<Original />} />
             <Route path="original/filter" element={<OriginalFilterResult />} />
-
             <Route path="wishlist" element={<Wishlist />} />
             <Route path="wishlist/:folderId" element={<WishlistDetail />} />
             <Route path="shorts" element={<Shorts />} />
@@ -97,7 +99,7 @@ function App() {
           </Route>
         </Route>
 
-        {/* 없는 경로 */}
+        {/* 404 처리 */}
         <Route
           path="*"
           element={<Navigate to={isLogin ? afterLoginPath : "/land"} replace />}
