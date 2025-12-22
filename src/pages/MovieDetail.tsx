@@ -135,6 +135,10 @@ const MovieDetail = () => {
 
   const handleDownload = async () => {
     if (!activeProfileId) return;
+
+    const confirmed = window.confirm("정말 다운로드 하시겠습니까?");
+    if (!confirmed) return;
+
     await onAddDownload({
       profileId: activeProfileId,
       mediaType: "movie",
@@ -145,7 +149,6 @@ const MovieDetail = () => {
       runtime: movieDetail.runtime,
     } as any);
   };
-
   /* ---------------- render ---------------- */
   return (
     <div className="detail-page">

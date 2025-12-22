@@ -242,6 +242,9 @@ const Tvdetail = () => {
   const handleDownload = async () => {
     if (!tvDetail || !activeProfileId || !selectedSeasonNumber) return;
 
+    const confirmed = window.confirm("정말 다운로드 하시겠습니까?");
+    if (!confirmed) return;
+
     const firstEp = episodes?.[0];
 
     try {
