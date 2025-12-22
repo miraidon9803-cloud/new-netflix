@@ -155,11 +155,11 @@ const MainBanner: React.FC = () => {
             <div className="btns-text">
               <img className="banTxt" src={banner.txt} alt="" />
 
-              <button
+              <div className="btns">
+                <button
                 type="button"
                 className="play"
-                onClick={() => goDetail(banner.mediaType, banner.tmdbId)}
-              >
+                onClick={() => goDetail(banner.mediaType, banner.tmdbId)}>
                 <span className="play-ico" aria-hidden="true">
                   <img className="playicon" src="/images/icon/play.png" alt="" />
                   <img className="play-hover" src="/images/icon/play-hover.png" alt="" />
@@ -178,6 +178,8 @@ const MainBanner: React.FC = () => {
                 </span>
                 <span className="wish-txt">위시리스트</span>
               </button>
+              </div>
+              
             </div>
           </div>
         ))}

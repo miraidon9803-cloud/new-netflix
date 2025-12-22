@@ -9,6 +9,7 @@ import type { LikeItem } from "../store/LikeStore";
 import type { DownloadItem } from "../store/DownloadStore";
 import "./scss/StorageBox.scss";
 import SideNav from "../components/SideNav";
+import MobileNav from "../components/MobileNav";
 
 const IMG = "https://image.tmdb.org/t/p/w500";
 
@@ -351,6 +352,7 @@ const StorageBox = () => {
           )}
         </>
       )}
+      <MobileNav/>
     </div>
   );
 };

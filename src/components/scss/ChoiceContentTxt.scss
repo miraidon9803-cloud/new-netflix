@@ -1,4 +1,4 @@
-@use '../../App.scss' as color;
+@use "../../App.scss" as color;
 
 /* ⭐ 여기서 크기를 "딱" 1440 x 600 으로 고정 */
 .rolling-banner-wrap {
@@ -48,8 +48,8 @@
       margin-bottom: 1.6rem;
     }
 
-    >a{
-      width:16% ;
+    > a {
+      width: 16%;
       align-items: center;
       .cta {
         margin-top: 5.3rem;
@@ -65,17 +65,16 @@
         align-items: center;
         justify-content: center;
         transition: 0.2s ease;
-  
+
         > img {
           margin-left: 1.2rem;
         }
-  
+
         &:hover {
           background: #fff;
           transform: translateY(-1px);
         }
       }
-
     }
   }
 }
@@ -106,10 +105,12 @@
       .subtitle {
         font-size: 1.3rem;
       }
-
-      .cta {
-        margin-top: 2.4rem;
-        font-size: 1.4rem;
+      > a {
+        width: 32%;
+        .cta {
+          margin-top: 2.4rem;
+          font-size: 1.4rem;
+        }
       }
     }
   }

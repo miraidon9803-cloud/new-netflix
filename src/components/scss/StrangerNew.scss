@@ -88,49 +88,51 @@
     }
   }
 
-  @media (max-width: 430px) {
+  .button {
+    .play {
+      bottom: 5%;
+      width: 25%;
+      height: 3.6rem;
+
+      .play-ico {
+        width: 1.8rem;
+        height: 1.8rem;
+        flex: 0 0 1.8rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 1440px) {
+  .poster {
+    > p {
+      font-size: 2rem;
+    }
+  }
+}
+@media (max-width: 430px) {
+  .Stranger {
+    // border: 1px solid red;
+    height: 19rem;
     .poster {
       padding: 0 1.6rem 0;
-
+      overflow: hidden;
       > p {
         font-size: 2rem;
       }
 
       img {
-        width: 125%;
-        max-width: none;
-
-        margin-left: 0;
-        margin-right: 0;
-        left: 0;
-        position: relative;
-
-        transform: none;
-        transform-origin: left top;
+        position: absolute;
+        width: 62.3rem;
+        // height: auto;
         object-fit: cover;
       }
     }
-
     .button {
-      .play {
-        bottom: 5%;
-        width: 25%;
-        height: 3.6rem;
-
-        .play-ico {
-          width: 1.8rem;
-          height: 1.8rem;
-          flex: 0 0 1.8rem;
-        }
-      }
-    }
-  }
-
-  @media (max-width: 1440px) {
-    .poster {
-      > p {
-        font-size: 2rem;
-      }
+      position: absolute;
+      width: 29%;
+      bottom: 18%;
+      left: 2.4%;
     }
   }
 }

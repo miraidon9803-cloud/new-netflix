@@ -1,5 +1,5 @@
 /* src/components/scss/Mainbanner.scss */
-@use '../../App.scss' as Color;
+@use "../../App.scss" as Color;
 
 .wrap {
   position: relative;
@@ -56,29 +56,43 @@
           left: 0;
         }
 
-        button {
+        /* ✅ 버튼들 묶음(새로 만든 .btns 기준) */
+        .btns {
           position: absolute;
+          left: 5.5%;
           bottom: 10%;
+          display: flex;
+          align-items: center;
+          gap: 1.2rem; /* ✅ 버튼 사이 간격 */
+          z-index: 31;
+        }
+
+        /* ✅ 공통 버튼 스타일 (기존 absolute/left 전부 제거) */
+        .btns > button {
+          position: static;
+          bottom: auto;
+          left: auto;
+
           width: 24rem;
           height: 4rem;
           border-radius: 0.4rem;
           border: none;
           cursor: pointer;
 
-          display: flex;
+          display: inline-flex;
           align-items: center;
           justify-content: center;
           gap: 0.8rem;
         }
 
-        /* ✅ PLAY: 기본 배경 유지 + hover 때만 보더 */
+        /* ✅ PLAY */
         .play {
-          left: 5.5%;
-          background: #fff; /* ✅ 기본 배경(원래 하얀 버튼 느낌) */
+          background: #fff;
           color: #111;
 
           &:hover {
             border: 1px solid #e50914;
+            color: #e50914;
           }
 
           .play-ico {
@@ -118,15 +132,10 @@
           }
         }
 
-        /* ✅ WISH: 기본 배경 유지 + hover 때만 보더 */
+        /* ✅ WISH */
         .wish {
-          left: 23.5%;
           background: rgba(255, 255, 255, 0.6);
           color: #111;
-
-          &:hover {
-            border: 1px solid #e50914;
-          }
 
           .wish-ico {
             position: relative;
@@ -222,11 +231,14 @@
     display: none;
   }
 
+  /* ✅ 1440 이하 */
   @media (max-width: 1440px) {
     max-width: 100%;
     height: 600px;
 
     .banner-track {
+      margin-top: 7rem;
+
       .banner-item {
         .banner-layer {
           .banMid {
@@ -245,29 +257,12 @@
             max-width: 70%;
           }
 
-          .play,
-          .wish {
+          /* ✅ 버튼 크기만 줄이고, 위치는 .btns가 담당 */
+          .btns > button {
             width: 18rem;
             height: 3.4rem;
           }
-
-          .wish {
-            left: 24%;
-          }
         }
-      }
-
-      .banner-item:first-child .banMid,
-      .banner-item:nth-child(2) .banMid,
-      .banner-item:last-child .banMid {
-        max-height: 100%;
-        width: auto;
-      }
-
-      .banner-item:nth-child(3) .banMid,
-      .banner-item:nth-child(4) .banMid {
-        max-width: 100%;
-        height: auto;
       }
     }
 
@@ -276,58 +271,85 @@
     }
   }
 
+  /* ✅ 모바일(430.98 이하) */
   @media (max-width: 430.98px) {
     max-width: 100%;
-    height: auto;
-    min-height: unset;
+    height: 60.8rem;
+    overflow: hidden;
+    position: relative;
 
     .mobile-wrap {
       position: relative;
-      margin-top: 8rem;
+      height: 100%;
+      margin-top: 0;
       display: block;
 
       .mobileBG {
         width: 100%;
+        height: 100%;
         margin: 0 auto;
 
         img {
           width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
         }
       }
 
       .mobileimg {
         position: absolute;
         left: 4.1%;
-        top: 0%;
+        top: 8rem;
         width: 91.8%;
         aspect-ratio: 179/248;
-        margin: 1.8rem 0;
+        margin: 0;
 
         img {
           width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
         }
       }
 
       .mobilebtn {
-        left: 19.3%;
-        bottom: 8%;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 3%;
+        z-index: 60;
 
         button {
           position: absolute;
           width: 38%;
-          height: 5.5%;
+          height: 3.6rem;
           left: 24%;
-          bottom: 27%;
+          bottom: 0;
           border: none;
           border-radius: 0.4rem;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.6rem;
+          cursor: pointer;
         }
 
         button:last-child {
           width: 4rem;
+          height: 3.6rem;
           left: 66%;
           background: rgba(255, 255, 255, 0.6);
         }
       }
+    }
+
+    .banner-dots {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0.5%;
+      z-index: 70;
     }
 
     .banner-track {
