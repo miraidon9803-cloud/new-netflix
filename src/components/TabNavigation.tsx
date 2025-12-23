@@ -1,11 +1,11 @@
 import { useDetailUIStore } from "../store/useDetailUIStore";
 
-type ActiveTab = "회차" | "비슷한콘텐츠";
+type ActiveTab = "에피소드" | "비슷한콘텐츠";
 
-const TABS: ActiveTab[] = ["회차", "비슷한콘텐츠"];
+const TABS: ActiveTab[] = ["에피소드", "비슷한콘텐츠"];
 
 const TAB_LABELS: Record<ActiveTab, string> = {
-  회차: "회차",
+  에피소드: "에피소드",
   비슷한콘텐츠: "비슷한 콘텐츠",
 };
 

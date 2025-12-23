@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type ActiveTab = "회차" | "비슷한콘텐츠" | "관련클립";
+type ActiveTab = "에피소드" | "비슷한콘텐츠" | "관련클립";
 
 interface DetailUIState {
   // Season state
