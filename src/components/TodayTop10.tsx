@@ -54,7 +54,7 @@ const TodayTop10: React.FC = () => {
         slidesPerView="auto"
         freeMode
         mousewheel={{ forceToAxis: true }}
-        spaceBetween={88} // ✅ 2.4rem 고정
+        spaceBetween={80} // ✅ 2.4rem 고정
       >
         {netflixTop10.map((item, index) => {
           const badge = getBadgeType(item);

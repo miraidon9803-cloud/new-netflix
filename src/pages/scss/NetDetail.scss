@@ -64,6 +64,11 @@
           color: l.$grey10;
           text-align: left;
           margin-bottom: 40px;
+
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
 
         .btn-wrap {

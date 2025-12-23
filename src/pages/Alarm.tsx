@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./scss/Alarm.scss";
 
-type MediaType = "movie" | "tv";
-type TabType = "all" | "movie" | "tv";
+type MediaType = "영화" | "시리즈";
+type TabType = "all" | "영화" | "시리즈";
 
 interface AlarmItem {
   id: number;
@@ -29,16 +29,16 @@ const formatKoreanReleaseText = (
   mediaType: MediaType,
   dateStr: string | null
 ) => {
-  if (!dateStr) return mediaType === "movie" ? "개봉일 미정" : "공개일 미정";
+  if (!dateStr) return mediaType === "영화" ? "개봉일 미정" : "공개일 미정";
 
   const d = new Date(dateStr);
   if (Number.isNaN(d.getTime()))
-    return mediaType === "movie" ? "개봉일 미정" : "공개일 미정";
+    return mediaType === "영화" ? "개봉일 미정" : "공개일 미정";
 
   const month = d.getMonth() + 1;
   const day = d.getDate();
 
-  return mediaType === "movie"
+  return mediaType === "영화"
     ? `${month}월 ${day}일 개봉예정`
     : `${month}월 ${day}일 공개예정`;
 };
@@ -195,14 +195,14 @@ const Alarm = () => {
             전체
           </p>
           <p
-            className={`alram-tab ${tab === "movie" ? "active" : ""}`}
-            onClick={() => setTab("movie")}
+            className={`alram-tab ${tab === "영화" ? "active" : ""}`}
+            onClick={() => setTab("영화")}
           >
             MOVIE
           </p>
           <p
-            className={`alram-tab ${tab === "tv" ? "active" : ""}`}
-            onClick={() => setTab("tv")}
+            className={`alram-tab ${tab === "시리즈" ? "active" : ""}`}
+            onClick={() => setTab("시리즈")}
           >
             TV
           </p>

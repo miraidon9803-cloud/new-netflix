@@ -1,3 +1,4 @@
+// src/components/ProfileGate.tsx
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuthStore } from "../store/authStore";
@@ -9,23 +10,36 @@ const ProfileGate = () => {
 
   const user = useAuthStore((s) => s.user);
   const loading = useAuthStore((s) => s.loading);
+
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
+  const profilesLoading = useProfileStore((s) => s.profilesLoading);
 
   useEffect(() => {
     if (loading) return;
+    if (!user) return;
+    if (profilesLoading) return;
 
-    if (!user) {
-      navigate("/auth", { replace: true, state: { from: location.pathname } });
+    if (
+      location.pathname === "/profile" ||
+      location.pathname === "/mypage/profile"
+    ) {
       return;
     }
 
     if (!activeProfileId) {
-      navigate("/profile", {
+      navigate("/mypage/profile", {
         replace: true,
         state: { from: location.pathname },
       });
     }
-  }, [loading, user, activeProfileId, location.pathname, navigate]);
+  }, [
+    loading,
+    user,
+    profilesLoading,
+    activeProfileId,
+    location.pathname,
+    navigate,
+  ]);
 
   return <Outlet />;
 };

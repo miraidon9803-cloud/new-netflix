@@ -5,35 +5,27 @@
   padding: 0;
   font-size: 0.875;
   padding: 11rem 0 12rem;
-
+  background: url("/images/payment/Login_bg.png") no-repeat center / cover;
   // .payment-page {
   //   min-height: 100vh;
   //   background-color: $BG;
   //   position: relative;
   // }
   .payment-page {
-  position: relative;
-  min-height: auto; // 🔥
-}
-
-  /* *배경* */
-  // .payment-bg {
-  //   position: fixed;
-  //   inset: 0;
-  //   background: url("/images/payment/Login_bg.png") no-repeat center / cover;
-  //   z-index: 0;
-  // }
+    position: relative;
+    min-height: auto; // 🔥
+  }
 
   .payment-bg {
-  position: absolute; // 🔥
-  inset: 0;
-  z-index: 0;
-}
+    position: absolute; // 🔥
+    inset: 0;
+    z-index: 0;
+  }
 
-.payment-container {
-  position: relative;
-  z-index: 1;
-}
+  .payment-container {
+    position: relative;
+    z-index: 1;
+  }
   /* *중앙 카드* */
   .payment-container {
     z-index: 1;

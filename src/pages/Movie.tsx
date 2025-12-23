@@ -8,10 +8,13 @@ import AwardMovie from "../components/Movies/AwardMovie";
 import PopularFocusMovies from "../components/Movies/PopularFocusMovies";
 import FilterPopup from "../components/Movies/FilterPopup";
 import "./scss/Movie.scss";
+import MobileNav from "../components/MobileNav";
+import SideNav from "../components/SideNav";
 
 const Movie = () => {
   return (
-    <div className="movie-inner">
+    <div className="movie-inner">\
+      <SideNav/>
       <MovieBanner />
       <FilterPopup />
       <MovieTop10 />
@@ -21,6 +24,7 @@ const Movie = () => {
       <FunMovies />
       <PopularFocusMovies />
       <AwardMovie />
+      <MobileNav/>
     </div>
   );
 };

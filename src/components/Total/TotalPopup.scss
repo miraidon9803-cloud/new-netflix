@@ -1,16 +1,14 @@
-@use '../../App.scss' as color;
+@use "../../App.scss" as color;
 
 /* =========================
-   필터 버튼 래퍼
+   필터 버튼 래퍼 (TSX: total-wrap)
    ========================= */
 .total-wrap {
-  position: absolute;
-  right: 4%;
-  bottom: 250%;
+  // position: absolute;
   width: 24rem;
   height: 4rem;
-  z-index: 2000;
-  // border: 1px solid white;
+  margin-left: auto;
+  margin-top: 2rem;
 
   > button {
     width: 100%;
@@ -18,7 +16,7 @@
     color: #fff;
     background-color: color.$grey3;
     border: none;
-    border-radius: 0.8rem;
+    border-radius: 0.4rem;
 
     display: flex;
     align-items: center;
@@ -26,16 +24,15 @@
     gap: 0.6rem;
     cursor: pointer;
 
-    > img {
+    img {
       width: 1.6rem;
       height: 1.6rem;
-      object-fit: contain;
     }
   }
 }
 
 /* =========================
-   딤(배경) + BLUR
+   DIM + BLUR (TSX: total-dim)
    ========================= */
 .total-dim {
   position: fixed;
@@ -46,19 +43,16 @@
   align-items: center;
   justify-content: center;
 
-  /* ✅ 어둡게 (블러가 보이도록 0.35 정도 추천) */
   background: rgba(0, 0, 0, 0.35);
 
-  /* ✅ 뒤 배경 블러 4px */
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 
-  /* ✅ (선택) 렌더 안정성 */
   will-change: backdrop-filter;
 }
 
 /* =========================
-   팝업 바디
+   팝업 박스 (TSX: total-popup)
    ========================= */
 .total-popup {
   width: min(110rem, 92vw);
@@ -70,93 +64,95 @@
   border-radius: 1.2rem;
   padding: 2.4rem 2.8rem;
   color: #fff;
-
-  /* ✅ 팝업은 블러 영향 X */
-  backdrop-filter: none;
 }
 
-/* ✅ 상단 타이틀 가운데 + X 우측 */
+/* =========================
+   헤더 (TSX: popup-top / popup-title / popup-close)
+   - 타이틀은 진짜 가운데, X는 오른쪽
+   ========================= */
 .popup-top {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end; /* X를 오른쪽 끝으로 */
   margin-bottom: 2.2rem;
+}
 
-  .popup-title {
-    font-size: 1.6rem;
-    font-weight: 700;
-  }
+.popup-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
 
-  .popup-close {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 2.4rem;
-    line-height: 1;
-    cursor: pointer;
-  }
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  width: 100%;
+  pointer-events: none; /* 타이틀 위 클릭이 X를 방해하지 않게 */
+}
+
+.popup-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2.4rem;
+  line-height: 1;
+  cursor: pointer;
 }
 
 /* =========================
-   섹션 공통
+   섹션 (TSX: total-sec / total-sec-title)
    ========================= */
 .total-sec {
   margin-top: 2.2rem;
-  text-align: left;
 }
 
 .total-sec-title {
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   opacity: 0.85;
   margin-bottom: 1.2rem;
+  text-align: start;
 }
 
-/* ✅ 정렬 라디오 */
+/* =========================
+   라디오 (TSX: radio-row / radio-item)
+   ========================= */
 .radio-row {
   display: flex;
   gap: 2rem;
   flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: center;
 }
 
 .radio-item {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  font-size: 1.3rem;
+  font-size: 1.6rem;
 
   input {
-    accent-color: #e50914;
+    accent-color: color.$main1;
   }
 }
 
-/* ✅ 칩 레이아웃 */
+/* =========================
+   칩 (TSX: chip-grid / chip-row / chip)
+   ========================= */
 .chip-grid,
 .chip-row {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  justify-content: flex-start;
-  align-items: flex-start;
 }
 
-/* ✅ 칩 */
 .chip {
   padding: 0.7rem 1.2rem;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.25);
   background: transparent;
   color: #fff;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   cursor: pointer;
   opacity: 0.9;
-  text-align: left;
 
   &.is-active {
     border-color: rgba(255, 255, 255, 0.6);
@@ -166,7 +162,7 @@
 }
 
 /* =========================
-   하단 버튼 (초기화 / 적용하기)
+   하단 버튼 (TSX: total-actions)
    ========================= */
 .total-actions {
   margin-top: 3rem;
@@ -176,7 +172,7 @@
   .btn {
     flex: 1;
     height: 4.4rem;
-    border-radius: 0.8rem;
+    border-radius: 0.4rem;
     border: none;
     cursor: pointer;
     font-size: 1.3rem;
@@ -192,13 +188,4 @@
     background: #e50914;
     color: #fff;
   }
-}
-
-/* (선택) 결과없음 UI가 있다면 */
-.series-empty,
-.movie-empty,
-.total-empty {
-  margin-top: 1.6rem;
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 1.3rem;
 }

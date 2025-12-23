@@ -21,7 +21,7 @@ const StrangerNew: React.FC = () => {
 
       <div className="button">
         {/* ✅ MainBanner랑 동일: 아이콘 hover 교체 + hover 보더(#E50914) */}
-        <button type="button" className="play" onClick={goDetail}>
+        <button type="button" className="Splay" onClick={goDetail}>
           <span className="play-ico" aria-hidden="true">
             <img className="playicon" src="/images/icon/play.png" alt="" />
             <img className="play-hover" src="/images/icon/play-hover.png" alt="" />

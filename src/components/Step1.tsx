@@ -6,6 +6,7 @@ import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 // import "swiper/css/effect-coverflow";
 import "./scss/Step1.scss";
+import SideNav from "./SideNav";
 
 /* 카드 타입 */
 interface MoodCard {
@@ -65,6 +66,7 @@ const Step1 = ({ onNext }: Step1Props) => {
 
   return (
     <section className="step1_section">
+      <SideNav />
       <div className="step1-textbox">
         <p className="step1_small">1단계</p>
         <h2 className="step1_title">지금, 가장 가까운 기분은 무엇인가요?</h2>

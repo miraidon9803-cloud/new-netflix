@@ -68,7 +68,7 @@ const Tvdetail = () => {
   } = useDetailUIStore();
 
   useEffect(() => {
-    setActiveTab("회차");
+    setActiveTab("에피소드");
   }, [tvId, setActiveTab]);
 
   // Season logic
@@ -302,7 +302,7 @@ const Tvdetail = () => {
         <div className="season-box">
           <TabNavigation />
 
-          {activeTab === "회차" ? (
+          {activeTab === "에피소드" ? (
             <>
               <SeasonSelector
                 seasons={seasons}

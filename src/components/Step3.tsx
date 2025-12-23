@@ -6,6 +6,7 @@ import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 // import "swiper/css/effect-coverflow";
 import "./scss/Step3.scss";
+import SideNav from "./SideNav";
 
 type ToneValue = "warm" | "calm" | "dark" | "dreamy" | "tense" | "funny";
 
@@ -63,6 +64,7 @@ const Step3 = ({ onNext }: Step3Props) => {
 
   return (
     <section className="step3_section">
+      <SideNav />
       <div className="step3_textbox">
         <p className="step3_small">3단계</p>
         <h2 className="step3_title">어떤 분위기의 이야기가 좋으신가요?</h2>
