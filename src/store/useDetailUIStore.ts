@@ -42,7 +42,7 @@ export const useDetailUIStore = create<DetailUIState>((set) => ({
   selectedVideoKey: null,
   play: false,
   playerNonce: 0,
-  activeTab: "회차",
+  activeTab: "에피소드",
   moreOpen: false,
 
   // Season actions
