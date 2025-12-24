@@ -19,6 +19,10 @@
     background: rgba(44, 44, 44, 0.5);
     border: 1px solid #8a8a8a;
     border-radius: 16px;
+
+    h1 {
+      display: none;
+    }
   }
 
   .login-left {
@@ -236,25 +240,45 @@
       opacity: 1;
     }
   }
-
-  // 반응형 처리
 }
 
-/* RESPONSIVE */
-@media (max-width: 1366px) {
-  .login-wrap {
-    width: 100%;
-    height: auto;
-    grid-template-columns: 1fr;
-    background: none;
-    border: none;
-  }
+/* RESPONSIVE : 1366px 이하부터 */
+@media screen and (max-width: 1366px) {
+  .inner-login {
+    margin: 0 16px;
 
-  .login-left {
-    display: none;
-  }
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  .login-right2 {
-    margin-top: 0;
+    .login-wrap {
+      width: 100%;
+      max-width: 420px;
+      height: auto;
+      grid-template-columns: 1fr;
+      background: none;
+      border: none;
+      border-radius: 12px;
+
+      h1 {
+        display: block;
+        text-align: center;
+        margin-bottom: 80px;
+      }
+    }
+
+    /* ✅ 좌측 이미지 제거 */
+    .login-left {
+      display: none !important;
+    }
+
+    .login-right {
+      width: 100%;
+    }
+
+    .login-right2 {
+      width: 100%;
+      margin-top: 0;
+    }
   }
 }

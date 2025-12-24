@@ -18,7 +18,6 @@ const Login: React.FC<LoginProps> = ({ onNext }) => {
   const navigate = useNavigate();
 
   const goIntro = () => {
-    // ✅ 로그인 성공 후 인트로 페이지로 이동
     navigate("/intro", { replace: true });
   };
 
@@ -52,6 +51,9 @@ const Login: React.FC<LoginProps> = ({ onNext }) => {
   return (
     <div className="inner-login">
       <div className="login-wrap">
+        <h1>
+          <img src="/images/Netflix_Logo.png" alt="" />
+        </h1>
         {/* LEFT */}
         <div className="login-left">
           <img src="/images/login-img.png" alt="Netflix visual" />
