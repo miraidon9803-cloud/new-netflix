@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuthStore } from "../store/authStore";
 import "./scss/Acount.scss";
+import MobileNav from "./MobileNav";
 
 type AcountProps = {
   onClose: () => void;
@@ -122,6 +123,7 @@ const Acount = ({ onClose }: AcountProps) => {
           )}
         </div>
       </div>
+      <MobileNav />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { profile } from "../data/profile";
 import { useProfileStore } from "../store/Profile";
 import "./scss/ProfilePopup.scss";
 import AvatarSelPopup from "./AvatarSelPopup";
+import MobileNav from "./MobileNav";
 
 /* ================= 타입 ================= */
 
@@ -409,6 +410,7 @@ const ProfilePopup: React.FC<ProfilePopupProps> = ({
           />
         </div>
       </div>
+      <MobileNav />
     </div>
   );
 };

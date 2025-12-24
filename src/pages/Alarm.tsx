@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./scss/Alarm.scss";
+import MobileNav from "../components/MobileNav";
 
 type MediaType = "영화" | "시리즈";
 type TabType = "all" | "영화" | "시리즈";
@@ -277,6 +278,7 @@ const Alarm = () => {
             })}
         </div>
       </div>
+      <MobileNav />
     </div>
   );
 };

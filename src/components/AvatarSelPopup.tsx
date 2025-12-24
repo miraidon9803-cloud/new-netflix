@@ -1,4 +1,5 @@
 import { profile } from "../data/profile";
+import MobileNav from "./MobileNav";
 import "./scss/AvatarSelPopup.scss";
 
 interface AvatarPickerPopupProps {
@@ -67,6 +68,7 @@ const AvatarSelPopup: React.FC<AvatarPickerPopupProps> = ({
           </div>
         </div>
       </div>
+      <MobileNav />
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import "./scss/AppPopup.scss";
+import MobileNav from "./MobileNav";
 
 const STORAGE_KEY = "app-settings";
 
@@ -187,6 +188,7 @@ const AppPopup = ({ onClose }: AppPopupProps) => {
           </form>
         </div>
       </div>
+      <MobileNav />
     </div>
   );
 };

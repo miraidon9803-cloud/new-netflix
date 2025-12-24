@@ -11,6 +11,7 @@ import ProfilePopup from "../components/ProfilePopup";
 import AvatarSelPopup from "../components/AvatarSelPopup";
 import { profile } from "../data/profile";
 import CSpopup from "../components/CSpopup";
+import MobileNav from "../components/MobileNav";
 
 const MypageMain = () => {
   const user = useAuthStore((s) => s.user);
@@ -190,6 +191,7 @@ const MypageMain = () => {
           </div>
         </div>
       </div>
+      <MobileNav />
     </div>
   );
 };

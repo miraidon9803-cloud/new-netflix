@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuthStore } from "../store/authStore";
 import "./scss/MemberPopup.scss";
+import MobileNav from "./MobileNav";
 
 type AcountProps = {
   onClose: () => void;
@@ -39,8 +40,8 @@ const MemberPopup = ({ onClose }: AcountProps) => {
   };
 
   return (
-    <div className="member-inner">
-      <div className="member-wrap">
+    <div className="member-inner" onClick={onClose}>
+      <div className="member-wrap" onClick={(e) => e.stopPropagation()}>
         <div className="member-content">
           <div className="member-header">
             <h1>멤버십 설정</h1>
@@ -141,6 +142,7 @@ const MemberPopup = ({ onClose }: AcountProps) => {
           </form>
         </div>
       </div>
+      <MobileNav />
     </div>
   );
 };

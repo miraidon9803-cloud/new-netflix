@@ -1,3 +1,4 @@
+import MobileNav from "./MobileNav";
 import "./scss/Cspopup.scss";
 type CsProps = {
   onClose: () => void;
@@ -7,8 +8,8 @@ const CSpopup = ({ onClose }: CsProps) => {
   const handleClose = () => onClose();
   return (
     <div className="cs-wrap">
-      <div className="cs-popup">
-        <div className="inner">
+      <div className="cs-popup" onClick={onClose}>
+        <div className="inner" onClick={(e) => e.stopPropagation()}>
           <div className="first-wrap">
             <div className="top-wrap">
               <h1 className="cs-title">고객센터</h1>
@@ -48,6 +49,7 @@ const CSpopup = ({ onClose }: CsProps) => {
             <button>전송</button>
           </div>
         </div>
+        <MobileNav />
       </div>
     </div>
   );

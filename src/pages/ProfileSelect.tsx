@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useProfileStore } from "../store/Profile";
 import ProfileCreateModal from "../components/ProfilePopup";
 import "./scss/ProfileSelect.scss";
+import MobileNav from "../components/MobileNav";
 
 const ProfileSelect = () => {
   const navigate = useNavigate();
@@ -92,6 +93,7 @@ const ProfileSelect = () => {
       </div>
 
       <ProfileCreateModal open={open} onClose={() => setOpen(false)} />
+      <MobileNav />
     </div>
   );
 };
