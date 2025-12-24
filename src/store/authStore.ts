@@ -198,7 +198,9 @@ export const useAuthStore = create<AuthState>()(
               set({
                 user: data,
                 isLogin: true,
-                onboardingDone: !!data.membership,
+                // ✅ 구글 유저는 onboardingDone: true
+                onboardingDone:
+                  data.provider === "google" ? true : !!data.membership,
                 authReady: true,
                 loading: false,
               });
@@ -208,7 +210,7 @@ export const useAuthStore = create<AuthState>()(
               set({
                 user: newUser,
                 isLogin: true,
-                onboardingDone: !!newUser.membership,
+                onboardingDone: true,
                 authReady: true,
                 loading: false,
               });
@@ -369,12 +371,14 @@ export const useAuthStore = create<AuthState>()(
           set({
             user: userInfo,
             isLogin: true,
-            onboardingDone: !!userInfo.membership,
+            onboardingDone: true,
             authReady: true,
             loading: false,
           });
 
           await useProfileStore.getState().loadProfiles();
+
+          // ❌ window.location.href = "/intro"; 제거!
         } catch (err) {
           console.error("구글 로그인 실패:", err);
           set({ loading: false });

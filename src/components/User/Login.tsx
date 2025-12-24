@@ -51,18 +51,16 @@ const Login: React.FC<LoginProps> = ({ onNext }) => {
   const handleKakaoLogin = async () => {
     try {
       setError("");
-      await onKakaoLogin(navigate);
+      await onKakaoLogin();
     } catch (e) {
       setError("카카오 로그인 중 오류가 발생했습니다.");
     }
   };
-
   const handleGoogleLogin = async () => {
     try {
       setError("");
       await onGoogleLogin();
-
-      navigate("/mypage/profile", { replace: true });
+      navigate("/intro", { replace: true }); // ← 여기서 이동
     } catch (err) {
       setError("구글 로그인 중 오류가 발생했습니다.");
     }
