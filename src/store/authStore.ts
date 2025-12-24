@@ -107,7 +107,7 @@ interface AuthState {
   onLogin: (email: string, password: string) => Promise<void>;
 
   onGoogleLogin: () => Promise<void>;
-  onKakaoLogin: (navigate?: (path: string) => void) => Promise<void>;
+  onKakaoLogin: () => Promise<void>;
 
   onLogout: () => Promise<void>;
 
@@ -161,6 +161,23 @@ export const useAuthStore = create<AuthState>()(
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
           try {
             if (!firebaseUser) {
+              // ✅ Firebase 유저 없을 때 - 카카오 유저 체크
+              const stored = localStorage.getItem("auth-store");
+              if (stored) {
+                const parsed = JSON.parse(stored);
+                if (parsed.state?.user?.provider === "kakao") {
+                  set({
+                    user: parsed.state.user,
+                    isLogin: parsed.state.isLogin,
+                    onboardingDone: true,
+                    authReady: true,
+                    loading: false,
+                  });
+                  return;
+                }
+              }
+
+              // 카카오 유저도 없으면 로그아웃
               set({
                 user: null,
                 isLogin: false,
@@ -172,12 +189,12 @@ export const useAuthStore = create<AuthState>()(
               return;
             }
 
+            // ✅ Firebase 유저 있을 때
             const userRef = doc(db, "users", firebaseUser.uid);
             const snap = await getDoc(userRef);
 
             if (snap.exists()) {
               const data = snap.data() as AppUser;
-
               set({
                 user: data,
                 isLogin: true,
@@ -188,7 +205,6 @@ export const useAuthStore = create<AuthState>()(
             } else {
               const newUser = buildDefaultUser(firebaseUser);
               await setDoc(userRef, newUser, { merge: true });
-
               set({
                 user: newUser,
                 isLogin: true,
@@ -265,10 +281,10 @@ export const useAuthStore = create<AuthState>()(
           set({
             user: null,
             isLogin: false,
-            onboardingDone: false, // 로그인 안 했으니 여기서는 false로 둠
+            onboardingDone: false,
             authReady: true,
             loading: false,
-            tempJoin: null, // 비밀번호 포함 데이터 즉시 제거
+            tempJoin: null,
           });
 
           useProfileStore.getState().resetProfiles();
@@ -366,8 +382,8 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      onKakaoLogin: async (navigate) => {
-        set({ loading: true }); // ← 로딩 시작 추가
+      onKakaoLogin: async () => {
+        set({ loading: true });
 
         try {
           const Kakao = (window as any).Kakao;
@@ -421,14 +437,13 @@ export const useAuthStore = create<AuthState>()(
             });
           });
 
-          const uid = `kakao_${res.id}`; // ← Firebase UID와 구분하기 위해 prefix 추가
+          const uid = `kakao_${res.id}`;
           const nickname =
             res.kakao_account?.profile?.nickname || "카카오사용자";
 
           const userRef = doc(db, "users", uid);
           const userDoc = await getDoc(userRef);
 
-          // ✅ AppUser 타입에 맞게 수정
           const kakaoUser: AppUser = {
             uid,
             email: res.kakao_account?.email || "",
@@ -440,7 +455,6 @@ export const useAuthStore = create<AuthState>()(
             createdAt: userDoc.exists()
               ? userDoc.data().createdAt
               : serverTimestamp(),
-            // membership은 기존 유저만 포함
             ...(userDoc.exists() &&
               userDoc.data().membership && {
                 membership: userDoc.data().membership,
@@ -449,36 +463,27 @@ export const useAuthStore = create<AuthState>()(
 
           await setDoc(userRef, kakaoUser, { merge: true });
 
-          //  모든 필요한 상태 업데이트
           set({
             user: kakaoUser,
-            isLogin: true, // ← 추가!
-            authReady: true, // ← 추가!
-            onboardingDone: !!kakaoUser.membership, // ← 추가!
-            loading: false, // ← 추가!
+            isLogin: true,
+            authReady: true,
+            onboardingDone: true,
+            loading: false,
           });
 
-          // 프로필 로드
           await useProfileStore.getState().loadProfiles();
 
           alert(`${nickname}님, 카카오 로그인 성공!`);
 
-          if (navigate) {
-            // 멤버십이 있으면 프로필로, 없으면 멤버십 선택으로
-            navigate("/mypage/profile");
-          }
+          window.location.href = "/intro";
         } catch (err: any) {
           console.error("카카오 로그인 중 오류:", err);
-          set({ loading: false }); // ← 에러 시 로딩 해제
+          set({ loading: false });
           alert("카카오 로그인 실패: " + (err?.message || "알 수 없는 오류"));
-          throw err; // ← 에러를 상위로 전파
+          throw err;
         }
       },
 
-      /**
-       *  기존 로그인 유저가 멤버십 선택/변경할 때 사용
-       * (신규 회원가입 플로우는 finalizeJoinWithComplete를 사용)
-       */
       saveMembership: async (membership) => {
         const currentUser = auth.currentUser;
         const uid = currentUser?.uid ?? get().user?.uid;
@@ -526,7 +531,24 @@ export const useAuthStore = create<AuthState>()(
       },
 
       onLogout: async () => {
+        // 카카오 로그아웃 처리
+        const Kakao = (window as any).Kakao;
+        if (Kakao && Kakao.Auth && Kakao.Auth.logout) {
+          try {
+            await new Promise<void>((resolve) => {
+              Kakao.Auth.logout(() => resolve());
+            });
+          } catch (e) {
+            console.log("카카오 로그아웃 에러 (무시):", e);
+          }
+        }
+
+        // Firebase 로그아웃
         await signOut(auth);
+
+        // localStorage에서 auth-store 삭제
+        localStorage.removeItem("auth-store");
+
         set({
           user: null,
           isLogin: false,
@@ -542,10 +564,6 @@ export const useAuthStore = create<AuthState>()(
       name: "auth-store",
       storage: createJSONStorage(() => localStorage),
 
-      /**
-       * ✅ 보안상 tempJoin(비밀번호 포함)은 절대 저장하면 안 됩니다.
-       * 그래서 partialize에서 제외합니다.
-       */
       partialize: (state) => ({
         user: state.user,
         isLogin: state.isLogin,

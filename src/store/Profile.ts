@@ -66,6 +66,29 @@ interface ProfileState {
 
 const MAX_PROFILES = 5;
 
+// ✅ 카카오 유저 uid 가져오는 헬퍼 함수
+const getUid = (): string | null => {
+  // Firebase 유저 먼저 체크
+  if (auth.currentUser?.uid) {
+    return auth.currentUser.uid;
+  }
+
+  // 카카오 유저 체크 (localStorage에서)
+  try {
+    const stored = localStorage.getItem("auth-store");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (parsed.state?.user?.uid) {
+        return parsed.state.user.uid;
+      }
+    }
+  } catch (e) {
+    console.error("getUid 에러:", e);
+  }
+
+  return null;
+};
+
 export const useProfileStore = create<ProfileState>()(
   persist(
     (set, get) => ({
@@ -83,13 +106,13 @@ export const useProfileStore = create<ProfileState>()(
       },
 
       loadProfiles: async () => {
-        const currentUser = auth.currentUser;
+        const uid = getUid();
 
         // ✅ 로딩 시작
         set({ profilesLoading: true });
 
         try {
-          if (!currentUser) {
+          if (!uid) {
             set({
               profiles: [],
               activeProfileId: null,
@@ -99,7 +122,7 @@ export const useProfileStore = create<ProfileState>()(
           }
 
           // 1) profiles 가져오기 (생성순)
-          const colRef = collection(db, "users", currentUser.uid, "profiles");
+          const colRef = collection(db, "users", uid, "profiles");
           const q = query(colRef, orderBy("createdAt", "asc"));
           const snap = await getDocs(q);
 
@@ -109,7 +132,7 @@ export const useProfileStore = create<ProfileState>()(
           });
 
           // 2) activeProfileId 가져오기 (users/{uid} 문서)
-          const userSnap = await getDoc(doc(db, "users", currentUser.uid));
+          const userSnap = await getDoc(doc(db, "users", uid));
           const serverActive: string | null = userSnap.exists()
             ? (userSnap.data() as any).activeProfileId ?? null
             : null;
@@ -134,7 +157,7 @@ export const useProfileStore = create<ProfileState>()(
           // - 서버에 값이 없거나 잘못된 값이면 정리
           if (nextActive !== serverActive) {
             await setDoc(
-              doc(db, "users", currentUser.uid),
+              doc(db, "users", uid),
               { activeProfileId: nextActive },
               { merge: true }
             );
@@ -146,8 +169,8 @@ export const useProfileStore = create<ProfileState>()(
       },
 
       createProfile: async (input) => {
-        const currentUser = auth.currentUser;
-        if (!currentUser) throw new Error("로그인이 필요합니다.");
+        const uid = getUid();
+        if (!uid) throw new Error("로그인이 필요합니다.");
 
         const nowProfiles = get().profiles;
 
@@ -157,7 +180,7 @@ export const useProfileStore = create<ProfileState>()(
 
         // Firestore doc id 생성(브라우저 지원 OK)
         const id = crypto.randomUUID();
-        const profileRef = doc(db, "users", currentUser.uid, "profiles", id);
+        const profileRef = doc(db, "users", uid, "profiles", id);
 
         const payload = {
           ...input,
@@ -190,7 +213,7 @@ export const useProfileStore = create<ProfileState>()(
         // 서버(users/{uid})에도 activeProfileId 저장
         if (!prevActive) {
           await setDoc(
-            doc(db, "users", currentUser.uid),
+            doc(db, "users", uid),
             { activeProfileId: nextActive },
             { merge: true }
           );
@@ -198,12 +221,10 @@ export const useProfileStore = create<ProfileState>()(
       },
 
       deleteProfile: async (profileId) => {
-        const currentUser = auth.currentUser;
-        if (!currentUser) throw new Error("로그인이 필요합니다.");
+        const uid = getUid();
+        if (!uid) throw new Error("로그인이 필요합니다.");
 
-        await deleteDoc(
-          doc(db, "users", currentUser.uid, "profiles", profileId)
-        );
+        await deleteDoc(doc(db, "users", uid, "profiles", profileId));
 
         const nextProfiles = get().profiles.filter((p) => p.id !== profileId);
 
@@ -214,7 +235,7 @@ export const useProfileStore = create<ProfileState>()(
           nextActive = nextProfiles[0]?.id ?? null;
 
           await setDoc(
-            doc(db, "users", currentUser.uid),
+            doc(db, "users", uid),
             { activeProfileId: nextActive },
             { merge: true }
           );
@@ -224,15 +245,15 @@ export const useProfileStore = create<ProfileState>()(
       },
 
       updateProfile: async (profileId, input) => {
-        const currentUser = auth.currentUser;
-        if (!currentUser) throw new Error("로그인이 필요합니다.");
+        const uid = getUid();
+        if (!uid) throw new Error("로그인이 필요합니다.");
 
         const exists = get().profiles.some((p) => p.id === profileId);
         if (!exists) throw new Error("존재하지 않는 프로필입니다.");
 
         // Firestore update(merge)
         await setDoc(
-          doc(db, "users", currentUser.uid, "profiles", profileId),
+          doc(db, "users", uid, "profiles", profileId),
           { ...input, updatedAt: serverTimestamp() },
           { merge: true }
         );
@@ -246,14 +267,14 @@ export const useProfileStore = create<ProfileState>()(
       },
 
       setActiveProfile: async (profileId) => {
-        const currentUser = auth.currentUser;
-        if (!currentUser) throw new Error("로그인이 필요합니다.");
+        const uid = getUid();
+        if (!uid) throw new Error("로그인이 필요합니다.");
 
         const exists = get().profiles.some((p) => p.id === profileId);
         if (!exists) throw new Error("존재하지 않는 프로필입니다.");
 
         await setDoc(
-          doc(db, "users", currentUser.uid),
+          doc(db, "users", uid),
           { activeProfileId: profileId },
           { merge: true }
         );
@@ -265,7 +286,7 @@ export const useProfileStore = create<ProfileState>()(
       name: "profile-store",
       storage: createJSONStorage(() => localStorage),
 
-      // ✅ 진짜 필요한 것만 저장(계정 꼬임 방지)
+      // 진짜 필요한 것만 저장(계정 꼬임 방지)
       partialize: (state) => ({
         activeProfileId: state.activeProfileId,
       }),

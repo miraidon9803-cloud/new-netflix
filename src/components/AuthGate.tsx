@@ -15,7 +15,9 @@ export default function AuthGate() {
 
   if (!isLogin) return <Navigate to="/land" replace />;
 
-  if (!onboardingDone) return <Navigate to="/auth" replace />;
+  if (!onboardingDone && user?.provider !== "kakao") {
+    return <Navigate to="/auth" replace />;
+  }
 
   const introSeen = user
     ? localStorage.getItem(`introSeen-${user.uid}`) === "1"
