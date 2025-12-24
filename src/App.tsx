@@ -15,7 +15,7 @@ import Movie from "./pages/Movie";
 import Original from "./pages/Original";
 import MovieFilterResult from "./pages/MovieFilterResult";
 
-import Payment from "./components/Payment";
+import Payment from "./components/User/Payment";
 import Wishlist from "./components/Wishlist";
 import WishlistDetail from "./components/WishlistDetail";
 import Shorts from "./components/Shorts";

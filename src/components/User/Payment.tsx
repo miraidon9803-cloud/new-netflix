@@ -8,7 +8,7 @@ import "./scss/Payment.scss";
 // import "./scss/Payment.scss";
 
 import { useNavigate, Link } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
+import { useAuthStore } from "../../store/authStore";
 
 interface PaymentProps {
   onPrev?: () => void;

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
+import { useAuthStore } from "../../store/authStore";
 import "./scss/Complete.scss";
 
 interface CompleteProps {
@@ -21,7 +21,7 @@ const Complete: React.FC<CompleteProps> = ({ onPrev }) => {
     try {
       if (!tempMembership) return alert("멤버십을 선택해주세요.");
 
-      // ✅ 여기서 회원가입 + 멤버십 저장 후 즉시 signOut(스토어에서 처리)
+      //  여기서 회원가입 + 멤버십 저장 후 즉시 signOut(스토어에서 처리)
       await finalizeJoinWithComplete(tempMembership);
 
       navigate("/auth", { replace: true });

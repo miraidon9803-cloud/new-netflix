@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import Login from "../components/Login";
-import Join from "../components/Join";
+import Login from "../components/User/Login";
+import Join from "../components/User/Join";
 import Membership from "../components/Membership";
-import Payment from "../components/Payment";
-import Complete from "../components/Complete";
+import Payment from "../components/User/Payment";
+import Complete from "../components/User/Complete";
 
 interface StepProps {
   onNext?: () => void;
