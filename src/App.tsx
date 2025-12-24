@@ -41,7 +41,7 @@ function App() {
   const onboardingDone = useAuthStore((s) => s.onboardingDone);
   const activeProfileId = useProfileStore((s) => s.activeProfileId);
 
-  // ✅ 로그인 후 기본 목적지
+  // 로그인 후 기본 목적지
   // (인트로/프로필은 Gate가 자동으로 처리하므로 최종 목적지만 지정)
   const afterLoginPath = !onboardingDone
     ? "/auth"
@@ -62,21 +62,21 @@ function App() {
           element={<Navigate to={isLogin ? afterLoginPath : "/land"} replace />}
         />
 
-        {/* 🔓 비로그인 전용 */}
+        {/*  비로그인 전용 */}
         <Route element={<GuestOnly redirectTo={afterLoginPath} />}>
           <Route path="land" element={<Landing />} />
           <Route path="auth" element={<FullLogin />} />
         </Route>
 
-        {/* 🔐 로그인 필수 (AuthGate가 인트로 강제) */}
+        {/*  로그인 필수 (AuthGate가 인트로 강제) */}
         <Route element={<AuthGate />}>
-          {/* ✅ 인트로 페이지 (프로필 불필요) */}
+          {/*  인트로 페이지 (프로필 불필요) */}
           <Route path="intro" element={<IntroPage />} />
 
-          {/* ✅ 프로필 선택 페이지 (하나로 통일) */}
+          {/*  프로필 선택 페이지 (하나로 통일) */}
           <Route path="mypage/profile" element={<ProfileSelect />} />
 
-          {/* ✅ 프로필 필수 페이지들 */}
+          {/*  프로필 필수 페이지들 */}
           <Route element={<ProfileGate />}>
             <Route path="main" element={<Main />} />
             <Route path="mypage" element={<MypageMain />} />

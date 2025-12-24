@@ -38,13 +38,33 @@ const Login: React.FC<LoginProps> = ({ onNext }) => {
     }
   };
 
-  const handleSocialLogin = async (loginFn: () => Promise<void>) => {
+  // const handleSocialLogin = async (loginFn: () => Promise<void>) => {
+  //   try {
+  //     setError("");
+  //     await loginFn();
+  //     goIntro();
+  //   } catch (err) {
+  //     setError("소셜 로그인 중 오류가 발생했습니다.");
+  //   }
+  // };
+
+  const handleKakaoLogin = async () => {
     try {
       setError("");
-      await loginFn();
-      goIntro();
+      await onKakaoLogin(navigate);
+    } catch (e) {
+      setError("카카오 로그인 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      setError("");
+      await onGoogleLogin();
+
+      navigate("/mypage/profile", { replace: true });
     } catch (err) {
-      setError("소셜 로그인 중 오류가 발생했습니다.");
+      setError("구글 로그인 중 오류가 발생했습니다.");
     }
   };
 
@@ -100,7 +120,7 @@ const Login: React.FC<LoginProps> = ({ onNext }) => {
               <button
                 type="button"
                 className="google-btn"
-                onClick={() => handleSocialLogin(onGoogleLogin)}
+                onClick={handleGoogleLogin}
                 disabled={loading}
               >
                 <span className="social-inner">
@@ -112,7 +132,7 @@ const Login: React.FC<LoginProps> = ({ onNext }) => {
               <button
                 type="button"
                 className="kakao-btn"
-                onClick={() => handleSocialLogin(onKakaoLogin)}
+                onClick={handleKakaoLogin}
                 disabled={loading}
               >
                 <span className="social-inner">

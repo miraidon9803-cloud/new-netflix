@@ -215,7 +215,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       /**
-       * ✅ 이제 onMember는 "임시 저장"만 합니다.
+       *  이제 onMember는 "임시 저장"만 합니다.
        * (기존 Join 코드가 아직 onMember를 호출해도 안전하게 동작)
        */
       onMember: async ({ email, password, phone }) => {
@@ -223,7 +223,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       /**
-       * ✅ Membership 화면에서 호출:
+       *  Membership 화면에서 호출:
        * - tempJoin으로 Firebase 계정 생성
        * - Firestore users 문서 생성 (membership 포함)
        * - 로그인/온보딩 완료 처리
@@ -258,10 +258,10 @@ export const useAuthStore = create<AuthState>()(
 
           await setDoc(userRef, newUser, { merge: true });
 
-          // ✅ 3) "로그인 상태로 두지 않기" → 즉시 로그아웃
+          //  3) "로그인 상태로 두지 않기" → 즉시 로그아웃
           await signOut(auth);
 
-          // ✅ 4) 전역 상태도 로그아웃 상태로 정리
+          //  4) 전역 상태도 로그아웃 상태로 정리
           set({
             user: null,
             isLogin: false,
@@ -367,71 +367,116 @@ export const useAuthStore = create<AuthState>()(
       },
 
       onKakaoLogin: async (navigate) => {
-        set({ loading: true });
-        try {
-          const Kakao = (window as unknown as { Kakao: KakaoSDK }).Kakao;
+        set({ loading: true }); // ← 로딩 시작 추가
 
-          if (!Kakao.isInitialized()) {
-            Kakao.init("b3fc478b356ae6fee151857a00679e07");
+        try {
+          const Kakao = (window as any).Kakao;
+
+          if (!Kakao) {
+            throw new Error(
+              "Kakao SDK가 로드되지 않았습니다. index.html 스크립트를 확인해주세요."
+            );
           }
 
-          await new Promise<unknown>((resolve, reject) => {
+          const JS_KEY = import.meta.env.VITE_KAKAO_JS_KEY;
+          if (!JS_KEY) {
+            throw new Error("VITE_KAKAO_JS_KEY 환경변수가 없습니다.");
+          }
+
+          if (typeof Kakao.isInitialized !== "function") {
+            throw new Error(
+              "정상 Kakao SDK가 아닙니다. window.Kakao가 다른 객체로 덮였을 수 있어요."
+            );
+          }
+
+          if (!Kakao.isInitialized()) {
+            Kakao.init(JS_KEY);
+          }
+
+          if (!Kakao.Auth || typeof Kakao.Auth.login !== "function") {
+            throw new Error(
+              "Kakao.Auth.login이 없습니다. (SDK 환경/버전에 따라 제공되지 않을 수 있어요)"
+            );
+          }
+
+          await new Promise((resolve, reject) => {
             Kakao.Auth.login({
-              scope: "profile_nickname, profile_image",
+              scope: "profile_nickname,profile_image",
               success: resolve,
               fail: reject,
             });
           });
 
-          const res = await Kakao.API.request({ url: "/v2/user/me" });
-          const uid: string = String(res.id);
-
-          const kakaoUser: AppUser = {
-            uid,
-            email: res.kakao_account?.email ?? "",
-            phone: res.kakao_account?.phone_number ?? "",
-            name: res.kakao_account?.profile?.nickname ?? "카카오사용자",
-            nickname: res.kakao_account?.profile?.nickname ?? "카카오사용자",
-            photoURL: res.kakao_account?.profile?.profile_image_url ?? "",
-            provider: "kakao",
-            createdAt: serverTimestamp(),
-          };
-
-          const userRef = doc(db, "users", uid);
-          const userSnap = await getDoc(userRef);
-
-          let finalUser: AppUser = kakaoUser;
-
-          if (!userSnap.exists()) {
-            await setDoc(userRef, kakaoUser, { merge: true });
-          } else {
-            const data = userSnap.data() as AppUser;
-            finalUser = { ...data, ...kakaoUser, provider: "kakao" };
+          if (!Kakao.API || typeof Kakao.API.request !== "function") {
+            throw new Error(
+              "Kakao.API.request가 없습니다. SDK 로드/권한 설정을 확인해주세요."
+            );
           }
 
-          set({
-            user: finalUser,
-            isLogin: true,
-            onboardingDone: !!finalUser.membership,
-            authReady: true,
-            loading: false,
+          const res: any = await new Promise((resolve, reject) => {
+            Kakao.API.request({
+              url: "/v2/user/me",
+              success: resolve,
+              fail: reject,
+            });
           });
 
-          // ✅ 온보딩 여부에 따라 이동
-          if (finalUser.membership) {
-            navigate?.("/mypage/profile");
-          } else {
-            navigate?.("/auth");
+          const uid = `kakao_${res.id}`; // ← Firebase UID와 구분하기 위해 prefix 추가
+          const nickname =
+            res.kakao_account?.profile?.nickname || "카카오사용자";
+
+          const userRef = doc(db, "users", uid);
+          const userDoc = await getDoc(userRef);
+
+          // ✅ AppUser 타입에 맞게 수정
+          const kakaoUser: AppUser = {
+            uid,
+            email: res.kakao_account?.email || "",
+            phone: "",
+            name: nickname,
+            nickname: nickname,
+            photoURL: res.kakao_account?.profile?.profile_image_url || "",
+            provider: "kakao",
+            createdAt: userDoc.exists()
+              ? userDoc.data().createdAt
+              : serverTimestamp(),
+            // membership은 기존 유저만 포함
+            ...(userDoc.exists() &&
+              userDoc.data().membership && {
+                membership: userDoc.data().membership,
+              }),
+          };
+
+          await setDoc(userRef, kakaoUser, { merge: true });
+
+          //  모든 필요한 상태 업데이트
+          set({
+            user: kakaoUser,
+            isLogin: true, // ← 추가!
+            authReady: true, // ← 추가!
+            onboardingDone: !!kakaoUser.membership, // ← 추가!
+            loading: false, // ← 추가!
+          });
+
+          // 프로필 로드
+          await useProfileStore.getState().loadProfiles();
+
+          alert(`${nickname}님, 카카오 로그인 성공!`);
+
+          if (navigate) {
+            // 멤버십이 있으면 프로필로, 없으면 멤버십 선택으로
+            navigate("/mypage/profile");
           }
-        } catch (err) {
+        } catch (err: any) {
           console.error("카카오 로그인 중 오류:", err);
-          set({ loading: false });
-          throw err;
+          set({ loading: false }); // ← 에러 시 로딩 해제
+          alert("카카오 로그인 실패: " + (err?.message || "알 수 없는 오류"));
+          throw err; // ← 에러를 상위로 전파
         }
       },
 
       /**
-       * ✅ 기존 로그인 유저가 멤버십 선택/변경할 때 사용
+       *  기존 로그인 유저가 멤버십 선택/변경할 때 사용
        * (신규 회원가입 플로우는 finalizeJoinWithComplete를 사용)
        */
       saveMembership: async (membership) => {
