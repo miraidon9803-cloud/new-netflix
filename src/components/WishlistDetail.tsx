@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import SideNav from "./SideNav";
-// import Footer from "./Footer";
 import { useWishlistStore } from "../store/WishlistStore";
 import type { WishlistContent } from "../store/WishlistStore";
 import type { SortOrder } from "../types/search";
 import "./scss/WishlistDetail.scss";
 import MobileNav from "./MobileNav";
 
-const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
+const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
+const FALLBACK_IMAGE = "/images/icon/no_poster.png";
 
 // SVG 아이콘 컴포넌트들
 const BackArrowIcon: React.FC = () => (
@@ -234,30 +234,24 @@ const WishlistDetail: React.FC = () => {
   > | null>(null);
   const folderListRef = useRef<HTMLDivElement>(null);
 
-  // 현재 폴더
   const currentFolder = folders.find((f) => f.id === folderId);
   const folderName = currentFolder?.name || "폴더";
-  // const EMPTY_CONTENTS: Content[] = [];
-  // const contents = currentFolder?.contents ?? EMPTY_CONTENTS;
   const contents = currentFolder?.contents || [];
 
-  // 폴더 로드 (마운트 시 1회만)
   useEffect(() => {
     loadFolders();
   }, []);
 
-  // 콘텐츠 정렬
   useEffect(() => {
     let sorted = [...contents];
-    if (sortOrder === 'title') {
-      sorted.sort((a, b) => a.title.localeCompare(b.title, 'ko'));
-    } else if (sortOrder === 'popular') {
+    if (sortOrder === "title") {
+      sorted.sort((a, b) => a.title.localeCompare(b.title, "ko"));
+    } else if (sortOrder === "popular") {
       sorted = [...contents].reverse();
     }
     setSortedContents(sorted);
   }, [sortOrder, contents]);
 
-  // ESC 키 처리
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -272,7 +266,6 @@ const WishlistDetail: React.FC = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [navigate, showEditPopup, showMovePopup]);
 
-  // 이동 팝업 키보드 네비게이션
   useEffect(() => {
     if (!showMovePopup) return;
     const otherFolders = folders.filter((f) => f.id !== folderId);
@@ -375,6 +368,19 @@ const WishlistDetail: React.FC = () => {
     }
   };
 
+  // 이미지 URL 생성 함수
+  const getImageUrl = (posterPath: string | null) => {
+    if (!posterPath) return FALLBACK_IMAGE;
+
+    // 이미 전체 URL인 경우 (MainBanner 등에서 로컬 이미지 경로)
+    if (posterPath.startsWith("http") || posterPath.startsWith("/images")) {
+      return posterPath;
+    }
+
+    // TMDB 경로인 경우
+    return `${IMAGE_BASE_URL}${posterPath}`;
+  };
+
   const otherFolders = folders.filter((f) => f.id !== folderId);
 
   if (isLoading)
@@ -425,17 +431,14 @@ const WishlistDetail: React.FC = () => {
               onTouchEnd={handleContentMouseUp}
             >
               <div className="wishlist-detail-image-wrapper">
-                {content.poster_path ? (
-                  <img
-                    src={`${IMAGE_BASE_URL}/w300${content.poster_path}`}
-                    alt={content.title}
-                    className="content-image"
-                  />
-                ) : (
-                  <div className="no-image">
-                    <span>{content.title}</span>
-                  </div>
-                )}
+                <img
+                  src={getImageUrl(content.poster_path)}
+                  alt={content.title}
+                  className="content-image"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
+                  }}
+                />
               </div>
               <div className="wishlist-detail-info">
                 <p className="wishlist-detail-card-title">
@@ -450,15 +453,6 @@ const WishlistDetail: React.FC = () => {
               </div>
             </div>
           ))}
-          {sortedContents.length % 3 !== 0 &&
-            Array.from({ length: 3 - (sortedContents.length % 3) }).map(
-              (_, i) => (
-                <div
-                  className="wishlist-detail-card placeholder"
-                  key={`placeholder-${i}`}
-                />
-              )
-            )}
         </div>
 
         {sortedContents.length === 0 && (
@@ -468,7 +462,6 @@ const WishlistDetail: React.FC = () => {
         )}
       </main>
 
-      {/* 콘텐츠 수정 팝업 */}
       {showEditPopup && !showMovePopup && (
         <div className="popup-overlay" onClick={handlePopupOverlayClick}>
           <div className="popup-container popup-content-edit">
@@ -501,7 +494,6 @@ const WishlistDetail: React.FC = () => {
         </div>
       )}
 
-      {/* 이동 팝업 */}
       {showMovePopup && (
         <div className="popup-overlay" onClick={handlePopupOverlayClick}>
           <div className="popup-container popup-move">
@@ -536,28 +528,7 @@ const WishlistDetail: React.FC = () => {
         </div>
       )}
 
-      {/* <div className="wishlist-detail-footer">
-        <Footer />
-      </div> */}
-
-      {/* <nav className="wishlist-detail-bottom-nav">
-        <a href="/" className="bottom-nav-item">
-          <img src="/images/icon/바로가기.png" alt="" />
-        </a>
-        <a href="/shorts" className="bottom-nav-item">
-          <img src="/images/icon/쇼츠.png" alt="" />
-        </a>
-        <a href="/" className="bottom-nav-item">
-          <img src="/images/icon/홈.png" alt="" />
-        </a>
-        <a href="/wishlist" className="bottom-nav-item active">
-          <img src="/images/icon/위시리스트.png" alt="" />
-        </a>
-        <a href="/" className="bottom-nav-item">
-          <img src="/images/icon/보관함.png" alt="" />
-        </a>
-      </nav> */}
-      <MobileNav/>
+      <MobileNav />
     </div>
   );
 };
