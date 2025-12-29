@@ -245,15 +245,14 @@
 /* RESPONSIVE : 1366px 이하부터 */
 @media screen and (max-width: 1366px) {
   .inner-login {
-    margin: 0 16px;
-
     display: flex;
     align-items: center;
     justify-content: center;
 
     .login-wrap {
+      margin: 0 16px;
       width: 100%;
-      max-width: 420px;
+      // max-width: 420px;
       height: auto;
       grid-template-columns: 1fr;
       background: none;
@@ -267,7 +266,6 @@
       }
     }
 
-    /* ✅ 좌측 이미지 제거 */
     .login-left {
       display: none !important;
     }
