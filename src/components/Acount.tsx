@@ -23,9 +23,7 @@ const Acount = ({ onClose }: AcountProps) => {
         alert("비밀번호가 일치하지 않습니다.");
         return;
       }
-      alert(
-        "비밀번호 변경은 아직 연결되지 않았습니다. (원하시면 연결해드릴게요)"
-      );
+
       // TODO: Firebase updatePassword 연결
     }
 
@@ -116,7 +114,6 @@ const Acount = ({ onClose }: AcountProps) => {
             </div>
           </form>
 
-          {/* ✅ 유저 정보가 늦게 들어오는 구조면 안내 */}
           {!user && (
             <p className="account-hint">사용자 정보를 불러오는 중입니다…</p>
           )}
