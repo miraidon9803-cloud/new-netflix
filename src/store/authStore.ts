@@ -24,32 +24,6 @@ import {
 
 import { useProfileStore } from "./Profile";
 
-/** Kakao SDK 타입 */
-interface KakaoSDK {
-  isInitialized(): boolean;
-  init(appKey: string): void;
-  Auth: {
-    login(options: {
-      scope: string;
-      success: (authObj: unknown) => void;
-      fail: (err: unknown) => void;
-    }): void;
-  };
-  API: {
-    request(options: { url: string }): Promise<{
-      id: number;
-      kakao_account?: {
-        email?: string;
-        phone_number?: string;
-        profile?: {
-          nickname?: string;
-          profile_image_url?: string;
-        };
-      };
-    }>;
-  };
-}
-
 export interface MembershipInfo {
   type: "adStandard" | "standard" | "premium";
   name: string;
@@ -161,7 +135,6 @@ export const useAuthStore = create<AuthState>()(
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
           try {
             if (!firebaseUser) {
-              // ✅ Firebase 유저 없을 때 - 카카오 유저 체크
               const stored = localStorage.getItem("auth-store");
               if (stored) {
                 const parsed = JSON.parse(stored);

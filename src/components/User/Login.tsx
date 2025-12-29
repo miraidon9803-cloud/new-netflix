@@ -60,7 +60,7 @@ const Login: React.FC<LoginProps> = ({ onNext }) => {
     try {
       setError("");
       await onGoogleLogin();
-      navigate("/intro", { replace: true }); // ← 여기서 이동
+      navigate("/intro", { replace: true });
     } catch (err) {
       setError("구글 로그인 중 오류가 발생했습니다.");
     }
